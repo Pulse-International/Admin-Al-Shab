@@ -4,7 +4,6 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
-
     <main>
         <style>
             .hintClass {

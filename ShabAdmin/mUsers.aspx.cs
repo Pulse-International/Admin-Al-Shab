@@ -1,0 +1,808 @@
+﻿using DevExpress.Web;
+using DevExpress.Web.Data;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SqlClient;
+using System.IO;
+using System.Web.UI;
+using static MainHelper;
+
+
+namespace ShabAdmin
+{
+    public partial class mUsers : Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
+        protected void Page_Init(object sender, EventArgs e)
+        {
+            var (countryId, companyId) = GetUserPrivileges();
+
+            // Clear all parameters before assigning new ones
+            db_DeliveryUsers.SelectParameters.Clear();
+            db_MachineUsers.SelectParameters.Clear();
+            db_Products.SelectParameters.Clear();
+            db_AppUsers.SelectParameters.Clear();
+            db_countryName.SelectParameters.Clear();
+            db_companyName.SelectParameters.Clear();
+
+            if (countryId != 1000 && companyId != 1000)
+            {
+                db_DeliveryUsers.SelectCommand = @"
+            SELECT id, username, userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
+                   licensePicture, password, firstName, lastName, vehiecleType, isActive, vehiecleVin, vehiecleNo, 
+                   isOnline, countryId
+            FROM [usersDelivery]
+            WHERE countryId = @countryId";
+
+                db_DeliveryUsers.SelectParameters.Add("countryId", countryId.ToString());
+
+                db_MachineUsers.SelectCommand = @"
+            SELECT id, username, password, firstName, lastName, isActive, countryId, companyId, branchId
+            FROM [usersMachine]
+            WHERE countryId = @countryId AND companyId = @companyId";
+
+                db_MachineUsers.SelectParameters.Add("countryId", countryId.ToString());
+                db_MachineUsers.SelectParameters.Add("companyId", companyId.ToString());
+
+                db_Products.SelectCommand = @"
+            SELECT id, name, countryId, companyId, rate, rateCount
+            FROM [products]
+            WHERE countryId = @countryId AND companyId = @companyId";
+
+                db_Products.SelectParameters.Add("countryId", countryId.ToString());
+                db_Products.SelectParameters.Add("companyId", companyId.ToString());
+
+                db_AppUsers.SelectCommand = @"
+            SELECT id, countryCode, firstName, LEFT(FCMToken, 5) AS FCMToken, userPlatform, lastName, username, isActive, balance, 
+                   l_userLevelId, twoAuthenticationEnabled, userPoints, isDeleted, freeDeliveryCount
+            FROM [usersApp]
+            WHERE countryCode = (SELECT countryCode FROM countries WHERE id = @countryId)
+            ORDER BY isDeleted ASC, id desc";
+
+                db_AppUsers.SelectParameters.Add("countryId", countryId.ToString());
+
+                db_countryName.SelectCommand = "SELECT id, countryName FROM countries WHERE id = @countryId";
+                db_countryName.SelectParameters.Add("countryId", countryId.ToString());
+
+                db_companyName.SelectCommand = "SELECT id, companyName FROM companies WHERE id = @companyId";
+                db_companyName.SelectParameters.Add("companyId", companyId.ToString());
+
+                db_branchName.SelectCommand = @"
+    SELECT id, name 
+    FROM [branches] 
+    WHERE countryId = @countryId AND companyId = @companyId";
+
+                db_branchName.SelectParameters.Add("countryId", countryId.ToString());
+                db_branchName.SelectParameters.Add("companyId", companyId.ToString());
+
+                db_productName.SelectCommand = @"
+    SELECT id, name 
+    FROM [products] 
+    WHERE countryId = @countryId AND companyId = @companyId";
+
+                db_productName.SelectParameters.Add("countryId", countryId.ToString());
+                db_productName.SelectParameters.Add("companyId", companyId.ToString());
+            }
+            else if (countryId != 1000)
+            {
+                db_DeliveryUsers.SelectCommand = @"
+            SELECT id, username, userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
+                   licensePicture, password, firstName, lastName, vehiecleType, isActive, vehiecleVin, vehiecleNo, 
+                   isOnline, countryId
+            FROM [usersDelivery]
+            WHERE countryId = @countryId";
+
+                db_DeliveryUsers.SelectParameters.Add("countryId", countryId.ToString());
+
+                db_MachineUsers.SelectCommand = @"
+            SELECT id, username, password, firstName, lastName, isActive, countryId, companyId, branchId
+            FROM [usersMachine]
+            WHERE countryId = @countryId";
+
+                db_MachineUsers.SelectParameters.Add("countryId", countryId.ToString());
+
+                db_Products.SelectCommand = @"
+            SELECT id, name, countryId, companyId, rate, rateCount
+            FROM [products]
+            WHERE countryId = @countryId";
+
+                db_Products.SelectParameters.Add("countryId", countryId.ToString());
+
+                db_AppUsers.SelectCommand = @"
+            SELECT id, countryCode, firstName, LEFT(FCMToken, 5) AS FCMToken, userPlatform, lastName, username, isActive, balance, 
+                   l_userLevelId, twoAuthenticationEnabled, userPoints, isDeleted, freeDeliveryCount
+            FROM [usersApp]
+            WHERE countryCode = (SELECT countryCode FROM countries WHERE id = @countryId)
+            ORDER BY isDeleted ASC, id desc";
+
+                db_AppUsers.SelectParameters.Add("countryId", countryId.ToString());
+
+                db_countryName.SelectCommand = "SELECT id, countryName FROM countries WHERE id = @countryId";
+                db_countryName.SelectParameters.Add("countryId", countryId.ToString());
+
+                db_companyName.SelectCommand = "SELECT id, companyName FROM companies WHERE countryId = @countryId";
+                db_companyName.SelectParameters.Add("countryId", countryId.ToString());
+
+                db_branchName.SelectCommand = @"
+    SELECT id, name 
+    FROM [branches] 
+    WHERE countryId = @countryId";
+
+                db_branchName.SelectParameters.Add("countryId", countryId.ToString());
+
+                db_productName.SelectCommand = @"
+    SELECT id, name 
+    FROM [products] 
+    WHERE countryId = @countryId";
+
+                db_productName.SelectParameters.Add("countryId", countryId.ToString());
+            }
+            else
+            {
+                // No filtering
+                db_DeliveryUsers.SelectCommand = @"
+            SELECT id, username, userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
+                   licensePicture, password, firstName, lastName, vehiecleType, isActive, vehiecleVin, vehiecleNo, 
+                   isOnline, countryId
+            FROM [usersDelivery]";
+
+                db_MachineUsers.SelectCommand = @"
+            SELECT id, username, password, firstName, lastName, isActive, countryId, companyId, branchId
+            FROM [usersMachine]";
+
+                db_Products.SelectCommand = @"
+            SELECT id, name, countryId, companyId, rate, rateCount
+            FROM [products]";
+
+                db_AppUsers.SelectCommand = @"
+            SELECT id, countryCode, firstName, lastName, LEFT(FCMToken, 5) AS FCMToken, userPlatform, username, isActive, balance, 
+                   l_userLevelId, twoAuthenticationEnabled, userPoints, isDeleted, freeDeliveryCount
+            FROM [usersApp]
+            ORDER BY isDeleted ASC, id desc";
+
+                db_countryName.SelectCommand = "SELECT id, countryName FROM countries WHERE id <> 1000";
+                db_companyName.SelectCommand = "SELECT id, companyName FROM companies WHERE id <> 1000";
+
+                db_branchName.SelectCommand = "SELECT id, name FROM [branches]";
+                db_productName.SelectCommand = "SELECT id, name FROM [products]";
+            }
+        }
+
+
+        private (int countryId, int companyId) GetUserPrivileges()
+        {
+            string username = MainHelper.M_Check(Request.Cookies["M_Username"]?.Value);
+            int privilegeCountryID = 0;
+            int privilegeCompanyID = 0;
+
+            if (!string.IsNullOrEmpty(username))
+            {
+                string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+                    string query = "SELECT privilegeCountryID, privilegeCompanyID FROM users WHERE username = @username";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@username", username);
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                if (reader["privilegeCountryID"] != DBNull.Value)
+                                    privilegeCountryID = Convert.ToInt32(reader["privilegeCountryID"]);
+                                if (reader["privilegeCompanyID"] != DBNull.Value)
+                                    privilegeCompanyID = Convert.ToInt32(reader["privilegeCompanyID"]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return (privilegeCountryID, privilegeCompanyID);
+        }
+        protected void GridMachineUsers_RowValidating(object sender, DevExpress.Web.Data.ASPxDataValidationEventArgs e)
+        {
+            string plainPassword = e.NewValues["password"]?.ToString();
+            string oldPassword = e.OldValues.Contains("password") ? e.OldValues["password"]?.ToString() : null;
+
+            bool isNewRow = e.IsNewRow;
+
+            if (isNewRow)
+            {
+                if (string.IsNullOrWhiteSpace(plainPassword))
+                {
+                    e.RowError = "كلمة المرور مطلوبة";
+                    return;
+                }
+            }
+        }
+        protected void GridMachineUsers_RowInserting(object sender, DevExpress.Web.Data.ASPxDataInsertingEventArgs e)
+        {
+            string plainPassword = e.NewValues["password"]?.ToString();
+            HashSalt hashed = MainHelper.HashPassword(plainPassword);
+            e.NewValues["password"] = hashed.Hash;
+            e.NewValues["storedsalt"] = Convert.FromBase64String(hashed.Salt);
+        }
+
+        protected void GridMachineUsers_RowUpdating(object sender, DevExpress.Web.Data.ASPxDataUpdatingEventArgs e)
+        {
+
+
+            int id = (int)e.Keys["id"];
+            string username = e.NewValues["username"]?.ToString();
+            string plainPassword = e.NewValues["password"]?.ToString();
+            string firstName = e.NewValues["firstName"]?.ToString();
+            string lastName = e.NewValues["lastName"]?.ToString();
+            bool isActive = Convert.ToBoolean(e.NewValues["isActive"]);
+            int countryId = Convert.ToInt32(e.NewValues["countryId"]);
+            int companyId = Convert.ToInt32(e.NewValues["companyId"]);
+            int branchId = Convert.ToInt32(e.NewValues["branchId"]);
+
+            string sql;
+            List<SqlParameter> parameters = new List<SqlParameter>
+    {
+        new SqlParameter("@username", username),
+        new SqlParameter("@firstName", firstName),
+        new SqlParameter("@lastName", lastName),
+        new SqlParameter("@isActive", isActive),
+        new SqlParameter("@countryId", countryId),
+        new SqlParameter("@companyId", companyId),
+        new SqlParameter("@branchId", branchId),
+        new SqlParameter("@id", id)
+    };
+
+            if (e.NewValues["password"] == e.OldValues["password"])
+            {
+                HashSalt hashed = MainHelper.HashPassword(plainPassword);
+                sql = @"UPDATE [usersMachine]
+                SET username = @username,
+                    password = @password,
+                    storedsalt = @storedsalt,
+                    firstName = @firstName,
+                    lastName = @lastName,
+                    isActive = @isActive,
+                    countryId = @countryId,
+                    companyId = @companyId,
+                    branchId = @branchId
+                WHERE id = @id";
+                parameters.Insert(1, new SqlParameter("@password", hashed.Hash));
+                parameters.Insert(2, new SqlParameter("@storedsalt", Convert.FromBase64String(hashed.Salt)));
+            }
+            else
+            {
+                sql = @"UPDATE [usersMachine]
+                SET username = @username,
+                    firstName = @firstName,
+                    lastName = @lastName,
+                    isActive = @isActive,
+                    countryId = @countryId,
+                    companyId = @companyId,
+                    branchId = @branchId
+                WHERE id = @id";
+            }
+
+            using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
+            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            {
+                cmd.Parameters.AddRange(parameters.ToArray());
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+
+            e.Cancel = true;
+            GridMachineUsers.CancelEdit();
+            GridMachineUsers.DataBind();
+        }
+
+
+        protected void callbackApprove_Callback(object sender, DevExpress.Web.CallbackEventArgs e)
+        {
+            if (int.TryParse(e.Parameter, out int id))
+            {
+                string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd1 = new SqlCommand(@"
+                UPDATE productsRates
+                SET rateApproved = 1
+                WHERE id = @id", conn);
+                    cmd1.Parameters.AddWithValue("@id", id);
+                    cmd1.ExecuteNonQuery();
+
+                    SqlCommand getProductIdCmd = new SqlCommand("SELECT productId FROM productsRates WHERE id = @id", conn);
+                    getProductIdCmd.Parameters.AddWithValue("@id", id);
+                    int productId = Convert.ToInt32(getProductIdCmd.ExecuteScalar());
+
+                    SqlCommand callProcedure = new SqlCommand("UpdateProductRates", conn);
+                    callProcedure.CommandType = System.Data.CommandType.StoredProcedure;
+                    callProcedure.Parameters.AddWithValue("@ProductId", productId);
+                    callProcedure.ExecuteNonQuery();
+                }
+
+            }
+        }
+        protected void ApproveOrderRate_Callback(object sender, DevExpress.Web.CallbackEventArgs e)
+        {
+            if (int.TryParse(e.Parameter, out int id))
+            {
+                string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd1 = new SqlCommand(@"
+                UPDATE orders
+                SET rateApproved = 1
+                WHERE id = @id", conn);
+                    cmd1.Parameters.AddWithValue("@id", id);
+                    cmd1.ExecuteNonQuery();
+
+                    SqlCommand getCompanyIdCmd = new SqlCommand("SELECT companyId FROM orders WHERE id = @id", conn);
+                    getCompanyIdCmd.Parameters.AddWithValue("@id", id);
+                    int companyId = Convert.ToInt32(getCompanyIdCmd.ExecuteScalar());
+
+                    SqlCommand callProcedure = new SqlCommand("UpdateCompanyRates", conn);
+                    callProcedure.CommandType = System.Data.CommandType.StoredProcedure;
+                    callProcedure.Parameters.AddWithValue("@CompanyId", companyId);
+                    callProcedure.ExecuteNonQuery();
+                }
+
+            }
+        }
+
+        protected void GridMachineUsers_CellEditorInitialize(object sender, ASPxGridViewEditorEventArgs e)
+        {
+            if ((e.Column.FieldName == "password") && (!GridMachineUsers.IsNewRowEditing))
+            {
+                ASPxTextBox Password = e.Editor as ASPxTextBox;
+                Password.Password = false;
+            }
+            if (e.Column.FieldName == "companyId")
+            {
+                ASPxComboBox combo = e.Editor as ASPxComboBox;
+
+                if (GridMachineUsers.IsNewRowEditing)
+                {
+                    // New row: empty combo
+                    combo.Items.Clear();
+                }
+                else
+                {
+                    // Edit row: filter companies by the row's countryId
+                    object countryObj = GridMachineUsers.GetRowValues(e.VisibleIndex, "countryId");
+                    int countryId = countryObj != null ? Convert.ToInt32(countryObj) : 0;
+                    if (countryId > 0)
+                    {
+                        db_companyName.SelectCommand = "SELECT id, companyName FROM companies WHERE countryId = @countryId";
+                        db_companyName.SelectParameters.Clear();
+                        db_companyName.SelectParameters.Add("countryId", countryId.ToString());
+                        combo.DataBind();
+                    }
+                    else
+                    {
+                        combo.Items.Clear(); // fallback: empty if no country
+                    }
+                }
+
+                combo.Callback += (s, args) =>
+                {
+                    int countryId;
+                    if (int.TryParse(args.Parameter, out countryId))
+                    {
+                        var (countryId1, companyId1) = GetUserPrivileges();
+                        if (companyId1 != 1000)
+                        {
+                            db_companyName.SelectCommand = "SELECT id, companyName FROM companies WHERE countryId = @countryId AND id =@companyId ";
+                            db_companyName.SelectParameters.Clear();
+                            db_companyName.SelectParameters.Add("countryId", countryId.ToString());
+                            db_companyName.SelectParameters.Add("companyId", companyId1.ToString());
+                        }
+                        else
+                        {
+                            db_companyName.SelectCommand = "SELECT id, companyName FROM companies WHERE countryId = @countryId";
+                            db_companyName.SelectParameters.Clear();
+                            db_companyName.SelectParameters.Add("countryId", countryId.ToString());
+                        }
+                        combo.DataBind();
+                    }
+                };
+            }
+            else if (e.Column.FieldName == "branchId")
+            {
+                ASPxComboBox combo = e.Editor as ASPxComboBox;
+
+                if (GridMachineUsers.IsNewRowEditing)
+                {
+                    // New row: empty combo
+                    combo.Items.Clear();
+                }
+                else
+                {
+                    // Edit row: filter branches by countryId and companyId
+                    object countryObj = GridMachineUsers.GetRowValues(e.VisibleIndex, "countryId");
+                    object companyObj = GridMachineUsers.GetRowValues(e.VisibleIndex, "companyId");
+                    int countryId = countryObj != null ? Convert.ToInt32(countryObj) : 0;
+                    int companyId = companyObj != null ? Convert.ToInt32(companyObj) : 0;
+                    if (countryId > 0 && companyId > 0)
+                    {
+                        db_branchName.SelectCommand = "SELECT id, name FROM branches WHERE countryId = @countryId AND companyId = @companyId";
+                        db_branchName.SelectParameters.Clear();
+                        db_branchName.SelectParameters.Add("countryId", countryId.ToString());
+                        db_branchName.SelectParameters.Add("companyId", companyId.ToString());
+                        combo.DataBind();
+                    }
+                    else
+                    {
+                        combo.Items.Clear(); // fallback: empty if no country/company
+                    }
+                }
+
+                combo.Callback += (s, args) =>
+                {
+                    string[] parts = args.Parameter.Split('|');
+                    if (parts.Length == 2 && int.TryParse(parts[0], out int countryId) && int.TryParse(parts[1], out int companyId))
+                    {
+                        db_branchName.SelectCommand = "SELECT id, name FROM branches WHERE countryId = @countryId AND companyId = @companyId";
+                        db_branchName.SelectParameters.Clear();
+                        db_branchName.SelectParameters.Add("countryId", countryId.ToString());
+                        db_branchName.SelectParameters.Add("companyId", companyId.ToString());
+                        combo.DataBind();
+                    }
+                };
+            }
+        }
+
+
+        protected void GridDeliveryUsers_RowValidating(object sender, DevExpress.Web.Data.ASPxDataValidationEventArgs e)
+        {
+            string plainPassword = e.NewValues["password"]?.ToString();
+            string oldPassword = e.OldValues.Contains("password") ? e.OldValues["password"]?.ToString() : null;
+
+            bool isNewRow = e.IsNewRow;
+
+            if (isNewRow)
+            {
+                if (string.IsNullOrWhiteSpace(plainPassword))
+                {
+                    e.RowError = "كلمة المرور مطلوبة";
+                    return;
+                }
+            }
+        }
+
+        protected void GridDeliveryUsers_RowInserting(object sender, DevExpress.Web.Data.ASPxDataInsertingEventArgs e)
+        {
+            string plainPassword = e.NewValues["password"]?.ToString();
+            HashSalt hashed = MainHelper.HashPassword(plainPassword);
+            e.NewValues["password"] = hashed.Hash;
+            e.NewValues["storedsalt"] = Convert.FromBase64String(hashed.Salt);
+        }
+
+        protected void GridDeliveryUsers_RowUpdating(object sender, DevExpress.Web.Data.ASPxDataUpdatingEventArgs e)
+        {
+
+            string path = l_car_file.Text;
+            int id = (int)e.Keys["id"];
+            string username = e.NewValues["username"]?.ToString();
+            string plainPassword = e.NewValues["password"]?.ToString();
+            string firstName = e.NewValues["firstName"]?.ToString();
+            string vehiecleVin = e.NewValues["vehiecleVin"]?.ToString();
+            string vehiecleNo = e.NewValues["vehiecleNo"]?.ToString();
+            string image = l_item_file.Text.ToString();
+            string carPicture = l_car_file.Text.ToString();
+            string carLicensePicture = l_carLicense_file.Text.ToString();
+            string idFrontPicture = l_idFront_file.Text.ToString();
+            string idBackPicture = l_idBack_file.Text.ToString();
+            string licensePicture = l_license_file.Text.ToString();
+            string lastName = e.NewValues["lastName"]?.ToString();
+            string vehiecleType = e.NewValues["vehiecleType"]?.ToString();
+            bool isActive = Convert.ToBoolean(e.NewValues["isActive"]);
+
+            /////////////
+            DeleteOldFileIfChanged(l_item_file_check.Text, l_item_file_old.Text);
+            DeleteOldFileIfChanged(l_idFront_file_check.Text, l_idFront_file_old.Text);
+            DeleteOldFileIfChanged(l_idBack_file_check.Text, l_idBack_file_old.Text);
+            DeleteOldFileIfChanged(l_car_file_check.Text, l_car_file_old.Text);
+            DeleteOldFileIfChanged(l_carLicense_file_check.Text, l_carLicense_file_old.Text);
+            DeleteOldFileIfChanged(l_license_file_check.Text, l_license_file_old.Text);
+
+            // reset checks
+            l_item_file_check.Text = "0";
+            l_idFront_file_check.Text = "0";
+            l_idBack_file_check.Text = "0";
+            l_car_file_check.Text = "0";
+            l_carLicense_file_check.Text = "0";
+            l_license_file_check.Text = "0";
+            /////////////
+
+            string sql;
+            var parameters = new List<SqlParameter>
+    {
+        new SqlParameter("@username", username),
+        new SqlParameter("@firstName", firstName),
+        new SqlParameter("@lastName", lastName),
+        new SqlParameter("@vehiecleType", vehiecleType),
+        new SqlParameter("@isActive", isActive),
+        new SqlParameter("@vehiecleVin", vehiecleVin),
+        new SqlParameter("@vehiecleNo", vehiecleNo),
+        new SqlParameter("@image", image),
+        new SqlParameter("@carPicture", carPicture),
+        new SqlParameter("@carLicensePicture", carLicensePicture),
+        new SqlParameter("@idFrontPicture", idFrontPicture),
+        new SqlParameter("@idBackPicture", idBackPicture),
+        new SqlParameter("@licensePicture", licensePicture),
+        new SqlParameter("@id", id)
+    };
+
+            if (e.NewValues["password"] == e.OldValues["password"])
+            {
+                HashSalt hashed = MainHelper.HashPassword(plainPassword);
+                sql = @"UPDATE [usersDelivery]
+                SET username = @username,
+                    password = @password,
+                    storedsalt = @storedsalt,
+                    firstName = @firstName,
+                    lastName = @lastName,
+                    vehiecleNo = @vehiecleNo,
+                    vehiecleVin = @vehiecleVin,
+                    isActive = @isActive,
+                    userPicture = @image,
+                    vehiecleType = @vehiecleType,
+                    carLicensePicture = @carLicensePicture,
+                    idFrontPicture = @idFrontPicture,
+                    idBackPicture = @idBackPicture,
+                    licensePicture = @licensePicture,
+                    carPicture = @carPicture
+                WHERE id = @id";
+                parameters.Add(new SqlParameter("@password", hashed.Hash));
+                parameters.Add(new SqlParameter("@storedsalt", Convert.FromBase64String(hashed.Salt)));
+            }
+            else
+            {
+                sql = @"UPDATE [usersDelivery]
+                SET username = @username,
+                    firstName = @firstName,
+                    lastName = @lastName,
+                    vehiecleNo = @vehiecleNo,
+                    vehiecleVin = @vehiecleVin,
+                    isActive = @isActive,
+                    userPicture = @image,
+                    vehiecleType = @vehiecleType,
+                    carLicensePicture = @carLicensePicture,
+                    idFrontPicture = @idFrontPicture,
+                    idBackPicture = @idBackPicture,
+                    licensePicture = @licensePicture,
+                    carPicture = @carPicture
+                    WHERE id = @id";
+            }
+
+            using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
+            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            {
+                cmd.Parameters.AddRange(parameters.ToArray());
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+
+            e.Cancel = true;
+            GridDeliveryUsers.CancelEdit();
+            GridDeliveryUsers.DataBind();
+        }
+        void DeleteOldFileIfChanged(string fileCheck, string fileOld)
+        {
+            if (fileCheck == "1")
+            {
+                int pos = fileOld.LastIndexOf("/");
+                if (pos > -1)
+                {
+                    string fileToDelete = fileOld.Substring(pos + 1);
+                    string[] fileList = Directory.GetFiles(Server.MapPath("~/assets/uploads/delivery-users"), fileToDelete);
+                    foreach (string file in fileList)
+                        File.Delete(file);
+                }
+            }
+        }
+
+        string fileName = string.Empty;
+        int checkError = 0;
+
+        protected void ImageUpload_FileUploadComplete(object sender, FileUploadCompleteEventArgs e)
+        {
+            e.CallbackData = SavePostedFile_all(e.UploadedFile);
+
+            if (checkError == 1)
+            {
+                checkError = 0;
+                e.IsValid = false;
+                e.ErrorText = "<div style='direction:rtl;padding-left: 10px;padding-right:10px;padding-top:0px;padding-buttom:0px'><strong>خطــأ:</strong> الصورة <strong>\"" + e.UploadedFile.FileName + "\"</strong> لم يتم تحميلها, الرجاء تحميل صورة جديدة بدلا منها.<br /><strong>لماذا:</strong> حقوق ملكية، تالفة، هيكلية الصورة...الخ.</div>";
+            }
+        }
+
+        string SavePostedFile_all(UploadedFile uploadedFile)
+        {
+            if (!uploadedFile.IsValid)
+                return string.Empty;
+            string UploadDirectory = "/assets/uploads/delivery-users/";
+            string Docs = Guid.NewGuid().ToString() + ".png";
+            fileName = Docs;
+            try
+            {
+                string fileName = Path.Combine(MapPath(UploadDirectory), Docs);
+                using (System.Drawing.Image original = System.Drawing.Image.FromStream(uploadedFile.FileContent))
+                using (System.Drawing.Image thumbnail = PhotoUtils.Inscribe(original, 700, 500))
+                {
+                    PhotoUtils.SaveToJpeg(thumbnail, fileName, 1);
+                }
+            }
+            catch
+            {
+                checkError = 1;
+            }
+
+            return UploadDirectory + fileName;
+        }
+
+        protected void GridDeliveryUsers_CancelRowEditing(object sender, ASPxStartRowEditingEventArgs e)
+        {
+            if (l_item_file_check.Text == "1")
+            {
+                DeleteUploadedFile(l_item_file.Text);
+                l_item_file_check.Text = "0";
+            }
+            if (l_car_file_check.Text == "1")
+            {
+                DeleteUploadedFile(l_car_file.Text);
+                l_car_file_check.Text = "0";
+            }
+
+            if (l_carLicense_file_check.Text == "1")
+            {
+                DeleteUploadedFile(l_carLicense_file.Text);
+                l_carLicense_file_check.Text = "0";
+            }
+
+            if (l_idFront_file_check.Text == "1")
+            {
+                DeleteUploadedFile(l_idFront_file.Text);
+                l_idFront_file_check.Text = "0";
+            }
+
+            if (l_idBack_file_check.Text == "1")
+            {
+                DeleteUploadedFile(l_idBack_file.Text);
+                l_idBack_file_check.Text = "0";
+            }
+            if (l_license_file_check.Text == "1")
+            {
+                DeleteUploadedFile(l_license_file.Text);
+                l_license_file_check.Text = "0";
+            }
+
+        }
+
+        protected void GridDeliveryUsers_RowDeleting(object sender, ASPxDataDeletingEventArgs e)
+        {
+            DeleteUploadedFile(e.Values["image"]?.ToString());
+            DeleteUploadedFile(e.Values["carPicture"]?.ToString());
+            DeleteUploadedFile(e.Values["carLicensePicture"]?.ToString());
+            DeleteUploadedFile(e.Values["idFrontPicture"]?.ToString());
+            DeleteUploadedFile(e.Values["idBackPicture"]?.ToString());
+            DeleteUploadedFile(e.Values["licensePicture"]?.ToString());
+        }
+        private void DeleteUploadedFile(string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+                return;
+
+
+            int pos = filePath.LastIndexOf("/");
+            if (pos < 0) return;
+
+            string fileToDelete = filePath.Substring(pos + 1);
+            string[] fileList = Directory.GetFiles(Server.MapPath("~/assets/uploads/delivery-users"), fileToDelete);
+            foreach (string file in fileList)
+            {
+                File.Delete(file);
+            }
+
+        }
+
+        protected void GridDeliveryUsers_HtmlDataCellPrepared(object sender, ASPxGridViewTableDataCellEventArgs e)
+        {
+            if (e.DataColumn.FieldName == "password")
+            {
+                e.Cell.Text = "***********";
+            }
+        }
+        protected void GridMachineUsers_HtmlDataCellPrepared(object sender, ASPxGridViewTableDataCellEventArgs e)
+        {
+            if (e.DataColumn.FieldName == "password")
+            {
+                e.Cell.Text = "***********";
+            }
+        }
+
+        protected void GridDeliveryUsers_CellEditorInitialize(object sender, ASPxGridViewEditorEventArgs e)
+        {
+            if ((e.Column.FieldName == "password") && (!GridDeliveryUsers.IsNewRowEditing))
+            {
+                ASPxTextBox Password = e.Editor as ASPxTextBox;
+                Password.Password = false;
+            }
+        }
+
+        protected void GridUsers_HtmlDataCellPrepared(object sender, ASPxGridViewTableDataCellEventArgs e)
+        {
+            if (e.DataColumn.FieldName == "isDeleted")
+            {
+                bool isDeleted = Convert.ToBoolean(e.GetValue("isDeleted"));
+                if (isDeleted)
+                {
+                    e.Cell.BackColor = System.Drawing.Color.Red;
+                    e.Cell.ForeColor = System.Drawing.Color.White;
+                }
+            }
+            if (e.DataColumn.FieldName == "isActive")
+            {
+                bool isActive = Convert.ToBoolean(e.GetValue("isActive"));
+                if (isActive)
+                {
+                    e.Cell.ForeColor = System.Drawing.Color.Green;
+                    e.Cell.Font.Bold = true;
+                }
+                else
+                {
+                    e.Cell.ForeColor = System.Drawing.Color.Red;
+                    e.Cell.Font.Bold = true;
+                }
+            }
+        }
+
+        protected string GetLottieMarkup(object vehiecleType)
+        {
+            string type = vehiecleType?.ToString();
+            string markup = "";
+
+            if (type == "1")
+            {
+                // Car - Use image
+                markup = "<img src='/assets/animations/car.png' style='width: 80px; height: 80px;' />";
+            }
+            else if (type == "2")
+            {
+                // Bike - Use Lottie animation
+                markup = @"
+                <lottie-player 
+                    src='/assets/animations/bike.json' 
+                    background='transparent'  
+                    speed='1'  
+                    style='width: 80px; height: 80px;'  
+                    loop autoplay>
+                </lottie-player>";
+            }
+            else
+            {
+                // Default - Use fallback animation
+                markup = @"
+                <lottie-player 
+                    src='/assets/animations/default.json' 
+                    background='transparent'  
+                    speed='1'  
+                    style='width: 80px; height: 80px;'  
+                    loop autoplay>
+                </lottie-player>";
+            }
+
+            return markup;
+        }
+
+
+    }
+}

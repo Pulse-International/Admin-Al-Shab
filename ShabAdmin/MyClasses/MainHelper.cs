@@ -1,0 +1,219 @@
+﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+using System.Xml.Linq;
+using static Google.Apis.Requests.BatchRequest;
+
+public class MainHelper
+{
+    public static string M_Check(string username)
+    {
+        try
+        {
+            return Decrypt_User(username);
+        }
+        catch
+        {
+            return "-";
+        }
+    }   
+    public static string Encrypt_User(string Username)
+    {
+        string EncryptString = Encrypt_Me(Encrypt_Me(Encrypt_Me(Username, true), true), true);
+        return EncryptString;
+    }
+    public static string Decrypt_User(string Username)
+    {
+        string PreCode = Decrypt_Me(Decrypt_Me(Decrypt_Me(Username, true), true), true);
+        return PreCode;
+    }
+    public static string Encrypt_Me(string toEncrypt, bool useHashing) // this is public for poll_admin
+    {
+        try
+        {
+            byte[] keyArray;
+            byte[] toEncryptArray = UTF8Encoding.UTF8.GetBytes(toEncrypt);
+
+            System.Configuration.AppSettingsReader settingsReader = new AppSettingsReader();
+            string key = (string)settingsReader.GetValue("SecurityKey", typeof(String));
+            if (useHashing)
+            {
+                MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
+                keyArray = hashmd5.ComputeHash(UTF8Encoding.UTF8.GetBytes(key));
+                hashmd5.Clear();
+            }
+            else
+                keyArray = UTF8Encoding.UTF8.GetBytes(key);
+
+            TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider();
+            tdes.Key = keyArray;
+            tdes.Mode = CipherMode.ECB;
+            tdes.Padding = PaddingMode.PKCS7;
+
+            ICryptoTransform cTransform = tdes.CreateEncryptor();
+            byte[] resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
+            tdes.Clear();
+            return Convert.ToBase64String(resultArray, 0, resultArray.Length);
+        }
+        catch
+        {
+            return "-";
+        }
+    }
+
+    private static string Decrypt_Me(string cipherString, bool useHashing)
+    {
+        try
+        {
+            byte[] keyArray;
+            byte[] toEncryptArray = Convert.FromBase64String(cipherString);
+
+            System.Configuration.AppSettingsReader settingsReader = new AppSettingsReader();
+            string key = (string)settingsReader.GetValue("SecurityKey", typeof(String));
+
+            if (useHashing)
+            {
+                MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
+                keyArray = hashmd5.ComputeHash(UTF8Encoding.UTF8.GetBytes(key));
+                hashmd5.Clear();
+            }
+            else
+                keyArray = UTF8Encoding.UTF8.GetBytes(key);
+
+            TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider();
+            tdes.Key = keyArray;
+            tdes.Mode = CipherMode.ECB;
+            tdes.Padding = PaddingMode.PKCS7;
+
+            ICryptoTransform cTransform = tdes.CreateDecryptor();
+            byte[] resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
+
+            tdes.Clear();
+            return UTF8Encoding.UTF8.GetString(resultArray);
+        }
+        catch
+        {
+            return "-";
+        }
+    }
+    public class HashSalt
+    {
+        public string Hash { get; set; }
+        public string Salt { get; set; }
+    }
+
+    public static HashSalt HashPassword(string password)
+    {
+        byte[] salt = new byte[128 / 8];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(salt);
+        }
+
+        string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            password: password,
+            salt: salt,
+            prf: KeyDerivationPrf.HMACSHA1,
+            iterationCount: 10000,
+            numBytesRequested: 256 / 8));
+
+        return new HashSalt
+        {
+            Hash = hashed,
+            Salt = Convert.ToBase64String(salt)
+        };
+    }
+
+    public static TelrResponse TelrPaymentRefund(decimal amount = 0, string transactionRef = "", string description = "", string test = "1")
+    {
+        var xmlRequest = new XDocument(
+             new XDeclaration("1.0", "UTF-8", null),
+             new XElement("remote",
+                 new XElement("store", "33595"),
+                 new XElement("key", "kPGFd@z5ChK~5Jkm"),
+                 new XElement("tran",
+                     new XElement("type", "refund"),
+                     new XElement("class", "ecom"),
+                     new XElement("currency", "JOD"),
+                     new XElement("amount", amount.ToString("0.##")),
+                     new XElement("ref", transactionRef),
+                     new XElement("test", test)
+                 )
+             )
+         );
+
+        using (var webClient = new WebClient())
+        {
+            webClient.Encoding = Encoding.UTF8;
+            webClient.Headers[HttpRequestHeader.ContentType] = "application/xml";
+
+            var xmlString = xmlRequest.Declaration + Environment.NewLine + xmlRequest.ToString(SaveOptions.DisableFormatting);
+
+            string responseContent = string.Empty;
+            try
+            {
+                responseContent = webClient.UploadString("https://secure.telr.com/gateway/remote.xml", xmlString);
+            }
+            catch (WebException ex)
+            {
+                return new TelrResponse
+                {
+                    Status = "error",
+                    Message = ex.Message,
+                    AllResult = ex.ToString()
+                };
+            }
+
+            // Parse response
+            var xml = XDocument.Parse(responseContent);
+            var auth = xml.Root != null ? xml.Root.Element("auth") : null;
+            var payment = xml.Root != null ? xml.Root.Element("payment") : null;
+
+            var result = new TelrResponse
+            {
+                Status = auth != null && auth.Element("status") != null ? auth.Element("status").Value : null,
+                Code = auth != null && auth.Element("code") != null ? auth.Element("code").Value : null,
+                Message = auth != null && auth.Element("message") != null ? auth.Element("message").Value : null,
+                TranRef = auth != null && auth.Element("tranref") != null ? auth.Element("tranref").Value : null,
+                CVV = auth != null && auth.Element("cvv") != null ? auth.Element("cvv").Value : null,
+                AVS = auth != null && auth.Element("avs") != null ? auth.Element("avs").Value : null,
+                CartId = auth != null && auth.Element("cartid") != null ? auth.Element("cartid").Value : null,
+                Trace = auth != null && auth.Element("trace") != null ? auth.Element("trace").Value : null,
+                PaymentCode = payment != null && payment.Element("code") != null ? payment.Element("code").Value : null,
+                PaymentDescription = payment != null && payment.Element("description") != null ? payment.Element("description").Value : null,
+                CardEnd = payment != null && payment.Element("card_end") != null ? payment.Element("card_end").Value : null,
+                CardBin = payment != null && payment.Element("card_bin") != null ? payment.Element("card_bin").Value : null,
+                CardCountry = payment != null && payment.Element("card_country") != null ? payment.Element("card_country").Value : null,
+                AllResult = responseContent
+            };
+
+            return result;
+        }
+    }
+
+    public class TelrResponse
+    {
+        public string Status { get; set; }
+        public string Code { get; set; }
+        public string Message { get; set; }
+        public string TranRef { get; set; }
+        public string CVV { get; set; }
+        public string AVS { get; set; }
+        public string CartId { get; set; }
+        public string Trace { get; set; }
+        public string PaymentCode { get; set; }
+        public string PaymentDescription { get; set; }
+        public string CardEnd { get; set; }
+        public string CardBin { get; set; }
+        public string CardCountry { get; set; }
+        public object AllResult { get; set; }
+    }
+}

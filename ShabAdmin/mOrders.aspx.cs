@@ -970,37 +970,7 @@ LEFT JOIN
                 return "<span style='color:gray;'>لا يوجد</span>";
 
             return $"{total:F3}";
-        }
-        protected string GetCurrency(object countryIdObj)
-        {
-            int countryId = countryIdObj != DBNull.Value ? Convert.ToInt32(countryIdObj) : 0;
-            string currencyText;
-
-            switch (countryId)
-            {
-                case 1:
-                case 2:
-                    currencyText = "دينار أردني";
-                    break;
-                case 3:
-                    currencyText = "ريال قطري";
-                    break;
-                case 4:
-                    currencyText = "دينار بحريني";
-                    break;
-                case 5:
-                    currencyText = "درهم إماراتي";
-                    break;
-                case 6:
-                    currencyText = "دينار كويتي";
-                    break;
-                default:
-                    currencyText = "دولار";
-                    break;
-            }
-
-            return currencyText;
-        }
+        }      
 
     }
 }

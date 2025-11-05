@@ -42,6 +42,15 @@ namespace ShabAdmin
         protected global::DevExpress.Web.ASPxGridView GridOrders;
 
         /// <summary>
+        /// db_orderStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource db_orderStatus;
+
+        /// <summary>
         /// dsCountries control.
         /// </summary>
         /// <remarks>

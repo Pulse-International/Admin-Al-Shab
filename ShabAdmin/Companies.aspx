@@ -179,6 +179,9 @@
                     </dx:GridViewDataComboBoxColumn>
 
                     <dx:GridViewDataSpinEditColumn Caption="قيمة التوصيل" FieldName="deliveryAmount" VisibleIndex="8">
+                        <DataItemTemplate>
+                            <%# Eval("deliveryAmount") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
+                        </DataItemTemplate>
                         <PropertiesSpinEdit DisplayFormatString="g" MaxLength="4" MaxValue="1000">
                             <ValidationSettings Display="Dynamic" ErrorText="required." SetFocusOnError="True">
                                 <RequiredField IsRequired="True" />
@@ -187,14 +190,19 @@
                         <CellStyle HorizontalAlign="Center" VerticalAlign="Middle">
                         </CellStyle>
                     </dx:GridViewDataSpinEditColumn>
-                    <dx:GridViewDataSpinEditColumn Caption="قيمة الطلب" FieldName="minAmountOrder" VisibleIndex="9" EditFormSettings-VisibleIndex="7">
+
+                    <dx:GridViewDataSpinEditColumn Caption="أقل طلب" FieldName="minAmountOrder" VisibleIndex="9" EditFormSettings-VisibleIndex="7">
+                        <DataItemTemplate>
+                            <%# Eval("minAmountOrder") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
+                        </DataItemTemplate>
+
                         <PropertiesSpinEdit DisplayFormatString="g" MaxLength="4" MaxValue="1000">
                             <ValidationSettings Display="Dynamic" ErrorText="required." SetFocusOnError="True">
                                 <RequiredField IsRequired="True" />
                             </ValidationSettings>
                         </PropertiesSpinEdit>
 
-<EditFormSettings VisibleIndex="7"></EditFormSettings>
+                        <EditFormSettings VisibleIndex="7"></EditFormSettings>
 
                         <CellStyle HorizontalAlign="Center" VerticalAlign="Middle">
                         </CellStyle>
@@ -208,7 +216,7 @@
                             </ValidationSettings>
                         </PropertiesSpinEdit>
 
-<EditFormSettings VisibleIndex="6"></EditFormSettings>
+                        <EditFormSettings VisibleIndex="6"></EditFormSettings>
 
                         <CellStyle HorizontalAlign="Center" VerticalAlign="Middle">
                         </CellStyle>
@@ -224,7 +232,7 @@
                             </ValidationSettings>
                         </PropertiesSpinEdit>
 
-<EditFormSettings VisibleIndex="8"></EditFormSettings>
+                        <EditFormSettings VisibleIndex="8"></EditFormSettings>
 
                         <CellStyle HorizontalAlign="Center" VerticalAlign="Middle">
                         </CellStyle>

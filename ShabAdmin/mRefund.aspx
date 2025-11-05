@@ -133,7 +133,7 @@
 
                     <dx:GridViewDataColumn Caption="السعر" FieldName="amount">
                         <DataItemTemplate>
-                            <%# Eval("amount") + "</br>" + GetCurrency(Eval("countryId")) %>
+                            <%# Eval("amount") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
                         </DataItemTemplate>
                         <EditFormSettings Visible="False" />
                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
@@ -143,7 +143,7 @@
 
                     <dx:GridViewDataColumn Caption="سعر التوصيل" FieldName="deliveryAmount">
                         <DataItemTemplate>
-                            <%# Eval("deliveryAmount") + "</br>" + GetCurrency(Eval("countryId")) %>
+                            <%# Eval("deliveryAmount") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
                         </DataItemTemplate>
                         <EditFormSettings Visible="False" />
                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
@@ -153,7 +153,7 @@
 
                     <dx:GridViewDataColumn Caption="الضريبة" FieldName="taxAmount">
                         <DataItemTemplate>
-                            <%# Eval("taxAmount") + "</br>" + GetCurrency(Eval("countryId")) %>
+                            <%# Eval("taxAmount") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
                         </DataItemTemplate>
                         <EditFormSettings Visible="False" />
                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
@@ -163,7 +163,7 @@
 
                     <dx:GridViewDataColumn Caption="السعر الكلي" FieldName="totalAmount">
                         <DataItemTemplate>
-                            <%# Eval("totalAmount") + "</br>" + GetCurrency(Eval("countryId")) %>
+                            <%# Eval("totalAmount") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
                         </DataItemTemplate>
                         <EditFormSettings Visible="False" />
                         <CellStyle VerticalAlign="Middle" Font-Bold="true" HorizontalAlign="Center">
@@ -174,7 +174,7 @@
 
                     <dx:GridViewDataColumn Caption="المبلغ المرتجع" FieldName="refundedAmount">
                         <DataItemTemplate>
-                            <%# Eval("refundedAmount") + "</br>" + GetCurrency(Eval("countryId")) %>
+                            <%# Eval("refundedAmount") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
                         </DataItemTemplate>
                         <EditFormSettings Visible="False" />
                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
@@ -184,7 +184,7 @@
 
                     <dx:GridViewDataColumn Caption="الضريبة بعد الارجاع" FieldName="realTax">
                         <DataItemTemplate>
-                            <%# Eval("realTax") + "</br>" + GetCurrency(Eval("countryId")) %>
+                            <%# Eval("realTax") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
                         </DataItemTemplate>
                         <EditFormSettings Visible="False" />
                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
@@ -194,7 +194,7 @@
 
                     <dx:GridViewDataColumn Caption="السعر الكلي بعد الارجاع" FieldName="realTotalAmount">
                         <DataItemTemplate>
-                            <%# Eval("realTotalAmount") + "</br>" + GetCurrency(Eval("countryId")) %>
+                            <%# Eval("realTotalAmount") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
                         </DataItemTemplate>
                         <EditFormSettings Visible="False" />
                         <CellStyle VerticalAlign="Middle" Font-Bold="true" HorizontalAlign="Center">
@@ -384,7 +384,7 @@
     Eval("price"), 
     Eval("quantity"), 
     Eval("weight")
-) + "</br>" + GetCurrency(Eval("countryId"))
+) + "</br>" + MainHelper.GetCurrency(Eval("countryId"))
                                         %>
                                     </DataItemTemplate>
                                     <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />

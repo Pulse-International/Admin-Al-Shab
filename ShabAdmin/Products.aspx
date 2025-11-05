@@ -734,7 +734,7 @@
 
                     <dx:GridViewDataSpinEditColumn Caption="السعر" FieldName="price" VisibleIndex="5">
                         <DataItemTemplate>
-                            <%# Eval("price") + "</br>" + GetCurrency(Eval("countryId")) %>
+                            <%# Eval("price") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
                         </DataItemTemplate>
                         <EditFormSettings Visible="True" />
                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />

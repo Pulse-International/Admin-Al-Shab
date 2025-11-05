@@ -46,6 +46,7 @@ namespace ShabAdmin
                         SELECT 
                             b.[id], 
                             b.[name], 
+                            b.[l_branchStatus],
                             b.[cityId], 
                             b.[countryId], 
                             b.[companyId], 
@@ -84,6 +85,7 @@ namespace ShabAdmin
                         SELECT 
                             b.[id], 
                             b.[name], 
+                            b.[l_branchStatus],
                             b.[cityId], 
                             b.[countryId], 
                             b.[companyId], 

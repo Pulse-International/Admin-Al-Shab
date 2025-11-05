@@ -352,6 +352,20 @@
                                                 </CellStyle>
                                             </dx:GridViewDataColumn>
 
+                                            <dx:GridViewDataComboBoxColumn Caption="حالة الطلب" FieldName="l_orderStatus">
+                                                <PropertiesComboBox
+                                                    DataSourceID="db_orderStatus"
+                                                    ValueField="id"
+                                                    TextField="description"
+                                                    ValueType="System.Int32">
+                                                    <ValidationSettings RequiredField-IsRequired="True" ErrorText="يجب تحديد حالة الطلب" />
+                                                </PropertiesComboBox>
+                                                <DataItemTemplate>
+                                                    <%# GetOrderStatusLottie(Eval("l_orderStatus").ToString()) %>
+                                                </DataItemTemplate>
+                                                <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                                            </dx:GridViewDataComboBoxColumn>
+
                                             <dx:GridViewDataComboBoxColumn Caption="البلد" FieldName="countryId">
                                                 <PropertiesComboBox
                                                     DataSourceID="dsCountries"
@@ -496,6 +510,12 @@
                                     </dx:ASPxGridView>
 
                                     <asp:SqlDataSource
+                                        ID="db_orderStatus"
+                                        runat="server"
+                                        ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
+                                        SelectCommand="SELECT id, description FROM L_OrderStatus" />
+
+                                    <asp:SqlDataSource
                                         ID="dsCountries"
                                         runat="server"
                                         ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
@@ -518,6 +538,7 @@
                                         SelectCommand="
                                             SELECT 
                                                 o.[id], 
+                                                o.[l_orderStatus],
                                                 o.[companyId], 
                                                 c.[countryID] AS countryId, 
                                                 o.[username], 
@@ -537,7 +558,7 @@
                                             JOIN [usersApp] ua ON o.[username] = ua.[username]
                                             JOIN [branches] b ON o.[branchId] = b.[id]
                                             LEFT JOIN [usersDelivery] ud ON o.[usersDeliveryId] = ud.[id]
-                                            WHERE o.[l_orderStatus] = 3  order by o.id desc" />
+                                            WHERE ((o.[l_orderStatus] = 1) or (o.[l_orderStatus] = 2) or (o.[l_orderStatus] = 3))  order by o.id desc" />
                                 </div>
 
                                 <dx:ASPxPopupControl ID="popupAddress" runat="server" ClientInstanceName="popupAddress"
@@ -866,7 +887,7 @@
     Eval("price"), 
     Eval("quantity"), 
     Eval("weight")
-) + "</br>" + GetCurrency(Eval("countryId"))
+) + "</br>" + MainHelper.GetCurrency(Eval("countryId"))
                                     %>
                                 </DataItemTemplate>
                                 <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />

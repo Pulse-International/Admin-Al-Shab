@@ -106,8 +106,6 @@ namespace ShabAdmin
                 ASPxGridView grid = sender as ASPxGridView;
                 grid.JSProperties["cpShowDeletePopup"] = true;
             }
-        }
-
-
+        }        
     }
 }

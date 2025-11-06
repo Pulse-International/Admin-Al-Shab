@@ -722,6 +722,32 @@ LEFT JOIN
                             return;
                         }
 
+                        //  الجزء الجديد هنا
+                        decimal refundPoints = Math.Floor(requestedRefund) * 100;
+                        decimal currentPoints = 0;
+
+                        // نجيب نقاط المستخدم الحالية
+                        string getPointsSql = "SELECT userPoints FROM usersApp WHERE username = @username";
+                        using (var cmd = new SqlCommand(getPointsSql, conn, tx))
+                        {
+                            cmd.Parameters.Add("@username", SqlDbType.NVarChar, 100).Value = username;
+                            var result = cmd.ExecuteScalar();
+                            if (result != null && result != DBNull.Value)
+                                currentPoints = Convert.ToDecimal(result);
+                        }
+
+                        decimal newPoints = currentPoints - refundPoints;
+                        if (newPoints < 0) newPoints = 0;
+
+                        // نحدث النقاط الجديدة
+                        string updatePointsSql = "UPDATE usersApp SET userPoints = @points WHERE username = @username";
+                        using (var cmd = new SqlCommand(updatePointsSql, conn, tx))
+                        {
+                            cmd.Parameters.Add("@points", SqlDbType.Decimal).Value = newPoints;
+                            cmd.Parameters.Add("@username", SqlDbType.NVarChar, 100).Value = username;
+                            cmd.ExecuteNonQuery();
+                        }
+
                         decimal refundValue = requestedRefund;
                         decimal newRefundedAmount = refundedAmount + refundValue;
                         decimal newRealTotalAmount = totalAmount - newRefundedAmount;
@@ -875,6 +901,33 @@ LEFT JOIN
                             return;
                         }
 
+                        if (refundedAmount <= 0)
+                        {
+                            decimal refundPoints = Math.Floor(requestedRefund) * 100;
+                            decimal currentPoints = 0;
+
+                            // جلب نقاط المستخدم الحالية
+                            string getPointsSql = "SELECT userPoints FROM usersApp WHERE username = @username";
+                            using (var cmdPoints = new SqlCommand(getPointsSql, conn, tx))
+                            {
+                                cmdPoints.Parameters.Add("@username", SqlDbType.NVarChar, 100).Value = username;
+                                var resultPoints = cmdPoints.ExecuteScalar();
+                                if (resultPoints != null && resultPoints != DBNull.Value)
+                                    currentPoints = Convert.ToDecimal(resultPoints);
+                            }
+
+                            decimal newPoints = currentPoints - refundPoints;
+                            if (newPoints < 0) newPoints = 0;
+
+                            // تحديث النقاط
+                            string updatePointsSql = "UPDATE usersApp SET userPoints = @points WHERE username = @username";
+                            using (var cmdUpdatePoints = new SqlCommand(updatePointsSql, conn, tx))
+                            {
+                                cmdUpdatePoints.Parameters.Add("@points", SqlDbType.Decimal).Value = newPoints;
+                                cmdUpdatePoints.Parameters.Add("@username", SqlDbType.NVarChar, 100).Value = username;
+                                cmdUpdatePoints.ExecuteNonQuery();
+                            }
+                        }
                         // تحديث بيانات الطلب
                         decimal newRefundedAmount = requestedRefund;
                         decimal newRealTotalAmount = totalAmount - newRefundedAmount;
@@ -970,7 +1023,7 @@ LEFT JOIN
                 return "<span style='color:gray;'>لا يوجد</span>";
 
             return $"{total:F3}";
-        }      
+        }
 
     }
 }

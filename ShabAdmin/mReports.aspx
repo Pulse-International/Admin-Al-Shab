@@ -539,7 +539,7 @@
 
                                         <dx:GridViewDataColumn Caption="المبلغ" FieldName="amount">
                                             <DataItemTemplate>
-                                                <%# Eval("amount") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
+                                                <%# Eval("amount") + "</br>" + GetCurrency(Eval("countryId")) %>
                                             </DataItemTemplate>
                                             <EditFormSettings Visible="False" />
                                             <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
@@ -548,7 +548,7 @@
 
                                         <dx:GridViewDataColumn Caption="مبلغ التوصيل" FieldName="deliveryAmount">
                                             <DataItemTemplate>
-                                                <%# Eval("deliveryAmount") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
+                                                <%# Eval("deliveryAmount") + "</br>" + GetCurrency(Eval("countryId")) %>
                                             </DataItemTemplate>
                                             <EditFormSettings Visible="False" />
                                             <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
@@ -557,7 +557,7 @@
 
                                         <dx:GridViewDataColumn Caption="الضريبة" FieldName="taxAmount">
                                             <DataItemTemplate>
-                                                <%# Eval("taxAmount") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
+                                                <%# Eval("taxAmount") + "</br>" + GetCurrency(Eval("countryId")) %>
                                             </DataItemTemplate>
                                             <EditFormSettings Visible="False" />
                                             <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
@@ -566,7 +566,7 @@
 
                                         <dx:GridViewDataColumn Caption="المبلغ الكلي" FieldName="totalAmount">
                                             <DataItemTemplate>
-                                                <%# Eval("totalAmount") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
+                                                <%# Eval("totalAmount") + "</br>" + GetCurrency(Eval("countryId")) %>
                                             </DataItemTemplate>
                                             <EditFormSettings Visible="False" />
                                             <CellStyle VerticalAlign="Middle" Font-Bold="true" HorizontalAlign="Center">
@@ -1118,6 +1118,286 @@ ORDER BY o.id DESC">
                         </dx:ContentControl>
                     </ContentCollection>
                 </dx:TabPage>
+
+                <dx:TabPage Text="مستخدمين التطبيق" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="X-Large">
+                    <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="X-Large"></TabStyle>
+                    <ContentCollection>
+                        <dx:ContentControl>
+                            <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
+
+                                <dx:ASPxGridView ID="GridAppUsers" runat="server" DataSourceID="db_AppUsers" KeyFieldName="id" ClientInstanceName="GridAppUsers" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="1em" RightToLeft="True" OnHtmlDataCellPrepared="GridUsers_HtmlDataCellPrepared">
+                                    <Settings ShowFooter="True" ShowFilterRow="True" />
+
+
+                                    <SettingsAdaptivity AdaptivityMode="HideDataCells">
+                                    </SettingsAdaptivity>
+                                    <Settings ShowFilterRow="True" ShowFilterRowMenu="False" ShowHeaderFilterButton="False" AutoFilterCondition="Contains" />
+
+                                    <SettingsCommandButton>
+                                        <NewButton Text="جديد">
+                                        </NewButton>
+                                        <UpdateButton Text=" حفظ ">
+                                            <Image Url="~/assets/img/save.png" SpriteProperties-Left="50">
+                                                <SpriteProperties Left="50px"></SpriteProperties>
+                                            </Image>
+                                        </UpdateButton>
+                                        <CancelButton Text=" الغاء ">
+                                            <Image Url="~/assets/img/cancel.png">
+                                            </Image>
+                                        </CancelButton>
+                                    </SettingsCommandButton>
+
+                                    <SettingsPopup>
+                                        <FilterControl AutoUpdatePosition="False"></FilterControl>
+                                    </SettingsPopup>
+
+                                    <SettingsSearchPanel CustomEditorID="tbToolbarSearch1" />
+
+                                    <SettingsExport EnableClientSideExportAPI="true" ExcelExportMode="WYSIWYG" PaperKind="A4" RightToLeft="True" />
+                                    <SettingsLoadingPanel Text="Please Wait &amp;hellip;" Mode="ShowAsPopup" />
+                                    <SettingsText SearchPanelEditorNullText="ابحث في الجدول..." EmptyDataRow="لا يوجد" />
+                                    <Columns>
+                                        <dx:GridViewDataColumn Caption="الرقم" FieldName="id">
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+                                        </dx:GridViewDataColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="رمز الدولة" FieldName="countryCode">
+                                            <PropertiesTextEdit>
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesTextEdit>
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="الاسم الأول" FieldName="firstName">
+                                            <PropertiesTextEdit>
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesTextEdit>
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="الاسم الأخير" FieldName="lastName">
+                                            <PropertiesTextEdit>
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesTextEdit>
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="اسم المستخدم" FieldName="username">
+                                            <PropertiesTextEdit>
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesTextEdit>
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataComboBoxColumn Caption="مفعل؟" FieldName="isActive">
+                                            <PropertiesComboBox ValueType="System.Boolean">
+                                                <Items>
+                                                    <dx:ListEditItem Text="فعال" Value="True" />
+                                                    <dx:ListEditItem Text="موقوف" Value="False" />
+                                                </Items>
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesComboBox>
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+
+                                        </dx:GridViewDataComboBoxColumn>
+
+                                        <dx:GridViewDataSpinEditColumn Caption="الرصيد" FieldName="balance">
+                                            <PropertiesSpinEdit
+                                                MinValue="0"
+                                                MaxValue="9999.99"
+                                                NumberType="Float"
+                                                Increment="0.01"
+                                                DecimalPlaces="2"
+                                                DisplayFormatString="N2" />
+                                            <EditCellStyle HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+
+                                            <EditFormSettings ColumnSpan="1" />
+                                        </dx:GridViewDataSpinEditColumn>
+
+                                        <dx:GridViewDataColumn Caption="توصيل مجاني" FieldName="freeDeliveryCount">
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+                                        </dx:GridViewDataColumn>
+
+
+                                        <dx:GridViewDataComboBoxColumn Caption="المستوى" FieldName="l_userLevelId">
+                                            <PropertiesComboBox
+                                                DataSourceID="db_UserLevel"
+                                                TextField="description"
+                                                ValueField="id">
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesComboBox>
+                                        </dx:GridViewDataComboBoxColumn>
+
+                                        <dx:GridViewDataComboBoxColumn Caption="توثيق ثنائي؟" FieldName="twoAuthenticationEnabled">
+                                            <PropertiesComboBox ValueType="System.Boolean">
+                                                <Items>
+                                                    <dx:ListEditItem Text="نعم" Value="True" />
+                                                    <dx:ListEditItem Text="لا" Value="False" />
+                                                </Items>
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesComboBox>
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+
+                                        </dx:GridViewDataComboBoxColumn>
+
+
+                                        <dx:GridViewDataSpinEditColumn Caption="نقاط المستخدم" FieldName="userPoints">
+                                            <PropertiesSpinEdit
+                                                MinValue="0"
+                                                MaxValue="99999"
+                                                NumberType="Integer"
+                                                Increment="1"
+                                                DisplayFormatString="N0" />
+
+                                            <EditCellStyle HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+                                        </dx:GridViewDataSpinEditColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="FCMToken" FieldName="FCMToken">
+                                            <PropertiesTextEdit>
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesTextEdit>
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="المنصة" FieldName="userPlatform">
+                                            <PropertiesTextEdit>
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesTextEdit>
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataComboBoxColumn Caption="محذوف؟" FieldName="isDeleted">
+                                            <PropertiesComboBox ValueType="System.Boolean">
+                                                <Items>
+                                                    <dx:ListEditItem Text="نعم" Value="True" />
+                                                    <dx:ListEditItem Text="لا" Value="False" />
+                                                </Items>
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesComboBox>
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+
+                                        </dx:GridViewDataComboBoxColumn>
+                                    </Columns>
+                                    <Toolbars>
+                                        <dx:GridViewToolbar ItemAlign="left">
+                                            <SettingsAdaptivity Enabled="true" EnableCollapseRootItemsToIcons="true" />
+                                            <Items>
+                                                <dx:GridViewToolbarItem Command="Refresh" BeginGroup="true" AdaptivePriority="1" Text="تحديث الجدول" />
+                                                <dx:GridViewToolbarItem Command="ExportToXlsx" BeginGroup="true" />
+                                                <dx:GridViewToolbarItem Command="ExportToPdf" />
+
+                                                <dx:GridViewToolbarItem Alignment="Right" Name="toolbarItemSearch" BeginGroup="true" AdaptivePriority="2">
+                                                    <Template>
+                                                        <dx:ASPxButtonEdit ID="tbToolbarSearch1" runat="server" NullText="البحث..." Width="140" Font-Names="cairo" />
+                                                    </Template>
+                                                </dx:GridViewToolbarItem>
+
+                                            </Items>
+                                        </dx:GridViewToolbar>
+                                    </Toolbars>
+                                    <TotalSummary>
+                                        <dx:ASPxSummaryItem FieldName="id" SummaryType="Count" DisplayFormat="العدد = {0}" />
+                                    </TotalSummary>
+                                    <Styles>
+                                        <AlternatingRow BackColor="#F0F0F0">
+                                        </AlternatingRow>
+                                        <Footer Font-Names="cairo">
+                                        </Footer>
+                                    </Styles>
+                                    <Paddings Padding="2em" />
+
+                                </dx:ASPxGridView>
+                            </div>
+
+                            <asp:SqlDataSource
+                                ID="db_AppUsers"
+                                runat="server"
+                                ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
+                                SelectCommand="SELECT id, countryCode, LEFT(FCMToken, 5) AS FCMToken, userPlatform, firstName, lastName, username, isActive, balance, l_userLevelId, twoAuthenticationEnabled, userPoints, isDeleted, freeDeliveryCount
+                                        FROM [usersApp]
+                                        ORDER BY isDeleted ASC, id desc">
+                            </asp:SqlDataSource>
+
+                            <asp:SqlDataSource
+                                ID="db_UserLevel"
+                                runat="server"
+                                ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
+                                SelectCommand="SELECT id, description FROM [L_UserLevel]" />
+
+                            <dx:ASPxPopupControl runat="server" ID="Pop_Del_usersApp"
+                                PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter"
+                                AutoUpdatePosition="True" Modal="True" ClientInstanceName="Pop_Del_usersApp"
+                                HeaderText="حذف مستخدم" Font-Names="Cairo"
+                                Width="350px" Height="150px" CloseAnimationType="Slide">
+                                <ContentCollection>
+                                    <dx:PopupControlContentControl runat="server">
+                                        <div style="padding: 20px; text-align: right; font-family: 'Cairo', sans-serif;">
+                                            <div class="mb-3">
+                                                <dx:ASPxLabel ID="ASPxLabel2" runat="server" Text="هل أنت متأكد من تعيين المستخدم كمستخدم محذوف؟"
+                                                    Font-Names="Cairo" Font-Size="Medium" ForeColor="#333333" />
+                                            </div>
+                                            <div style="margin-top: 20px; text-align: center;">
+                                                <dx:ASPxButton ID="ASPxButton3" runat="server" Text="حذف"
+                                                    AutoPostBack="False" Font-Names="Cairo">
+                                                    <ClientSideEvents Click="function(s, e) { 
+        GridAppUsers.DeleteRow(MyIndex); 
+        setTimeout(function() { GridAppUsers.Refresh(); }, 200);
+        Pop_Del_usersApp.Hide(); 
+    }" />
+                                                </dx:ASPxButton>
+                                                <dx:ASPxButton ID="ASPxButton4" runat="server" Text="إغلاق"
+                                                    AutoPostBack="False" Font-Names="Cairo" Style="margin-right: 20px;">
+                                                    <ClientSideEvents Click="function(s, e) { Pop_Del_usersApp.Hide(); }" />
+                                                </dx:ASPxButton>
+                                            </div>
+                                        </div>
+                                    </dx:PopupControlContentControl>
+                                </ContentCollection>
+                            </dx:ASPxPopupControl>
+
+
+
+                        </dx:ContentControl>
+                    </ContentCollection>
+                </dx:TabPage>
             </TabPages>
 
         </dx:ASPxPageControl>
@@ -1237,7 +1517,7 @@ ORDER BY o.id DESC">
     Eval("price"), 
     Eval("quantity"), 
     Eval("weight")
-) + "</br>" + MainHelper.GetCurrency(Eval("countryId"))
+) + "</br>" + GetCurrency(Eval("countryId"))
                                     %>
                                 </DataItemTemplate>
                                 <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" Font-Size="Large" Font-Bold="true" />

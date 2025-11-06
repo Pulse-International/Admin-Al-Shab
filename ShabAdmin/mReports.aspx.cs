@@ -30,8 +30,8 @@ namespace ShabAdmin
                 dsOrders.SelectParameters["dateTo"].DefaultValue = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
 
                 GridOrders.DataBind();
-                
-                
+
+
 
                 dsOrdersInfo.SelectParameters["StatusId"].DefaultValue = "0";
                 dsOrdersInfo.SelectParameters["PaymentMethodId"].DefaultValue = "0";
@@ -177,6 +177,37 @@ namespace ShabAdmin
             GridOrders.DataBind();
         }
 
+
+        protected string GetCurrency(object countryIdObj)
+        {
+            int countryId = countryIdObj != DBNull.Value ? Convert.ToInt32(countryIdObj) : 0;
+            string currencyText;
+
+            switch (countryId)
+            {
+                case 1:
+                case 2:
+                    currencyText = "دينار أردني";
+                    break;
+                case 3:
+                    currencyText = "ريال قطري";
+                    break;
+                case 4:
+                    currencyText = "دينار بحريني";
+                    break;
+                case 5:
+                    currencyText = "درهم إماراتي";
+                    break;
+                case 6:
+                    currencyText = "دينار كويتي";
+                    break;
+                default:
+                    currencyText = "دولار";
+                    break;
+            }
+
+            return currencyText;
+        }
         protected string GetTotalPaidAmount(object productPrice, object quantityObj, object weightObj)
         {
             decimal price = 0, quantity = 0, weight = 0;
@@ -402,6 +433,33 @@ namespace ShabAdmin
 
             return $"<span class='order-badge badge-default'>{status}</span>";
         }
+        protected void GridUsers_HtmlDataCellPrepared(object sender, ASPxGridViewTableDataCellEventArgs e)
+        {
+            if (e.DataColumn.FieldName == "isDeleted")
+            {
+                bool isDeleted = Convert.ToBoolean(e.GetValue("isDeleted"));
+                if (isDeleted)
+                {
+                    e.Cell.BackColor = System.Drawing.Color.Red;
+                    e.Cell.ForeColor = System.Drawing.Color.White;
+                }
+            }
+            if (e.DataColumn.FieldName == "isActive")
+            {
+                bool isActive = Convert.ToBoolean(e.GetValue("isActive"));
+                if (isActive)
+                {
+                    e.Cell.ForeColor = System.Drawing.Color.Green;
+                    e.Cell.Font.Bold = true;
+                }
+                else
+                {
+                    e.Cell.ForeColor = System.Drawing.Color.Red;
+                    e.Cell.Font.Bold = true;
+                }
+            }
+        }
+
 
     }
 }

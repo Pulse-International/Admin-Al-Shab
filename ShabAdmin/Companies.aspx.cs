@@ -1,14 +1,15 @@
-﻿using System;
+﻿using DevExpress.Web;
+using DevExpress.Web.Data;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using DevExpress.Web;
-using DevExpress.Web.Data;
 
 namespace ShabAdmin
 {
@@ -16,8 +17,77 @@ namespace ShabAdmin
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!IsPostBack)
+            {
+                GridCompanies.RowInserting += GridCompanies_RowInserting;
+                GridCompanies.RowUpdating += GridCompanies_RowUpdating;
+            }
+        }       
 
+        protected void GridCompanies_RowInserting(object sender, DevExpress.Web.Data.ASPxDataInsertingEventArgs e)
+        {
+            FormatTimeValue(e.NewValues, "startHour");
+            FormatTimeValue(e.NewValues, "endHour");
         }
+
+        protected void GridCompanies_RowUpdating(object sender, DevExpress.Web.Data.ASPxDataUpdatingEventArgs e)
+        {
+            FormatTimeValue(e.NewValues, "startHour");
+            FormatTimeValue(e.NewValues, "endHour");
+        }
+
+        private void FormatTimeValue(System.Collections.Specialized.IOrderedDictionary values, string fieldName)
+        {
+            if (values[fieldName] != null && values[fieldName] != DBNull.Value)
+            {
+                string timeStr = values[fieldName].ToString().Replace(":", "").Trim();
+
+                // If it's 4 digits (like "0610" or "0405"), format as "06:10" or "04:05"
+                if (timeStr.Length == 4)
+                {
+                    values[fieldName] = timeStr.Substring(0, 2) + ":" + timeStr.Substring(2, 2);
+                }
+                // If it's 3 digits (like "610"), format as "06:10"
+                else if (timeStr.Length == 3)
+                {
+                    values[fieldName] = "0" + timeStr.Substring(0, 1) + ":" + timeStr.Substring(1, 2);
+                }
+                // If it already has colon, ensure proper format
+                else if (values[fieldName].ToString().Contains(":"))
+                {
+                    if (DateTime.TryParse(values[fieldName].ToString(), out DateTime dt))
+                    {
+                        values[fieldName] = dt.ToString("HH:mm");
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         protected void Page_Init(object sender, EventArgs e)
         {
@@ -46,7 +116,7 @@ namespace ShabAdmin
             if (privilegeCountryID != 1000 && privilegeCompanyID != 1000)
             {
                 db_Companies.SelectCommand = @"
-                                    SELECT [id], [companyName], [countryID], [companyTax],[isVisible], [l_companyStatus], [minAmountOrder], [deliveryAmount], [minDeliveryTime], [maxDeliveryTime], [pointsOffer], [isPointsOffer] 
+                                    SELECT [id], [companyName], [countryID], [companyTax],[isVisible], [l_companyStatus], [minAmountOrder], [deliveryAmount], [minDeliveryTime], [maxDeliveryTime], [pointsOffer], [isPointsOffer], [startHour], [endHour]
                                     FROM [companies] 
                                     WHERE id = @companyID AND countryID = @countryID
                                     ORDER BY [companyName] ASC";
@@ -62,7 +132,7 @@ namespace ShabAdmin
             else if (privilegeCountryID != 1000)
             {
                 db_Companies.SelectCommand = @"
-                                    SELECT [id], [companyName], [countryID], [companyTax] ,[isVisible], [l_companyStatus], [minAmountOrder], [deliveryAmount], [minDeliveryTime], [maxDeliveryTime], [pointsOffer], [isPointsOffer] 
+                                    SELECT [id], [companyName], [countryID], [companyTax] ,[isVisible], [l_companyStatus], [minAmountOrder], [deliveryAmount], [minDeliveryTime], [maxDeliveryTime], [pointsOffer], [isPointsOffer], [startHour], [endHour]
                                     FROM [companies] 
                                     WHERE countryID = @countryID
                                     ORDER BY [companyName] ASC";

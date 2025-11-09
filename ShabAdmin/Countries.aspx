@@ -68,7 +68,7 @@
 
                         <dx:GridViewDataTextColumn Caption="الدولة" FieldName="countryName">
                             <PropertiesTextEdit>
-                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
                                     <RequiredField IsRequired="True"></RequiredField>
                                 </ValidationSettings>
                             </PropertiesTextEdit>

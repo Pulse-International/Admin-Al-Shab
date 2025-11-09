@@ -282,7 +282,7 @@
 
                         <dx:GridViewDataTextColumn Caption="المجموعة الرئيسية" FieldName="name">
                             <PropertiesTextEdit>
-                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
                                     <RequiredField IsRequired="True"></RequiredField>
                                 </ValidationSettings>
                             </PropertiesTextEdit>
@@ -299,7 +299,7 @@
                         </dx:GridViewDataTextColumn>
                         <dx:GridViewDataTextColumn Caption="الاسم بالانجليزي" FieldName="nameEn">
                             <PropertiesTextEdit>
-                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
                                     <RequiredField IsRequired="True"></RequiredField>
                                 </ValidationSettings>
                             </PropertiesTextEdit>

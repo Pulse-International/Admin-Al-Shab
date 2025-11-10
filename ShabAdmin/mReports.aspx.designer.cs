@@ -285,6 +285,60 @@ namespace ShabAdmin
         protected global::System.Web.UI.WebControls.SqlDataSource dsOrdersInfo;
 
         /// <summary>
+        /// CountryList1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox CountryList1;
+
+        /// <summary>
+        /// Buyers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox Buyers;
+
+        /// <summary>
+        /// DateFrom2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxDateEdit DateFrom2;
+
+        /// <summary>
+        /// DateTo2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxDateEdit DateTo2;
+
+        /// <summary>
+        /// ButtonSearchUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton ButtonSearchUsers;
+
+        /// <summary>
+        /// ButtonResetUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton ButtonResetUsers;
+
+        /// <summary>
         /// GridAppUsers control.
         /// </summary>
         /// <remarks>
@@ -312,40 +366,94 @@ namespace ShabAdmin
         protected global::System.Web.UI.WebControls.SqlDataSource db_UserLevel;
 
         /// <summary>
-        /// Pop_Del_usersApp control.
+        /// DateFrom3 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxPopupControl Pop_Del_usersApp;
+        protected global::DevExpress.Web.ASPxDateEdit DateFrom3;
 
         /// <summary>
-        /// ASPxLabel2 control.
+        /// DateTo3 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxLabel ASPxLabel2;
+        protected global::DevExpress.Web.ASPxDateEdit DateTo3;
 
         /// <summary>
-        /// ASPxButton3 control.
+        /// ASPxButton1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxButton ASPxButton3;
+        protected global::DevExpress.Web.ASPxButton ASPxButton1;
 
         /// <summary>
-        /// ASPxButton4 control.
+        /// ASPxButton2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxButton ASPxButton4;
+        protected global::DevExpress.Web.ASPxButton ASPxButton2;
+
+        /// <summary>
+        /// GridBranches control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxGridView GridBranches;
+
+        /// <summary>
+        /// db_Branches control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource db_Branches;
+
+        /// <summary>
+        /// DB_Companies control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource DB_Companies;
+
+        /// <summary>
+        /// DB_BranchesList control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource DB_BranchesList;
+
+        /// <summary>
+        /// DB_Countries control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource DB_Countries;
+
+        /// <summary>
+        /// DB_Cities control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource DB_Cities;
 
         /// <summary>
         /// popupOrderProducts control.

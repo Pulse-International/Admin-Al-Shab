@@ -404,7 +404,9 @@
                                         Font-Names="Cairo"
                                         Font-Bold="True"
                                         Font-Size="Medium"
-                                        ClientInstanceName="dateFrom">
+                                        ClientInstanceName="dateFrom"
+                                        EditFormat="Date"
+                                        DisplayFormatString="yyyy-MM-dd">
                                     </dx:ASPxDateEdit>
 
                                     <dx:ASPxDateEdit
@@ -415,8 +417,11 @@
                                         Font-Names="Cairo"
                                         Font-Bold="True"
                                         Font-Size="Medium"
-                                        ClientInstanceName="dateTo">
+                                        ClientInstanceName="dateTo"
+                                        EditFormat="Date"
+                                        DisplayFormatString="yyyy-MM-dd">
                                     </dx:ASPxDateEdit>
+
 
                                     <dx:ASPxButton
                                         ID="btnSearch"
@@ -432,12 +437,7 @@
                                         Theme="Moderno">
                                         <Image Url="~/assets/img/search.png" />
                                         <ClientSideEvents Click="function(s,e){
-                                            var country = cmbCountry.GetValue() || 0;
-                                            var company = cmbCompany.GetValue() || 0;
-                                            var branch = cmbBranch.GetValue() || 0;
-                                            var from = dateFrom.GetDate() ? dateFrom.GetDate().toISOString().split('T')[0] : '';
-                                            var to = dateTo.GetDate() ? dateTo.GetDate().toISOString().split('T')[0] : '';
-                                            GridOrders.PerformCallback(country + '|' + company + '|' + branch + '|' + from + '|' + to);
+                                            GridOrders.PerformCallback();
                                         }" />
                                     </dx:ASPxButton>
 
@@ -460,13 +460,13 @@
                                             dateFrom.SetValue(null);
                                             dateTo.SetValue(null);
 
-                                            GridOrders.PerformCallback('0|0|0||');
+                                            GridOrders.PerformCallback('Cancel');
                                         }" />
                                     </dx:ASPxButton>
                                 </div>
 
                                 <dx:ASPxGridView ID="GridOrders" runat="server" DataSourceID="dsOrders" KeyFieldName="id" ClientInstanceName="GridOrders" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Bold="True"
-                                    Font-Size="0.77em" RightToLeft="True" OnCustomCallback="GridOrders_CustomCallback">
+                                    Font-Size="0.77em" RightToLeft="True" OnCustomCallback="GridOrders_CustomCallback" OnBeforePerformDataSelect="GridOrders_BeforePerformDataSelect">
                                     <Settings ShowFooter="True" ShowFilterRow="True" />
 
 
@@ -672,7 +672,7 @@
                                     ID="dsCountries"
                                     runat="server"
                                     ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                                    SelectCommand="SELECT id, countryName FROM countries where id <>100"></asp:SqlDataSource>
+                                    SelectCommand="SELECT id, countryName,countryCode FROM countries where id <>100"></asp:SqlDataSource>
                                 <asp:SqlDataSource
                                     ID="dsCompanies"
                                     runat="server"
@@ -854,12 +854,7 @@ ORDER BY o.id DESC">
                                         Theme="Moderno">
                                         <Image Url="~/assets/img/search.png" />
                                         <ClientSideEvents Click="function(s,e){
-                                            var status = StatusList.GetValue() || 0;
-                                            var paymentMethod = PaymentMethodList.GetValue() || 0;
-                                            var from = dateFrom1.GetDate() ? dateFrom1.GetDate().toISOString().split('T')[0] : '';
-                                            var to = dateTo1.GetDate() ? dateTo1.GetDate().toISOString().split('T')[0] : '';
-        
-                                            GridOrdersInfo.PerformCallback(status + '|' + paymentMethod + '|' + from + '|' + to );
+                                            GridOrdersInfo.PerformCallback();
                                         }" />
                                     </dx:ASPxButton>
 
@@ -887,7 +882,7 @@ ORDER BY o.id DESC">
                                 </div>
 
                                 <dx:ASPxGridView ID="GridOrdersInfo" runat="server" DataSourceID="dsOrdersInfo" KeyFieldName="id" ClientInstanceName="GridOrdersInfo" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Bold="True"
-                                    Font-Size="0.77em" RightToLeft="True" OnCustomCallback="GridOrdersInfo_CustomCallback">
+                                    Font-Size="0.77em" RightToLeft="True" OnCustomCallback="GridOrdersInfo_CustomCallback" OnBeforePerformDataSelect="GridOrdersInfo_BeforePerformDataSelect">
                                     <Settings ShowFooter="True" ShowFilterRow="True" />
 
 
@@ -1123,9 +1118,130 @@ ORDER BY o.id DESC">
                     <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="X-Large"></TabStyle>
                     <ContentCollection>
                         <dx:ContentControl>
+                            <div class="w-100 text-center my-4">
+                                <h2 class="pageTitle d-inline-block" style="font-family: Cairo">المستخدمين</h2>
+                            </div>
                             <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
+                                <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: center; padding-top: 25px;">
+                                    <dx:ASPxComboBox
+                                        ID="CountryList1"
+                                        runat="server"
+                                        Font-Names="Cairo"
+                                        Width="240px"
+                                        TextField="countryName"
+                                        ValueField="countryCode"
+                                        DataSourceID="dsCountries"
+                                        AutoPostBack="false"
+                                        NullText="اختر الدولة"
+                                        Font-Bold="True"
+                                        Font-Size="Medium"
+                                        ClientInstanceName="cmbCountry1">
+                                    </dx:ASPxComboBox>
 
-                                <dx:ASPxGridView ID="GridAppUsers" runat="server" DataSourceID="db_AppUsers" KeyFieldName="id" ClientInstanceName="GridAppUsers" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="1em" RightToLeft="True" OnHtmlDataCellPrepared="GridUsers_HtmlDataCellPrepared">
+                                    <dx:ASPxComboBox
+                                        ID="Buyers"
+                                        runat="server"
+                                        Font-Names="Cairo"
+                                        Width="240px"
+                                        NullText="اختر الخيار"
+                                        Font-Bold="True"
+                                        Font-Size="Medium"
+                                        ClientInstanceName="buyers">
+                                        <Items>
+                                            <dx:ListEditItem Text="أعلى المشتريين" Value="1" />
+                                            <dx:ListEditItem Text="الذين ليس لديهم طلبات" Value="2" />
+                                        </Items>
+                                    </dx:ASPxComboBox>
+
+
+                                    <dx:ASPxDateEdit
+                                        ID="DateFrom2"
+                                        runat="server"
+                                        Width="200px"
+                                        NullText="من تاريخ"
+                                        Font-Names="Cairo"
+                                        Font-Bold="True"
+                                        Font-Size="Medium"
+                                        ClientInstanceName="dateFrom2">
+                                    </dx:ASPxDateEdit>
+
+                                    <dx:ASPxDateEdit
+                                        ID="DateTo2"
+                                        runat="server"
+                                        Width="200px"
+                                        NullText="إلى تاريخ"
+                                        Font-Names="Cairo"
+                                        Font-Bold="True"
+                                        Font-Size="Medium"
+                                        ClientInstanceName="dateTo2">
+                                    </dx:ASPxDateEdit>
+
+                                </div>
+
+                                <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: center; margin-top: 15px;">
+
+                                    <dx:ASPxButton
+                                        ID="ButtonSearchUsers"
+                                        runat="server"
+                                        Text="بحث"
+                                        AutoPostBack="False"
+                                        Width="140px"
+                                        Font-Names="Cairo"
+                                        Font-Size="Medium"
+                                        CssClass="rounded-xl"
+                                        Font-Bold="true"
+                                        ClientInstanceName="btnSearchUsers"
+                                        Theme="Moderno">
+                                        <Image Url="~/assets/img/search.png" />
+                                        <ClientSideEvents Click="function(s,e){
+    var option = buyers.GetValue() || '0';
+    var country = cmbCountry1.GetValue() || '0';
+    
+    var fromDate = dateFrom2.GetDate();
+    var toDate = dateTo2.GetDate();
+
+    if(!fromDate) fromDate = new Date(2025, 0, 1);
+    if(!toDate) toDate = new Date();
+
+    var from = fromDate.toISOString().split('T')[0];
+    var to = toDate.toISOString().split('T')[0];
+
+    GridAppUsers.PerformCallback(option + '|' + country + '|' + from + '|' + to);
+}" />
+
+                                    </dx:ASPxButton>
+
+                                    <dx:ASPxButton
+                                        ID="ButtonResetUsers"
+                                        runat="server"
+                                        Text="مسح"
+                                        AutoPostBack="False"
+                                        Width="140px"
+                                        Font-Names="Cairo"
+                                        Font-Size="Medium"
+                                        CssClass="rounded-xl"
+                                        ClientInstanceName="btnResetUsers"
+                                        Theme="Moderno">
+                                        <Image Url="~/assets/img/reset.png" />
+                                        <ClientSideEvents Click="function(s,e){
+        buyers.SetValue(null);
+        cmbCountry1.SetValue(null);
+        dateFrom2.SetValue(null);
+        dateTo2.SetValue(null);
+        
+        // إعادة تحميل الكل بالافتراضي من 1/1/2025 لليوم
+        var fromDate = new Date(2025, 0, 1);
+        var toDate = new Date();
+        var from = fromDate.toISOString().split('T')[0];
+        var to = toDate.toISOString().split('T')[0];
+
+        GridAppUsers.PerformCallback('All|0|' + from + '|' + to);
+    }" />
+                                    </dx:ASPxButton>
+
+
+                                </div>
+                                <dx:ASPxGridView ID="GridAppUsers" runat="server" DataSourceID="db_AppUsers" KeyFieldName="id" ClientInstanceName="GridAppUsers" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="1em" RightToLeft="True" OnHtmlDataCellPrepared="GridUsers_HtmlDataCellPrepared" OnBeforePerformDataSelect="GridAppUsers_BeforePerformDataSelect" OnCustomCallback="GridAppUsers_CustomCallback">
                                     <Settings ShowFooter="True" ShowFilterRow="True" />
 
 
@@ -1163,44 +1279,28 @@ ORDER BY o.id DESC">
                                         </dx:GridViewDataColumn>
 
                                         <dx:GridViewDataTextColumn Caption="رمز الدولة" FieldName="countryCode">
-                                            <PropertiesTextEdit>
-                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
-                                                    <RequiredField IsRequired="True"></RequiredField>
-                                                </ValidationSettings>
-                                            </PropertiesTextEdit>
+
                                             <EditFormSettings Visible="False" />
                                             <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
 
                                         </dx:GridViewDataTextColumn>
 
                                         <dx:GridViewDataTextColumn Caption="الاسم الأول" FieldName="firstName">
-                                            <PropertiesTextEdit>
-                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
-                                                    <RequiredField IsRequired="True"></RequiredField>
-                                                </ValidationSettings>
-                                            </PropertiesTextEdit>
+
                                             <EditFormSettings Visible="False" />
                                             <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
 
                                         </dx:GridViewDataTextColumn>
 
                                         <dx:GridViewDataTextColumn Caption="الاسم الأخير" FieldName="lastName">
-                                            <PropertiesTextEdit>
-                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
-                                                    <RequiredField IsRequired="True"></RequiredField>
-                                                </ValidationSettings>
-                                            </PropertiesTextEdit>
+
                                             <EditFormSettings Visible="False" />
                                             <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
 
                                         </dx:GridViewDataTextColumn>
 
                                         <dx:GridViewDataTextColumn Caption="اسم المستخدم" FieldName="username">
-                                            <PropertiesTextEdit>
-                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
-                                                    <RequiredField IsRequired="True"></RequiredField>
-                                                </ValidationSettings>
-                                            </PropertiesTextEdit>
+
                                             <EditFormSettings Visible="False" />
                                             <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
 
@@ -1221,6 +1321,9 @@ ORDER BY o.id DESC">
                                         </dx:GridViewDataComboBoxColumn>
 
                                         <dx:GridViewDataSpinEditColumn Caption="الرصيد" FieldName="balance">
+                                            <DataItemTemplate>
+                                                <%# Eval("balance") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
+                                            </DataItemTemplate>
                                             <PropertiesSpinEdit
                                                 MinValue="0"
                                                 MaxValue="9999.99"
@@ -1235,6 +1338,19 @@ ORDER BY o.id DESC">
                                         </dx:GridViewDataSpinEditColumn>
 
                                         <dx:GridViewDataColumn Caption="توصيل مجاني" FieldName="freeDeliveryCount">
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+                                        </dx:GridViewDataColumn>
+
+                                        <dx:GridViewDataColumn Caption="المبلغ الاجمالي" FieldName="TotalAmount">
+                                            <DataItemTemplate>
+                                                <%# Eval("TotalAmount") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
+                                            </DataItemTemplate>
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+                                        </dx:GridViewDataColumn>
+
+                                        <dx:GridViewDataColumn Caption="عدد الطلبات" FieldName="OrderCount">
                                             <EditFormSettings Visible="False" />
                                             <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
                                         </dx:GridViewDataColumn>
@@ -1347,14 +1463,62 @@ ORDER BY o.id DESC">
                                 </dx:ASPxGridView>
                             </div>
 
+
                             <asp:SqlDataSource
                                 ID="db_AppUsers"
                                 runat="server"
                                 ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                                SelectCommand="SELECT id, countryCode, LEFT(FCMToken, 5) AS FCMToken, userPlatform, firstName, lastName, username, isActive, balance, l_userLevelId, twoAuthenticationEnabled, userPoints, isDeleted, freeDeliveryCount
-                                        FROM [usersApp]
-                                        ORDER BY isDeleted ASC, id desc">
+                                SelectCommand="SELECT 
+                                    u.id,
+                                    u.username,
+                                    u.firstName,
+                                    u.lastName,
+                                    COUNT(CASE WHEN o.id IS NOT NULL 
+                                          AND CAST(o.userDate AS DATE) BETWEEN @FromDate2 AND @ToDate2 
+                                          THEN o.id END) AS OrderCount,
+                                    ISNULL(SUM(CASE WHEN CAST(o.userDate AS DATE) BETWEEN @FromDate2 AND @ToDate2 
+                                               THEN o.totalAmount ELSE 0 END), 0) AS TotalAmount,
+                                    u.isActive,
+                                    u.balance,
+                                    u.freeDeliveryCount,
+                                    u.l_userLevelId,
+                                    u.twoAuthenticationEnabled,
+                                    u.userPoints,
+                                    u.isDeleted,
+                                    LEFT(u.FCMToken, 5) AS FCMToken,
+                                    u.userPlatform,
+                                    c.countryCode,
+                                    c.id AS countryId
+                                FROM usersApp u
+                                LEFT JOIN orders o ON u.username = o.username
+                                LEFT JOIN countries c ON u.countryCode = c.countryCode
+                                WHERE (@Country2 = '0' OR u.countryCode = CONVERT(NVARCHAR(50), @Country2))
+                                GROUP BY 
+                                    u.id, u.username, u.firstName, u.lastName, 
+                                    u.isActive, u.balance, u.freeDeliveryCount, u.l_userLevelId,
+                                    u.twoAuthenticationEnabled, u.userPoints, u.isDeleted,
+                                    u.FCMToken, u.userPlatform, c.countryCode,c.id
+                                HAVING 
+                                    (@Option2 = 0)
+
+                                    OR (@Option2 = 1 AND COUNT(CASE WHEN o.id IS NOT NULL 
+                                        AND CAST(o.userDate AS DATE) BETWEEN @FromDate2 AND @ToDate2 
+                                        THEN o.id END) &gt; 0)
+                                    OR (@Option2 = 2 AND COUNT(CASE WHEN o.id IS NOT NULL 
+                                        AND CAST(o.userDate AS DATE) BETWEEN @FromDate2 AND @ToDate2 
+                                        THEN o.id END) = 0)
+            
+                                ORDER BY  TotalAmount DESC, OrderCount DESC;">
+                                <SelectParameters>
+                                    <asp:Parameter Name="FromDate2" Type="DateTime" />
+                                    <asp:Parameter Name="ToDate2" Type="DateTime" />
+                                    <asp:Parameter Name="Country2" Type="String" />
+                                    <asp:Parameter Name="Option2" Type="Int32" DefaultValue="0" />
+                                </SelectParameters>
                             </asp:SqlDataSource>
+
+
+
 
                             <asp:SqlDataSource
                                 ID="db_UserLevel"
@@ -1362,39 +1526,337 @@ ORDER BY o.id DESC">
                                 ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
                                 SelectCommand="SELECT id, description FROM [L_UserLevel]" />
 
-                            <dx:ASPxPopupControl runat="server" ID="Pop_Del_usersApp"
-                                PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter"
-                                AutoUpdatePosition="True" Modal="True" ClientInstanceName="Pop_Del_usersApp"
-                                HeaderText="حذف مستخدم" Font-Names="Cairo"
-                                Width="350px" Height="150px" CloseAnimationType="Slide">
-                                <ContentCollection>
-                                    <dx:PopupControlContentControl runat="server">
-                                        <div style="padding: 20px; text-align: right; font-family: 'Cairo', sans-serif;">
-                                            <div class="mb-3">
-                                                <dx:ASPxLabel ID="ASPxLabel2" runat="server" Text="هل أنت متأكد من تعيين المستخدم كمستخدم محذوف؟"
-                                                    Font-Names="Cairo" Font-Size="Medium" ForeColor="#333333" />
-                                            </div>
-                                            <div style="margin-top: 20px; text-align: center;">
-                                                <dx:ASPxButton ID="ASPxButton3" runat="server" Text="حذف"
-                                                    AutoPostBack="False" Font-Names="Cairo">
-                                                    <ClientSideEvents Click="function(s, e) { 
-        GridAppUsers.DeleteRow(MyIndex); 
-        setTimeout(function() { GridAppUsers.Refresh(); }, 200);
-        Pop_Del_usersApp.Hide(); 
-    }" />
-                                                </dx:ASPxButton>
-                                                <dx:ASPxButton ID="ASPxButton4" runat="server" Text="إغلاق"
-                                                    AutoPostBack="False" Font-Names="Cairo" Style="margin-right: 20px;">
-                                                    <ClientSideEvents Click="function(s, e) { Pop_Del_usersApp.Hide(); }" />
-                                                </dx:ASPxButton>
-                                            </div>
-                                        </div>
-                                    </dx:PopupControlContentControl>
-                                </ContentCollection>
-                            </dx:ASPxPopupControl>
+
+                            <div class="w-100 text-center my-4">
+                                <h2 class="pageTitle d-inline-block" style="font-family: Cairo">الفروع</h2>
+                            </div>
 
 
+                            <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
 
+                                <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: center; padding-top: 25px;">
+                                    <dx:ASPxDateEdit
+                                        ID="DateFrom3"
+                                        runat="server"
+                                        Width="200px"
+                                        NullText="من تاريخ"
+                                        Font-Names="Cairo"
+                                        Font-Bold="True"
+                                        Font-Size="Medium"
+                                        ClientInstanceName="dateFrom3">
+                                    </dx:ASPxDateEdit>
+
+                                    <dx:ASPxDateEdit
+                                        ID="DateTo3"
+                                        runat="server"
+                                        Width="200px"
+                                        NullText="إلى تاريخ"
+                                        Font-Names="Cairo"
+                                        Font-Bold="True"
+                                        Font-Size="Medium"
+                                        ClientInstanceName="dateTo3">
+                                    </dx:ASPxDateEdit>
+
+                                </div>
+
+                                <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: center; margin-top: 15px;">
+
+                                    <dx:ASPxButton
+                                        ID="ASPxButton1"
+                                        runat="server"
+                                        Text="بحث"
+                                        AutoPostBack="False"
+                                        Width="140px"
+                                        Font-Names="Cairo"
+                                        Font-Size="Medium"
+                                        CssClass="rounded-xl"
+                                        Font-Bold="true"
+                                        ClientInstanceName="btnSearchUsers"
+                                        Theme="Moderno">
+                                        <Image Url="~/assets/img/search.png" />
+                                        <ClientSideEvents Click="function(s,e){
+                                            var fromDate = dateFrom3.GetDate();
+                                            var toDate = dateTo3.GetDate();
+
+                                            if(!fromDate) fromDate = new Date(2025, 0, 1);
+                                            if(!toDate) toDate = new Date();
+
+                                            var from = fromDate.toISOString().split('T')[0];
+                                            var to = toDate.toISOString().split('T')[0];
+
+                                            GridBranches.PerformCallback(from + '|' + to);
+                                        }" />
+
+                                    </dx:ASPxButton>
+
+                                    <dx:ASPxButton
+                                        ID="ASPxButton2"
+                                        runat="server"
+                                        Text="مسح"
+                                        AutoPostBack="False"
+                                        Width="140px"
+                                        Font-Names="Cairo"
+                                        Font-Size="Medium"
+                                        CssClass="rounded-xl"
+                                        ClientInstanceName="btnResetUsers"
+                                        Theme="Moderno">
+                                        <Image Url="~/assets/img/reset.png" />
+                                        <ClientSideEvents Click="function(s,e){
+                                            dateFrom3.SetValue(null);
+                                            dateTo3.SetValue(null);
+
+                                            var from = new Date(2025, 0, 1).toISOString().split('T')[0];
+                                            var to = new Date().toISOString().split('T')[0];
+
+                                            GridBranches.PerformCallback(from + '|' + to);
+                                        }" />
+
+                                    </dx:ASPxButton>
+
+
+                                </div>
+
+                                <dx:ASPxGridView ID="GridBranches" runat="server" DataSourceID="db_Branches" KeyFieldName="id" ClientInstanceName="GridBranches" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="1em" RightToLeft="True" OnCustomCallback="GridBranches_CustomCallback" OnBeforePerformDataSelect="GridBranches_BeforePerformDataSelect">
+                                    <Settings ShowFooter="True" ShowFilterRow="True" />
+
+                                    <ClientSideEvents RowClick="function(s, e) {OnRowClick(e);}" RowDblClick="function(s, e) {setTimeout(function(){GridBranches.StartEditRow(MyIndex);},100);}" />
+                                    <SettingsAdaptivity AdaptivityMode="HideDataCells">
+                                    </SettingsAdaptivity>
+                                    <Settings ShowFilterRow="True" ShowFilterRowMenu="False" ShowHeaderFilterButton="False" AutoFilterCondition="Contains" />
+
+                                    <SettingsCommandButton>
+
+                                        <UpdateButton Text=" حفظ ">
+                                            <Image Url="~/assets/img/save.png" SpriteProperties-Left="50">
+                                                <SpriteProperties Left="50px"></SpriteProperties>
+                                            </Image>
+                                        </UpdateButton>
+                                        <CancelButton Text=" الغاء ">
+                                            <Image Url="~/assets/img/cancel.png">
+                                            </Image>
+                                        </CancelButton>
+                                    </SettingsCommandButton>
+
+                                    <SettingsPopup>
+                                        <FilterControl AutoUpdatePosition="False"></FilterControl>
+                                    </SettingsPopup>
+
+                                    <SettingsSearchPanel CustomEditorID="tbToolbarSearchBranch" />
+
+                                    <SettingsExport EnableClientSideExportAPI="true" ExcelExportMode="WYSIWYG" PaperKind="A4" RightToLeft="True" />
+                                    <SettingsLoadingPanel Text="Please Wait &amp;hellip;" Mode="ShowAsPopup" />
+                                    <SettingsText SearchPanelEditorNullText="ابحث في الجدول..." EmptyDataRow="لا يوجد" />
+                                    <Columns>
+                                        <dx:GridViewDataColumn Caption="الرقم" FieldName="id">
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
+                                            </CellStyle>
+                                        </dx:GridViewDataColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="الاسم" FieldName="name" Width="13%">
+                                            <PropertiesTextEdit>
+                                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesTextEdit>
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
+                                            </CellStyle>
+                                        </dx:GridViewDataTextColumn>
+                                        <dx:GridViewDataComboBoxColumn Caption="الدولة" FieldName="countryId">
+                                            <PropertiesComboBox DataSourceID="DB_Countries" TextField="countryName" ValueField="id" ValueType="System.Int32">
+                                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                                <ClientSideEvents SelectedIndexChanged="CitiesCombo_SelectedIndexChanged" />
+                                                <ItemStyle Font-Size="1.5em" />
+                                            </PropertiesComboBox>
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
+                                            </CellStyle>
+                                        </dx:GridViewDataComboBoxColumn>
+
+                                        <dx:GridViewDataComboBoxColumn Caption="الحالة" FieldName="l_branchStatus">
+                                            <PropertiesComboBox DataSourceID="DB_BranchesList" TextField="description" ValueField="id" ValueType="System.Int32">
+                                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="name in arabic is required." Display="Dynamic">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                                <ItemStyle Font-Size="1.5em" />
+                                            </PropertiesComboBox>
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
+                                            </CellStyle>
+                                        </dx:GridViewDataComboBoxColumn>
+
+                                        <dx:GridViewDataCheckColumn Caption="فرع رئيسي" FieldName="isMain" Width="5%">
+                                            <EditFormSettings Visible="True" />
+                                            <CellStyle HorizontalAlign="Center" VerticalAlign="Middle">
+                                            </CellStyle>
+                                        </dx:GridViewDataCheckColumn>
+
+                                        <dx:GridViewDataComboBoxColumn Caption="المدينة" FieldName="cityId">
+                                            <PropertiesComboBox DataSourceID="DB_Cities" TextField="cityName" ValueField="id" ValueType="System.Int32">
+                                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                                <ItemStyle Font-Size="1.5em" />
+                                            </PropertiesComboBox>
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
+                                            </CellStyle>
+                                        </dx:GridViewDataComboBoxColumn>
+
+                                        <dx:GridViewDataComboBoxColumn Caption="الشركة" FieldName="companyId">
+                                            <PropertiesComboBox DataSourceID="DB_Companies" TextField="companyName" ValueField="id" ValueType="System.Int32">
+                                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="required." Display="Dynamic">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                                <ItemStyle Font-Size="1.5em" />
+                                            </PropertiesComboBox>
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
+                                            </CellStyle>
+                                        </dx:GridViewDataComboBoxColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="خطوط الطول" FieldName="latitude">
+                                            <PropertiesTextEdit>
+                                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesTextEdit>
+                                            <EditFormSettings Visible="True" />
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                                            <DataItemTemplate>
+                                                <a href='<%# "https://maps.google.com/?q=" 
+                                         + Eval("latitude") + "," + Eval("longitude") %>'
+                                                    target="_blank">
+                                                    <%# Eval("latitude") %>
+                                                </a>
+                                            </DataItemTemplate>
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="خطوط العرض" FieldName="longitude">
+                                            <PropertiesTextEdit>
+                                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesTextEdit>
+                                            <EditFormSettings Visible="True" />
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                                            <DataItemTemplate>
+                                                <a href='<%# "https://maps.google.com/?q=" 
+                                         + Eval("latitude") + "," + Eval("longitude") %>'
+                                                    target="_blank">
+                                                    <%# Eval("longitude") %>
+                                                </a>
+                                            </DataItemTemplate>
+                                        </dx:GridViewDataTextColumn>
+                                        <dx:GridViewDataTextColumn Caption="الهاتف" FieldName="phone">
+                                            <PropertiesTextEdit>
+                                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesTextEdit>
+                                            <EditFormSettings Visible="True" />
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                                        </dx:GridViewDataTextColumn>
+                                        <dx:GridViewDataTextColumn Caption="الهاتف الفرعي" FieldName="extensionNumber">
+                                            <PropertiesTextEdit>
+                                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesTextEdit>
+                                            <EditFormSettings Visible="True" />
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataColumn Caption="المبلغ الاجمالي" FieldName="TotalSales" Width="5%">
+                                            <DataItemTemplate>
+                                                <%# Eval("TotalSales") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
+                                            </DataItemTemplate>
+                                            <EditFormSettings Visible="True" />
+                                            <CellStyle HorizontalAlign="Center" VerticalAlign="Middle">
+                                            </CellStyle>
+                                        </dx:GridViewDataColumn>
+
+                                    </Columns>
+                                    <Toolbars>
+                                        <dx:GridViewToolbar ItemAlign="left">
+                                            <SettingsAdaptivity Enabled="true" EnableCollapseRootItemsToIcons="true" />
+                                            <Items>
+                                                <dx:GridViewToolbarItem Command="Refresh" BeginGroup="true" AdaptivePriority="1" Text="تحديث الجدول" />
+                                                <dx:GridViewToolbarItem Command="ExportToXlsx" BeginGroup="true" />
+                                                <dx:GridViewToolbarItem Command="ExportToPdf" />
+
+                                                <dx:GridViewToolbarItem Alignment="Right" Name="toolbarItemSearch" BeginGroup="true" AdaptivePriority="2">
+                                                    <Template>
+                                                        <dx:ASPxButtonEdit ID="tbToolbarSearchBranch" runat="server" NullText="البحث..." Width="140" Font-Names="cairo" />
+                                                    </Template>
+                                                </dx:GridViewToolbarItem>
+
+                                            </Items>
+                                        </dx:GridViewToolbar>
+                                    </Toolbars>
+                                    <TotalSummary>
+                                        <dx:ASPxSummaryItem FieldName="id" SummaryType="Count" DisplayFormat="العدد = {0}" />
+                                    </TotalSummary>
+                                    <Styles>
+                                        <AlternatingRow BackColor="#F0F0F0">
+                                        </AlternatingRow>
+                                        <Footer Font-Names="cairo">
+                                        </Footer>
+                                    </Styles>
+                                    <Paddings Padding="2em" />
+
+                                </dx:ASPxGridView>
+
+                                <asp:SqlDataSource
+                                    ID="db_Branches"
+                                    runat="server"
+                                    ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
+                                    SelectCommand="
+        SELECT 
+            b.[id], 
+            b.[name], 
+            b.[l_branchStatus],
+            b.[countryId], 
+            b.[companyId], 
+            c.[companyName],
+            b.[cityId],
+            b.[latitude], 
+            b.[longitude], 
+            b.[phone], 
+            b.[extensionNumber],
+            b.[isMain],
+            ISNULL(SUM(o.totalAmount), 0) AS TotalSales
+        FROM branches b
+        LEFT JOIN companies c ON b.companyId = c.id
+        LEFT JOIN orders o ON o.branchId = b.id AND CAST(o.userDate AS DATE) BETWEEN @FromDate4 AND @ToDate4
+        GROUP BY 
+            b.[id], 
+            b.[name], 
+            b.[l_branchStatus],
+            b.[countryId], 
+            b.[companyId], 
+            c.[companyName],
+            b.[cityId],
+            b.[latitude], 
+            b.[longitude], 
+            b.[phone], 
+            b.[extensionNumber],
+            b.[isMain]
+        ORDER BY TotalSales DESC
+    ">
+                                    <SelectParameters>
+                                        <asp:Parameter Name="FromDate4" Type="DateTime" />
+                                        <asp:Parameter Name="ToDate4" Type="DateTime" />
+                                    </SelectParameters>
+                                </asp:SqlDataSource>
+
+
+                                <asp:SqlDataSource ID="DB_Companies" runat="server" ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>" SelectCommand="SELECT id,companyName FROM companies where id <> 1000"></asp:SqlDataSource>
+
+                                <asp:SqlDataSource ID="DB_BranchesList" runat="server" ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>" SelectCommand="SELECT id, description FROM L_BranchStatus"></asp:SqlDataSource>
+
+                                <asp:SqlDataSource ID="DB_Countries" runat="server" ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>" SelectCommand="SELECT * FROM countries where id <> 1000"></asp:SqlDataSource>
+
+                                <asp:SqlDataSource ID="DB_Cities" runat="server" ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>" SelectCommand="SELECT id,cityName FROM cities"></asp:SqlDataSource>
+                            </div>
                         </dx:ContentControl>
                     </ContentCollection>
                 </dx:TabPage>

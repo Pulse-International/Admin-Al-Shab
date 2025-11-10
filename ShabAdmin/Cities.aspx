@@ -70,7 +70,7 @@
                         <dx:GridViewDataComboBoxColumn Caption="الدولة" FieldName="countryId">
                             <PropertiesComboBox DataSourceID="DB_Countries" TextField="countryName" ValueField="id" ValueType="System.Int32">
                                 <ItemStyle Font-Size="1.5em" />
-                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
                                     <RequiredField IsRequired="True"></RequiredField>
                                 </ValidationSettings>
                             </PropertiesComboBox>
@@ -80,7 +80,7 @@
 
                         <dx:GridViewDataTextColumn Caption="المدينة" FieldName="cityName">
                             <PropertiesTextEdit>
-                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
                                     <RequiredField IsRequired="True"></RequiredField>
                                 </ValidationSettings>
                             </PropertiesTextEdit>

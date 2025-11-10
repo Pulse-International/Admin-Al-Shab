@@ -127,8 +127,8 @@
                         <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
                     </dx:GridViewDataCheckColumn>
 
-                    <dx:GridViewDataSpinEditColumn Caption="تأخير (دقائق)" FieldName="delayedMinutes">
-                        <PropertiesSpinEdit DisplayFormatString="g" MaxValue="999999" NumberType="Integer">
+                    <dx:GridViewDataSpinEditColumn Caption="وقت الإدخال خلال" FieldName="delayedMinutes">
+                        <PropertiesSpinEdit DisplayFormatString="({0}) دقيقة" MaxValue="999999" NumberType="Integer">
                         </PropertiesSpinEdit>
                         <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" Font-Bold="True" Font-Size="Larger" />
                     </dx:GridViewDataSpinEditColumn>

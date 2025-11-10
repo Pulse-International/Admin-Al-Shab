@@ -37,8 +37,6 @@
                 }
             }
 
-
-
         </script>
 
         <div class="w-100 text-center my-4">
@@ -50,11 +48,11 @@
 
         <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
 
+
+
             <dx:ASPxGridView ID="GridCompanies" runat="server" DataSourceID="db_Companies" KeyFieldName="id" ClientInstanceName="GridCompanies" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" OnRowDeleting="GridCompanies_RowDeleting" Font-Names="cairo" Font-Size="1em" RightToLeft="True">
                 <Settings ShowFooter="True" ShowFilterRow="True" />
-
-                <ClientSideEvents EndCallback="OnGridCompaniesEndCallback" />
-                <ClientSideEvents RowClick="function(s, e) {OnRowClick(e);}" RowDblClick="function(s, e) {setTimeout(function(){GridCompanies.StartEditRow(MyIndex);},100);}" />
+                <ClientSideEvents EndCallback="OnGridCompaniesEndCallback" RowClick="function(s, e) {OnRowClick(e);}" RowDblClick="function(s, e) {setTimeout(function(){GridCompanies.StartEditRow(MyIndex);},100);}" />
                 <SettingsAdaptivity AdaptivityMode="HideDataCells">
                 </SettingsAdaptivity>
                 <Settings ShowFilterRow="True" ShowFilterRowMenu="False" ShowHeaderFilterButton="False" AutoFilterCondition="Contains" />
@@ -83,15 +81,15 @@
                 <SettingsLoadingPanel Text="Please Wait &amp;hellip;" Mode="ShowAsPopup" />
                 <SettingsText SearchPanelEditorNullText="ابحث في الجدول..." EmptyDataRow="لا يوجد" />
                 <Columns>
-                    <dx:GridViewDataColumn Caption="الرقم" FieldName="id" VisibleIndex="0" Width="1%">
+                    <dx:GridViewDataColumn Caption="الرقم" FieldName="id" Width="1%">
                         <EditFormSettings Visible="False" />
                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
                         </CellStyle>
                     </dx:GridViewDataColumn>
 
-                    <dx:GridViewDataTextColumn Caption="الشركة" FieldName="companyName" VisibleIndex="1" Width="20%">
+                    <dx:GridViewDataTextColumn Caption="الشركة" FieldName="companyName" Width="15%">
                         <PropertiesTextEdit>
-                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
                                 <RequiredField IsRequired="True"></RequiredField>
                             </ValidationSettings>
                         </PropertiesTextEdit>
@@ -99,7 +97,7 @@
                         </CellStyle>
                     </dx:GridViewDataTextColumn>
 
-                    <dx:GridViewDataComboBoxColumn Caption="البلد" FieldName="countryID" VisibleIndex="2">
+                    <dx:GridViewDataComboBoxColumn Caption="البلد" FieldName="countryID">
                         <PropertiesComboBox
                             ClientInstanceName="comboCountry"
                             DataSourceID="dsCountries"
@@ -119,7 +117,7 @@
                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                     </dx:GridViewDataComboBoxColumn>
 
-                    <dx:GridViewDataComboBoxColumn Caption="الحالة" FieldName="l_companyStatus" VisibleIndex="3">
+                    <dx:GridViewDataComboBoxColumn Caption="الحالة" FieldName="l_companyStatus">
                         <PropertiesComboBox DataSourceID="dsCompanyStatus" ValueField="id" TextField="description" ValueType="System.Int32">
                             <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="required." Display="Dynamic">
                                 <RequiredField IsRequired="True"></RequiredField>
@@ -129,7 +127,7 @@
                         </CellStyle>
                     </dx:GridViewDataComboBoxColumn>
 
-                    <dx:GridViewDataSpinEditColumn Caption="الضريبة" FieldName="companyTax" VisibleIndex="4">
+                    <dx:GridViewDataSpinEditColumn Caption="الضريبة" FieldName="companyTax">
                         <PropertiesSpinEdit DisplayFormatString="{0:0.0} %" MaxLength="4" MaxValue="99.9" NumberType="Float" DecimalPlaces="1">
                             <ValidationSettings Display="Dynamic" ErrorText="required." SetFocusOnError="True">
                                 <RequiredField IsRequired="True" />
@@ -140,7 +138,7 @@
                     </dx:GridViewDataSpinEditColumn>
 
 
-                    <dx:GridViewDataComboBoxColumn Caption="عروض النقاط" FieldName="isPointsOffer" VisibleIndex="5">
+                    <dx:GridViewDataComboBoxColumn Caption="عروض النقاط" FieldName="isPointsOffer">
                         <PropertiesComboBox>
                             <Items>
                                 <dx:ListEditItem Text="نعم" Value="True" />
@@ -154,7 +152,7 @@
                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" Font-Bold="True" Font-Size="Large" />
                     </dx:GridViewDataComboBoxColumn>
 
-                    <dx:GridViewDataSpinEditColumn Caption="عدد النقاط" FieldName="pointsOffer" VisibleIndex="6">
+                    <dx:GridViewDataSpinEditColumn Caption="عدد النقاط" FieldName="pointsOffer">
                         <PropertiesSpinEdit DisplayFormatString="g" MaxLength="4" MinValue="1000" MaxValue="5000" NullText="1000">
                         </PropertiesSpinEdit>
                         <HeaderStyle Font-Bold="True" />
@@ -162,23 +160,9 @@
                         </CellStyle>
                     </dx:GridViewDataSpinEditColumn>
 
-                    <dx:GridViewDataComboBoxColumn Caption="مرئية" FieldName="isVisible" VisibleIndex="7">
-                        <PropertiesComboBox>
-                            <Items>
-                                <dx:ListEditItem Text="نعم" Value="True" />
-                                <dx:ListEditItem Text="لا" Value="False" />
-                            </Items>
-                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
-                                <RequiredField IsRequired="True"></RequiredField>
-                            </ValidationSettings>
-                        </PropertiesComboBox>
-                        <DataItemTemplate>
-                            <%# Convert.ToBoolean(Eval("isVisible")) ? "نعم" : "لا" %>
-                        </DataItemTemplate>
-                        <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
-                    </dx:GridViewDataComboBoxColumn>
 
-                    <dx:GridViewDataSpinEditColumn Caption="قيمة التوصيل" FieldName="deliveryAmount" VisibleIndex="8">
+
+                    <dx:GridViewDataSpinEditColumn Caption="قيمة التوصيل" FieldName="deliveryAmount">
                         <DataItemTemplate>
                             <%# Eval("deliveryAmount") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
                         </DataItemTemplate>
@@ -191,7 +175,7 @@
                         </CellStyle>
                     </dx:GridViewDataSpinEditColumn>
 
-                    <dx:GridViewDataSpinEditColumn Caption="أقل طلب" FieldName="minAmountOrder" VisibleIndex="9" EditFormSettings-VisibleIndex="7">
+                    <dx:GridViewDataSpinEditColumn Caption="أقل طلب" FieldName="minAmountOrder">
                         <DataItemTemplate>
                             <%# Eval("minAmountOrder") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
                         </DataItemTemplate>
@@ -202,28 +186,67 @@
                             </ValidationSettings>
                         </PropertiesSpinEdit>
 
-                        <EditFormSettings VisibleIndex="7"></EditFormSettings>
 
                         <CellStyle HorizontalAlign="Center" VerticalAlign="Middle">
                         </CellStyle>
                     </dx:GridViewDataSpinEditColumn>
 
-                    <dx:GridViewDataSpinEditColumn Caption="أقل وقت توصيل (د)" FieldName="minDeliveryTime" VisibleIndex="10" EditFormSettings-VisibleIndex="6">
-                        <PropertiesSpinEdit DisplayFormatString="g" MaxLength="4" MaxValue="480">
+
+                    <dx:GridViewDataTextColumn FieldName="startHour" Caption="الدوام من">
+                        <PropertiesTextEdit HelpText="مثال الساعة 8:30 صباحا تكتب (08:30)" HelpTextStyle-Font-Names="Cairo" HelpTextStyle-Font-Bold="true" HelpTextStyle-Font-Size="1em">
+                            <ClientSideEvents Init="function(s,e){
+                                var v = s.GetValue();
+                                if(v && v.length == 4 && v.indexOf(':') == -1){
+                                    s.SetValue(v.substring(0,2) + ':' + v.substring(2,4));
+                                } else if(v && v.length == 3 && v.indexOf(':') == -1){
+                                    s.SetValue('0' + v.substring(0,1) + ':' + v.substring(1,3));
+                                }
+                            }" />
+                            <MaskSettings Mask="00:00" />
+                            <ValidationSettings Display="Dynamic" ErrorText="Invalid time format" SetFocusOnError="True">
+                                <RequiredField IsRequired="True" />
+                                <RegularExpression ValidationExpression="^([0-1][0-9]|2[0-3]):[0-5][0-9]$" ErrorText="Enter valid time (00:00 - 23:59)" />
+                            </ValidationSettings>
+                        </PropertiesTextEdit>
+                        <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                    </dx:GridViewDataTextColumn>
+
+                    <dx:GridViewDataTextColumn FieldName="endHour" Caption="الدوام إلى">
+                        <PropertiesTextEdit HelpText="مثال الساعة 9:30 مساء تكتب (21:30)" HelpTextStyle-Font-Names="Cairo" HelpTextStyle-Font-Bold="true" HelpTextStyle-Font-Size="1em">
+                            <ClientSideEvents Init="function(s,e){
+                                var v = s.GetValue();
+                                if(v && v.length == 4 && v.indexOf(':') == -1){
+                                    s.SetValue(v.substring(0,2) + ':' + v.substring(2,4));
+                                } else if(v && v.length == 3 && v.indexOf(':') == -1){
+                                    s.SetValue('0' + v.substring(0,1) + ':' + v.substring(1,3));
+                                }
+                            }" />
+                            <MaskSettings Mask="00:00" />
+                            <ValidationSettings Display="Dynamic" ErrorText="Invalid time format" SetFocusOnError="True">
+                                <RequiredField IsRequired="True" />
+                                <RegularExpression ValidationExpression="^([0-1][0-9]|2[0-3]):[0-5][0-9]$" ErrorText="Enter valid time (00:00 - 23:59)" />
+                            </ValidationSettings>
+                        </PropertiesTextEdit>
+                        <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                    </dx:GridViewDataTextColumn>
+
+
+
+                    <dx:GridViewDataSpinEditColumn Caption="الطلب من" FieldName="minDeliveryTime">
+                        <PropertiesSpinEdit DisplayFormatString="{0} دقيقة" MaxLength="4" MaxValue="480">
 
                             <ValidationSettings Display="Dynamic" ErrorText="required." SetFocusOnError="True">
                                 <RequiredField IsRequired="True" />
                             </ValidationSettings>
                         </PropertiesSpinEdit>
 
-                        <EditFormSettings VisibleIndex="6"></EditFormSettings>
 
                         <CellStyle HorizontalAlign="Center" VerticalAlign="Middle">
                         </CellStyle>
                     </dx:GridViewDataSpinEditColumn>
 
-                    <dx:GridViewDataSpinEditColumn Caption="أكبر وقت توصيل (د)" FieldName="maxDeliveryTime" VisibleIndex="11" EditFormSettings-VisibleIndex="8">
-                        <PropertiesSpinEdit DisplayFormatString="g" MaxLength="4" MaxValue="480">
+                    <dx:GridViewDataSpinEditColumn Caption="الطلب إلى" FieldName="maxDeliveryTime">
+                        <PropertiesSpinEdit DisplayFormatString="{0} دقيقة" MaxLength="4" MaxValue="480">
                             <ClientSideEvents ValueChanged="function(s, e) {
                                  calcPercent(s, e);
                              }" />
@@ -232,13 +255,28 @@
                             </ValidationSettings>
                         </PropertiesSpinEdit>
 
-                        <EditFormSettings VisibleIndex="8"></EditFormSettings>
 
                         <CellStyle HorizontalAlign="Center" VerticalAlign="Middle">
                         </CellStyle>
                     </dx:GridViewDataSpinEditColumn>
 
-                    <dx:GridViewDataTextColumn Caption="" ShowInCustomizationForm="True" Width="100px" VisibleIndex="12">
+                    <dx:GridViewDataComboBoxColumn Caption="مرئية" FieldName="isVisible">
+                        <PropertiesComboBox>
+                            <Items>
+                                <dx:ListEditItem Text="نعم" Value="True" />
+                                <dx:ListEditItem Text="لا" Value="False" />
+                            </Items>
+                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
+                                <RequiredField IsRequired="True"></RequiredField>
+                            </ValidationSettings>
+                        </PropertiesComboBox>
+                        <DataItemTemplate>
+                            <%# Convert.ToBoolean(Eval("isVisible")) ? "نعم" : "لا" %>
+                        </DataItemTemplate>
+                        <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                    </dx:GridViewDataComboBoxColumn>
+
+                    <dx:GridViewDataTextColumn Caption="" ShowInCustomizationForm="True" Width="100px">
                         <EditFormSettings Visible="False" />
                         <DataItemTemplate>
                             <div style="width: 100%; float: left; text-align: center">
@@ -248,6 +286,12 @@
                             </div>
                         </DataItemTemplate>
                     </dx:GridViewDataTextColumn>
+
+
+
+
+
+
                 </Columns>
                 <Toolbars>
                     <dx:GridViewToolbar ItemAlign="left">
@@ -284,13 +328,15 @@
                 ID="db_Companies"
                 runat="server"
                 ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                SelectCommand="SELECT [id], [companyName], [countryID], [companyTax], [isVisible], [l_companyStatus], [minAmountOrder], [deliveryAmount], [minDeliveryTime], [maxDeliveryTime], [pointsOffer], [isPointsOffer] 
-                   FROM [companies] 
-                   WHERE id != 1000"
+                SelectCommand="SELECT [id], [companyName], [countryID], [companyTax], [isVisible], 
+   [l_companyStatus], [minAmountOrder], [deliveryAmount], [minDeliveryTime], 
+   [maxDeliveryTime], [pointsOffer], [isPointsOffer], [startHour], [endHour]
+   FROM [companies] 
+   WHERE id != 1000"
                 InsertCommand="INSERT INTO [companies] 
-                   ([companyName], [countryID], [companyTax], [isVisible], [l_companyStatus], [minAmountOrder], [deliveryAmount], [minDeliveryTime], [maxDeliveryTime], [pointsOffer], [isPointsOffer], [userDate]) 
+                   ([companyName], [countryID], [companyTax], [isVisible], [l_companyStatus], [minAmountOrder], [deliveryAmount], [minDeliveryTime], [maxDeliveryTime], [pointsOffer], [isPointsOffer], [startHour], [endHour], [userDate]) 
                    VALUES 
-                   (@companyName, @countryID, @companyTax, @isVisible, @l_companyStatus, @minAmountOrder, @deliveryAmount, @minDeliveryTime, @maxDeliveryTime, @pointsOffer, @isPointsOffer, getdate());"
+                   (@companyName, @countryID, @companyTax, @isVisible, @l_companyStatus, @minAmountOrder, @deliveryAmount, @minDeliveryTime, @maxDeliveryTime, @pointsOffer, @isPointsOffer, @startHour, @endHour, getdate());"
                 UpdateCommand="UPDATE [companies] 
                    SET [companyName] = @companyName, 
                        [countryID] = @countryID, 
@@ -302,8 +348,10 @@
                        [minDeliveryTime] = @minDeliveryTime, 
                        [maxDeliveryTime] = @maxDeliveryTime,
                        [pointsOffer] = @pointsOffer,
-                       [isPointsOffer] = @isPointsOffer                        
-                   WHERE [id] = @id;"
+                       [isPointsOffer] = @isPointsOffer,
+                       [startHour] = @startHour,
+                       [endHour] = @endHour
+                WHERE [id] = @id;"
                 DeleteCommand="DELETE FROM [companies] WHERE [id] = @id;">
 
                 <InsertParameters>
@@ -318,6 +366,8 @@
                     <asp:Parameter Name="l_companyStatus" Type="String" />
                     <asp:Parameter Name="pointsOffer" Type="String" DefaultValue="1000" />
                     <asp:Parameter Name="isPointsOffer" Type="String" DefaultValue="0" />
+                    <asp:Parameter Name="startHour" Type="String" />
+                    <asp:Parameter Name="endHour" Type="String" />
                 </InsertParameters>
 
                 <UpdateParameters>
@@ -332,6 +382,8 @@
                     <asp:Parameter Name="l_companyStatus" Type="String" />
                     <asp:Parameter Name="pointsOffer" Type="String" DefaultValue="1000" />
                     <asp:Parameter Name="isPointsOffer" Type="String" DefaultValue="0" />
+                    <asp:Parameter Name="startHour" Type="String" />
+                    <asp:Parameter Name="endHour" Type="String" />
                     <asp:Parameter Name="id" Type="Int32" />
                 </UpdateParameters>
 

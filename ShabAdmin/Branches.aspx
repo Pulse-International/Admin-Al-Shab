@@ -143,7 +143,7 @@
 
                     <dx:GridViewDataTextColumn Caption="الاسم" FieldName="name" Width="13%">
                         <PropertiesTextEdit>
-                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
                                 <RequiredField IsRequired="True"></RequiredField>
                             </ValidationSettings>
                         </PropertiesTextEdit>
@@ -152,7 +152,7 @@
                     </dx:GridViewDataTextColumn>
                     <dx:GridViewDataComboBoxColumn Caption="الدولة" FieldName="countryId">
                         <PropertiesComboBox DataSourceID="DB_Countries" TextField="countryName" ValueField="id" ValueType="System.Int32">
-                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
                                 <RequiredField IsRequired="True"></RequiredField>
                             </ValidationSettings>
                             <ClientSideEvents SelectedIndexChanged="CitiesCombo_SelectedIndexChanged" />
@@ -181,7 +181,7 @@
 
                     <dx:GridViewDataComboBoxColumn Caption="المدينة" FieldName="cityId">
                         <PropertiesComboBox DataSourceID="DB_Cities" TextField="cityName" ValueField="id" ValueType="System.Int32">
-                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
                                 <RequiredField IsRequired="True"></RequiredField>
                             </ValidationSettings>
                             <ItemStyle Font-Size="1.5em" />
@@ -203,7 +203,7 @@
 
                     <dx:GridViewDataTextColumn Caption="خطوط الطول" FieldName="latitude">
                         <PropertiesTextEdit>
-                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
                                 <RequiredField IsRequired="True"></RequiredField>
                             </ValidationSettings>
                         </PropertiesTextEdit>
@@ -219,7 +219,7 @@
                     </dx:GridViewDataTextColumn>
                     <dx:GridViewDataTextColumn Caption="خطوط العرض" FieldName="longitude">
                         <PropertiesTextEdit>
-                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
                                 <RequiredField IsRequired="True"></RequiredField>
                             </ValidationSettings>
                         </PropertiesTextEdit>
@@ -235,7 +235,7 @@
                     </dx:GridViewDataTextColumn>
                     <dx:GridViewDataTextColumn Caption="الهاتف" FieldName="phone">
                         <PropertiesTextEdit>
-                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
                                 <RequiredField IsRequired="True"></RequiredField>
                             </ValidationSettings>
                         </PropertiesTextEdit>
@@ -244,7 +244,7 @@
                     </dx:GridViewDataTextColumn>
                     <dx:GridViewDataTextColumn Caption="الهاتف الفرعي" FieldName="extensionNumber">
                         <PropertiesTextEdit>
-                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="Country name in arabic is required." Display="Dynamic">
+                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
                                 <RequiredField IsRequired="True"></RequiredField>
                             </ValidationSettings>
                         </PropertiesTextEdit>

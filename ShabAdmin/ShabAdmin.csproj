@@ -203,7 +203,6 @@
     <Content Include="assets\js\plugins\perfect-scrollbar.min.js" />
     <Content Include="assets\js\plugins\smooth-scrollbar.min.js" />
     <Content Include="assets\js\plugins\world.js" />
-    <Content Include="assets\uploads\noFile.png" />
     <Content Include="CheckOutReturn.aspx" />
     <Content Include="CheckOut.aspx" />
     <Content Include="mCoupons.aspx" />

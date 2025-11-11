@@ -6,7 +6,10 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -20,38 +23,7 @@ namespace ShabAdmin
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            //if (!IsPostBack)
-            //{
-            //    // من 1/1/2025 إلى يوم الغد
-            //    DateTime dateFrom = new DateTime(2025, 1, 1);
-            //    DateTime dateTo = DateTime.Now.AddDays(1);
 
-            //    // ===== GridOrders =====
-            //    dsOrders.SelectParameters["countryId"].DefaultValue = "0";
-            //    dsOrders.SelectParameters["companyId"].DefaultValue = "0";
-            //    dsOrders.SelectParameters["branchId"].DefaultValue = "0";
-            //    dsOrders.SelectParameters["dateFrom"].DefaultValue = dateFrom.ToString("yyyy-MM-dd");
-            //    dsOrders.SelectParameters["dateTo"].DefaultValue = dateTo.ToString("yyyy-MM-dd");
-            //    GridOrders.DataBind();
-
-            //    // ===== GridOrdersInfo =====
-            //    dsOrdersInfo.SelectParameters["StatusId"].DefaultValue = "0";
-            //    dsOrdersInfo.SelectParameters["PaymentMethodId"].DefaultValue = "0";
-            //    dsOrdersInfo.SelectParameters["dateFrom1"].DefaultValue = dateFrom.ToString("yyyy-MM-dd");
-            //    dsOrdersInfo.SelectParameters["dateTo1"].DefaultValue = dateTo.ToString("yyyy-MM-dd");
-            //    GridOrdersInfo.DataBind();
-
-            //    // ===== db_AppUsers =====
-            //    db_AppUsers.SelectParameters["Country2"].DefaultValue = "0";
-            //    db_AppUsers.SelectParameters["FromDate2"].DefaultValue = dateFrom.ToString("yyyy-MM-dd");
-            //    db_AppUsers.SelectParameters["ToDate2"].DefaultValue = dateTo.ToString("yyyy-MM-dd");
-            //    db_AppUsers.SelectParameters["Option2"].DefaultValue = "0"; // 0 = الكل
-
-
-            //    db_Branches.SelectParameters["FromDate4"].DefaultValue = dateFrom.ToString("yyyy-MM-dd");
-            //    db_Branches.SelectParameters["ToDate4"].DefaultValue = dateTo.ToString("yyyy-MM-dd");
-            //    GridBranches.DataBind();
-            //}
         }
 
         protected void Page_Init(object sender, EventArgs e)
@@ -649,134 +621,93 @@ namespace ShabAdmin
         // GridOrders filters and Privelages 
         protected void GridOrders_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
         {
-            if (e.Parameters == "Cancel")
-            {
-                dsOrders.SelectParameters["countryId"].DefaultValue = "0";
-                dsOrders.SelectParameters["companyId"].DefaultValue = "0";
-                dsOrders.SelectParameters["branchId"].DefaultValue = "0";
-                dsOrders.SelectParameters["dateFrom"].DefaultValue = "2025-01-01";
-                dsOrders.SelectParameters["dateTo"].DefaultValue = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
-
-                Session["countryId"] = "0";
-                Session["companyId"] = "0";
-                Session["branchId"] = "0";
-                Session["dateFrom"] = "2025-01-01";
-                Session["dateTo"] = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
-
-                GridOrders.DataBind();
-                return;
-            }
-            int countryId = Convert.ToInt32(CountryList.Value ?? 0);
-            int companyId = Convert.ToInt32(CompanyList.Value ?? 0);
-            int branchId = Convert.ToInt32(BranchList.Value ?? 0);
-
-            DateTime dateFrom = DateFrom.Date;
-            DateTime dateTo = DateTo.Date;
-
-            if (dateFrom == DateTime.MinValue) dateFrom = new DateTime(2025, 1, 1);
-            if (dateTo == DateTime.MinValue) dateTo = DateTime.Now.AddDays(1);
-
-            dsOrders.SelectParameters["countryId"].DefaultValue = countryId.ToString();
-            dsOrders.SelectParameters["companyId"].DefaultValue = companyId.ToString();
-            dsOrders.SelectParameters["branchId"].DefaultValue = branchId.ToString();
-            dsOrders.SelectParameters["dateFrom"].DefaultValue = dateFrom.ToString("yyyy-MM-dd");
-            dsOrders.SelectParameters["dateTo"].DefaultValue = dateTo.ToString("yyyy-MM-dd");
-
-            Session["countryId"] = countryId;
-            Session["companyId"] = companyId;
-            Session["branchId"] = branchId;
-            Session["dateFrom"] = dateFrom;
-            Session["dateTo"] = dateTo;
-
-            GridOrders.DataBind();
+            dsOrders.DataBind();
         }
         protected void GridOrders_BeforePerformDataSelect(object sender, EventArgs e)
         {
-            // جلب صلاحيات المستخدم
             var (countryId, companyId) = GetUserPrivileges();
 
             DateTime defaultFromDate = new DateTime(2025, 1, 1);
-            DateTime defaultToDate = DateTime.Now.AddDays(1);
+            DateTime defaultToDate = DateTime.Now;
 
             dsOrders.SelectParameters.Clear();
 
-            // جلب الفلاتر من السيشن (إن وُجدت)
-            int sessionCountryId = 0;
-            int sessionCompanyId = 0;
-            int sessionBranchId = 0;
-            DateTime sessionDateFrom = defaultFromDate;
-            DateTime sessionDateTo = defaultToDate;
+            int sessionCountryId = Convert.ToInt32(CountryList?.Value ?? 0);
+            int sessionCompanyId = Convert.ToInt32(CompanyList?.Value ?? 0);
+            int sessionBranchId = Convert.ToInt32(BranchList?.Value ?? 0);
 
-            if (Session["countryId"] != null)
-                int.TryParse(Session["countryId"].ToString(), out sessionCountryId);
+            // تحقق من صحة التاريخ لتفادي SqlDateTime overflow
+            DateTime dateFrom = (DateFrom != null && DateFrom.Date >= SqlDateTime.MinValue.Value)
+                ? DateFrom.Date
+                : defaultFromDate;
 
-            if (Session["companyId"] != null)
-                int.TryParse(Session["companyId"].ToString(), out sessionCompanyId);
+            DateTime dateTo = (DateTo != null && DateTo.Date >= SqlDateTime.MinValue.Value)
+                ? DateTo.Date
+                : defaultToDate;
 
-            if (Session["branchId"] != null)
-                int.TryParse(Session["branchId"].ToString(), out sessionBranchId);
+            // تأكد أن dateFrom <= dateTo
+            if (dateFrom > dateTo)
+                dateFrom = dateTo.AddDays(-1);
 
-            if (Session["dateFrom"] != null)
-                DateTime.TryParse(Session["dateFrom"].ToString(), out sessionDateFrom);
+            int finalCountryId = (countryId != 1000)
+                ? (sessionCountryId != 0 ? sessionCountryId : countryId)
+                : sessionCountryId;
 
-            if (Session["dateTo"] != null)
-                DateTime.TryParse(Session["dateTo"].ToString(), out sessionDateTo);
+            int finalCompanyId = (companyId != 1000)
+                ? (sessionCompanyId != 0 ? sessionCompanyId : companyId)
+                : sessionCompanyId;
 
-            int finalCountryId = (countryId != 1000) ? (sessionCountryId != 0 ? sessionCountryId : countryId) : sessionCountryId;
-            int finalCompanyId = (companyId != 1000) ? (sessionCompanyId != 0 ? sessionCompanyId : companyId) : sessionCompanyId;
             int finalBranchId = sessionBranchId;
 
-            // اختيار الاستعلام المناسب
             dsOrders.SelectCommand = @"
-    SELECT 
-        o.[id], 
-        o.[companyId], 
-        c.[countryID] AS countryId, 
-        c.[companyName] AS companyName, 
-        co.[countryName] AS countryName,
-        o.[username], 
-        u.[firstName] + ' ' + u.[lastName] AS fullName,
-        o.[addressId], 
-        o.[amount], 
-        o.[deliveryAmount], 
-        o.[taxAmount], 
-        o.[totalAmount], 
-        o.[couponId], 
-        o.[l_paymentMethodId],
-        o.[l_RefundType],
-        pm.[description] AS paymentMethod, 
-        br.[name] AS branchName, 
-        o.[transactionId], 
-        o.[invoiceNo], 
-        o.[notes], 
-        o.[l_orderStatus], 
-        os.[description] AS orderStatus,  
-        o.[refundedAmount], 
-        o.[realTotalAmount], 
-        o.[realTax], 
-        o.[userDate]
-    FROM [Orders] o
-    JOIN [companies] c ON o.companyId = c.id
-    LEFT JOIN l_paymentMethod pm ON o.l_paymentMethodId = pm.id
-    LEFT JOIN branches br ON o.branchId = br.id
-    LEFT JOIN countries co ON c.countryID = co.id
-    LEFT JOIN l_orderStatus os ON o.l_orderStatus = os.id
-    LEFT JOIN [usersApp] u ON o.username = u.username
-    WHERE 
-        o.l_orderStatus = 4
-        AND (c.countryID = @countryId OR @countryId = 0)
-        AND (c.id = @companyId OR @companyId = 0)
-        AND (br.id = @branchId OR @branchId = 0)
-        AND o.userDate BETWEEN @dateFrom AND @dateTo
-    ORDER BY o.id DESC";
+        SELECT 
+            o.[id], 
+            o.[companyId], 
+            c.[countryID] AS countryId, 
+            c.[companyName], 
+            co.[countryName],
+            o.[username], 
+            u.[firstName] + ' ' + u.[lastName] AS fullName,
+            o.[addressId], 
+            o.[amount], 
+            o.[deliveryAmount], 
+            o.[taxAmount], 
+            o.[totalAmount], 
+            o.[couponId], 
+            o.[l_paymentMethodId],
+            o.[l_RefundType],
+            pm.[description] AS paymentMethod, 
+            br.[name] AS branchName, 
+            o.[transactionId], 
+            o.[invoiceNo], 
+            o.[notes], 
+            o.[l_orderStatus], 
+            os.[description] AS orderStatus,  
+            o.[refundedAmount], 
+            o.[realTotalAmount], 
+            o.[realTax], 
+            o.[userDate]
+        FROM [Orders] o
+        JOIN [companies] c ON o.companyId = c.id
+        LEFT JOIN l_paymentMethod pm ON o.l_paymentMethodId = pm.id
+        LEFT JOIN branches br ON o.branchId = br.id
+        LEFT JOIN countries co ON c.countryID = co.id
+        LEFT JOIN l_orderStatus os ON o.l_orderStatus = os.id
+        LEFT JOIN [usersApp] u ON o.username = u.username
+        WHERE 
+            o.l_orderStatus = 4
+            AND (@countryId = 0 OR c.countryID = @countryId)
+            AND (@companyId = 0 OR c.id = @companyId)
+            AND (@branchId = 0 OR br.id = @branchId)
+            AND o.userDate BETWEEN @dateFrom AND @dateTo
+        ORDER BY o.id DESC";
 
-
-            // إضافة البراميترز
+            // البراميترات الآمنة
             dsOrders.SelectParameters.Add("countryId", finalCountryId.ToString());
             dsOrders.SelectParameters.Add("companyId", finalCompanyId.ToString());
-            dsOrders.SelectParameters.Add("branchId", Convert.ToInt32(BranchList.Value).ToString());
-            dsOrders.SelectParameters.Add("dateFrom", TypeCode.DateTime, sessionDateFrom.AddDays(1).ToString("yyyy-MM-dd"));
-            dsOrders.SelectParameters.Add("dateTo", TypeCode.DateTime, sessionDateTo.AddDays(1).ToString("yyyy-MM-dd"));
+            dsOrders.SelectParameters.Add("branchId", finalBranchId.ToString());
+            dsOrders.SelectParameters.Add("dateFrom", TypeCode.DateTime, dateFrom.ToString("yyyy-MM-dd"));
+            dsOrders.SelectParameters.Add("dateTo", TypeCode.DateTime, dateTo.AddDays(1).ToString("yyyy-MM-dd"));
         }
 
 
@@ -881,28 +812,6 @@ namespace ShabAdmin
         // GridOrdersInfo filters and Privelages 
         protected void GridOrdersInfo_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
         {
-
-            int status = Convert.ToInt32(StatusList.Value ?? 0);
-            int paymentMethod = Convert.ToInt32(PaymentMethodList.Value ?? 0);
-
-            DateTime dateFrom = DateFrom1.Date;
-            DateTime dateTo = DateTo1.Date;
-
-            if (dateFrom == DateTime.MinValue) dateFrom = new DateTime(2025, 1, 1);
-            if (dateTo == DateTime.MinValue) dateTo = DateTime.Now.AddDays(1);
-
-
-            dsOrdersInfo.SelectParameters["StatusId"].DefaultValue = status.ToString();
-            dsOrdersInfo.SelectParameters["PaymentMethodId"].DefaultValue = paymentMethod.ToString();
-            dsOrdersInfo.SelectParameters["dateFrom1"].DefaultValue = dateFrom.ToString("yyyy-MM-dd");
-            dsOrdersInfo.SelectParameters["dateTo1"].DefaultValue = dateTo.ToString("yyyy-MM-dd");
-
-            // تخزين القيم في الـ Session
-            Session["StatusId"] = status;
-            Session["PaymentMethodId"] = paymentMethod;
-            Session["FromDate1"] = dateFrom;
-            Session["ToDate1"] = dateTo;
-
             GridOrdersInfo.DataBind();
         }
         protected void GridOrdersInfo_BeforePerformDataSelect(object sender, EventArgs e)
@@ -913,21 +822,23 @@ namespace ShabAdmin
             DateTime sessionDateFrom = defaultFromDate;
             DateTime sessionDateTo = defaultToDate;
 
-            if (Session["FromDate1"] != null)
-                DateTime.TryParse(Session["FromDate1"].ToString(), out sessionDateFrom);
 
-            if (Session["ToDate1"] != null)
-                DateTime.TryParse(Session["ToDate1"].ToString(), out sessionDateTo);
+            int status = Convert.ToInt32(StatusList.Value ?? 0);
+            int paymentMethod = Convert.ToInt32(PaymentMethodList.Value ?? 0);
 
-            int status = Session["StatusId"] is int ? (int)Session["StatusId"] : 0;
-            int paymentMethod = Session["PaymentMethodId"] is int ? (int)Session["PaymentMethodId"] : 0;
-            DateTime fromDate = Session["FromDate1"] is DateTime ? (DateTime)Session["FromDate1"] : new DateTime(2025, 1, 1);
-            DateTime toDate = Session["ToDate1"] is DateTime ? (DateTime)Session["ToDate1"] : DateTime.Now.AddDays(1);
+            // تحقق من صحة التاريخ لتفادي SqlDateTime overflow
+            DateTime dateFrom = (DateFrom1 != null && DateFrom1.Date >= SqlDateTime.MinValue.Value)
+                ? DateFrom1.Date
+                : defaultFromDate;
+
+            DateTime dateTo = (DateTo1 != null && DateTo1.Date >= SqlDateTime.MinValue.Value)
+                ? DateTo1.Date
+                : defaultToDate;
 
             dsOrdersInfo.SelectParameters["StatusId"].DefaultValue = status.ToString();
             dsOrdersInfo.SelectParameters["PaymentMethodId"].DefaultValue = paymentMethod.ToString();
-            dsOrdersInfo.SelectParameters["dateFrom1"].DefaultValue = sessionDateFrom.AddDays(1).ToString("yyyy-MM-dd");
-            dsOrdersInfo.SelectParameters["dateTo1"].DefaultValue = sessionDateTo.AddDays(1).ToString("yyyy-MM-dd");
+            dsOrdersInfo.SelectParameters["dateFrom1"].DefaultValue = dateFrom.ToString("yyyy-MM-dd");
+            dsOrdersInfo.SelectParameters["dateTo1"].DefaultValue = dateTo.AddDays(1).ToString("yyyy-MM-dd");
         }
 
 
@@ -1092,101 +1003,69 @@ namespace ShabAdmin
         // GridAppUsers filters and Privelages 
         protected void GridAppUsers_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
         {
-            string[] parts = e.Parameters.Split('|');
-
-            int option;
-            string country = parts[1];
-            string dateFromStr = parts[2];
-            string dateToStr = parts[3];
-
-            // تحويل الخيار من نص إلى رقم
-            if (!int.TryParse(parts[0], out option))
-                option = 0; // 0 = All, 1 = TopBuyers, 2 = NoOrders
-
-            DateTime dateFrom, dateTo;
-
-            if (!DateTime.TryParse(dateFromStr, out dateFrom))
-                dateFrom = new DateTime(2025, 1, 1);
-
-            if (!DateTime.TryParse(dateToStr, out dateTo))
-                dateTo = DateTime.Now.AddDays(1);
-
-            // تخزين القيم في الـ Session
-            Session["Option2"] = option;
-            Session["Country2"] = country;
-            Session["FromDate2"] = dateFrom;
-            Session["ToDate2"] = dateTo;
-
-            ApplyUserFilter();
-        }
-        private void ApplyUserFilter()
-        {
-            int option = Session["Option2"] is int ? (int)Session["Option2"] : 0;
-            string country = Session["Country2"] as string ?? "0";
-            DateTime dateFrom = Session["FromDate2"] is DateTime ? (DateTime)Session["FromDate2"] : new DateTime(2025, 1, 1);
-            DateTime dateTo = Session["ToDate2"] is DateTime ? (DateTime)Session["ToDate2"] : DateTime.Now.AddDays(1);
-
-            db_AppUsers.SelectParameters["Country2"].DefaultValue = string.IsNullOrEmpty(country) ? "0" : country;
-            db_AppUsers.SelectParameters["FromDate2"].DefaultValue = dateFrom.ToString("yyyy-MM-dd");
-            db_AppUsers.SelectParameters["ToDate2"].DefaultValue = dateTo.ToString("yyyy-MM-dd");
-            db_AppUsers.SelectParameters["Option2"].DefaultValue = option.ToString();
-
             GridAppUsers.DataBind();
         }
         protected void GridAppUsers_BeforePerformDataSelect(object sender, EventArgs e)
         {
-            string country = "";
+            int country = 0;
             var (CountryID, _) = GetUserPrivileges();
             if (CountryID != 1000)
             {
-                country = CountryID.ToString();
+                country = CountryID;
             }
             else
             {
-                country = Session["Country2"] as string ?? "0";
+                country = Convert.ToInt32(CountryList1.Value ?? 0);
             }
-            int option = Session["Option2"] is int ? (int)Session["Option2"] : 0;
-            DateTime fromDate = Session["FromDate2"] is DateTime ? (DateTime)Session["FromDate2"] : new DateTime(2025, 1, 1);
-            DateTime toDate = Session["ToDate2"] is DateTime ? (DateTime)Session["ToDate2"] : DateTime.Now.AddDays(1);
+            int option = Convert.ToInt32(Buyers.Value ?? 0);
 
-            db_AppUsers.SelectParameters["Country2"].DefaultValue = country;
+            DateTime defaultFromDate = new DateTime(2025, 1, 1);
+            DateTime defaultToDate = DateTime.Now.AddDays(1);
+
+            DateTime sessionDateFrom = defaultFromDate;
+            DateTime sessionDateTo = defaultToDate;
+            // تحقق من صحة التاريخ لتفادي SqlDateTime overflow
+            DateTime dateFrom = (DateFrom2 != null && DateFrom2.Date >= SqlDateTime.MinValue.Value)
+                ? DateFrom2.Date
+                : defaultFromDate;
+
+            DateTime dateTo = (DateTo2 != null && DateTo2.Date >= SqlDateTime.MinValue.Value)
+                ? DateTo2.Date
+                : defaultToDate;
+
+            db_AppUsers.SelectParameters["Country2"].DefaultValue = country.ToString();
             db_AppUsers.SelectParameters["Option2"].DefaultValue = option.ToString();
-            db_AppUsers.SelectParameters["FromDate2"].DefaultValue = fromDate.AddDays(1).ToString("yyyy-MM-dd");
-            db_AppUsers.SelectParameters["ToDate2"].DefaultValue = toDate.AddDays(1).ToString("yyyy-MM-dd");
+            db_AppUsers.SelectParameters["FromDate2"].DefaultValue = dateFrom.ToString("yyyy-MM-dd");
+            db_AppUsers.SelectParameters["ToDate2"].DefaultValue = dateTo.AddDays(1).ToString("yyyy-MM-dd");
 
         }
 
         protected void GridBranches_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
         {
-            string[] parts = e.Parameters.Split('|');
-            string dateFromStr = parts[0];
-            string dateToStr = parts[1];
-
-            DateTime dateFrom, dateTo;
-
-            if (!DateTime.TryParse(dateFromStr, out dateFrom))
-                dateFrom = new DateTime(2025, 1, 1);
-
-            if (!DateTime.TryParse(dateToStr, out dateTo))
-                dateTo = DateTime.Now.AddDays(1);
-
-            db_Branches.SelectParameters["FromDate4"].DefaultValue = dateFrom.ToString("yyyy-MM-dd");
-            db_Branches.SelectParameters["ToDate4"].DefaultValue = dateTo.ToString("yyyy-MM-dd");
-
-            Session["FromDate4"] = dateFrom;
-            Session["ToDate4"] = dateTo;
-
-
             GridBranches.DataBind();
         }
 
         protected void GridBranches_BeforePerformDataSelect(object sender, EventArgs e)
         {
-            DateTime fromDate = Session["FromDate4"] is DateTime ? (DateTime)Session["FromDate4"] : new DateTime(2025, 1, 1);
-            DateTime toDate = Session["ToDate4"] is DateTime ? (DateTime)Session["ToDate4"] : DateTime.Now.AddDays(1);
 
-            db_Branches.SelectParameters["FromDate4"].DefaultValue = fromDate.AddDays(1).ToString("yyyy-MM-dd");
-            db_Branches.SelectParameters["ToDate4"].DefaultValue = toDate.AddDays(1).ToString("yyyy-MM-dd");
+
+            DateTime defaultFromDate = new DateTime(2025, 1, 1);
+            DateTime defaultToDate = DateTime.Now.AddDays(1);
+
+            DateTime sessionDateFrom = defaultFromDate;
+            DateTime sessionDateTo = defaultToDate;
+            // تحقق من صحة التاريخ لتفادي SqlDateTime overflow
+            DateTime dateFrom = (DateFrom3 != null && DateFrom3.Date >= SqlDateTime.MinValue.Value)
+                ? DateFrom3.Date
+                : defaultFromDate;
+
+            DateTime dateTo = (DateTo3 != null && DateTo3.Date >= SqlDateTime.MinValue.Value)
+                ? DateTo3.Date
+                : defaultToDate;
+            
+
+            db_Branches.SelectParameters["FromDate4"].DefaultValue = dateFrom.ToString("yyyy-MM-dd");
+            db_Branches.SelectParameters["ToDate4"].DefaultValue = dateTo.AddDays(1).ToString("yyyy-MM-dd");
         }
 
     }

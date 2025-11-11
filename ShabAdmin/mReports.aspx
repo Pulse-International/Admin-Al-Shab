@@ -1118,9 +1118,7 @@ ORDER BY o.id DESC">
                     <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="X-Large"></TabStyle>
                     <ContentCollection>
                         <dx:ContentControl>
-                            <div class="w-100 text-center my-4">
-                                <h2 class="pageTitle d-inline-block" style="font-family: Cairo">المستخدمين</h2>
-                            </div>
+                           
                             <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
                                 <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: center; padding-top: 25px;">
                                     <dx:ASPxComboBox
@@ -1527,10 +1525,13 @@ ORDER BY o.id DESC">
                                 SelectCommand="SELECT id, description FROM [L_UserLevel]" />
 
 
-                            <div class="w-100 text-center my-4">
-                                <h2 class="pageTitle d-inline-block" style="font-family: Cairo">الفروع</h2>
-                            </div>
-
+                        </dx:ContentControl>
+                    </ContentCollection>
+                </dx:TabPage>
+                <dx:TabPage Text="الفروع" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="X-Large">
+                    <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="X-Large"></TabStyle>
+                    <ContentCollection>
+                        <dx:ContentControl>
 
                             <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
 
@@ -1857,6 +1858,8 @@ ORDER BY o.id DESC">
 
                                 <asp:SqlDataSource ID="DB_Cities" runat="server" ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>" SelectCommand="SELECT id,cityName FROM cities"></asp:SqlDataSource>
                             </div>
+
+
                         </dx:ContentControl>
                     </ContentCollection>
                 </dx:TabPage>

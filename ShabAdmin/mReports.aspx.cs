@@ -774,7 +774,7 @@ namespace ShabAdmin
             // إضافة البراميترز
             dsOrders.SelectParameters.Add("countryId", finalCountryId.ToString());
             dsOrders.SelectParameters.Add("companyId", finalCompanyId.ToString());
-            dsOrders.SelectParameters.Add("branchId", finalBranchId.ToString());
+            dsOrders.SelectParameters.Add("branchId", Convert.ToInt32(BranchList.Value).ToString());
             dsOrders.SelectParameters.Add("dateFrom", TypeCode.DateTime, sessionDateFrom.AddDays(1).ToString("yyyy-MM-dd"));
             dsOrders.SelectParameters.Add("dateTo", TypeCode.DateTime, sessionDateTo.AddDays(1).ToString("yyyy-MM-dd"));
         }

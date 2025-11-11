@@ -1219,7 +1219,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="MyClasses\MainHelper.cs" />
-    <Compile Include="MyClasses\PhotoUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>

@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -161,6 +163,62 @@ public class MainHelper
             Hash = hashed,
             Salt = Convert.ToBase64String(salt)
         };
+    }
+
+    public static void CompressAndSaveImage(System.Drawing.Image original, string outputPath, int maxWidth, int maxHeight, long quality)
+    {
+        // تحديد الأبعاد الجديدة مع الحفاظ على النسبة
+        int newWidth = original.Width;
+        int newHeight = original.Height;
+
+        // حساب الأبعاد الجديدة إذا كانت الصورة أكبر من الحد الأقصى
+        if (original.Width > maxWidth || original.Height > maxHeight)
+        {
+            double ratioX = (double)maxWidth / original.Width;
+            double ratioY = (double)maxHeight / original.Height;
+            double ratio = Math.Min(ratioX, ratioY);
+
+            newWidth = (int)(original.Width * ratio);
+            newHeight = (int)(original.Height * ratio);
+        }
+
+        // إنشاء صورة جديدة بالأبعاد المحسوبة
+        using (Bitmap resized = new Bitmap(newWidth, newHeight, PixelFormat.Format24bppRgb))
+        {
+            using (Graphics g = Graphics.FromImage(resized))
+            {
+                // ملء الخلفية باللون الأبيض (للصور الشفافة)
+                g.Clear(Color.White);
+
+                // إعدادات الجودة العالية
+                g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+                g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+
+                // رسم الصورة
+                g.DrawImage(original, 0, 0, newWidth, newHeight);
+            }
+
+            // حفظ بصيغة JPG مع ضغط عالي
+            ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
+            EncoderParameters encoderParams = new EncoderParameters(1);
+            encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
+
+            resized.Save(outputPath, jpgEncoder, encoderParams);
+        }
+    }
+
+    private static ImageCodecInfo GetEncoder(ImageFormat format)
+    {
+        ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
+        foreach (ImageCodecInfo codec in codecs)
+        {
+            if (codec.FormatID == format.Guid)
+                return codec;
+        }
+        return null;
     }
 
     public static TelrResponse TelrPaymentRefund(decimal amount = 0, string transactionRef = "", string description = "", string test = "1")

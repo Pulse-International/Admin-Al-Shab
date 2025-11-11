@@ -56,11 +56,10 @@ namespace ShabAdmin
             fileName = Docs;
             try
             {
-                string fileName = Path.Combine(MapPath(UploadDirectory), Docs);
+                string filePath = Path.Combine(MapPath(UploadDirectory), Docs);
                 using (System.Drawing.Image original = System.Drawing.Image.FromStream(uploadedFile.FileContent))
-                using (System.Drawing.Image thumbnail = PhotoUtils.Inscribe(original, 500, 500))
                 {
-                    PhotoUtils.SaveToJpeg(thumbnail, fileName, 1);
+                    MainHelper.CompressAndSaveImage(original, filePath, 500, 500, 65);
                 }
             }
             catch

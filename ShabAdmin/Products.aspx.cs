@@ -1392,7 +1392,6 @@ namespace ShabAdmin
             }
         }
 
-
         protected void ImageUpload_FileUploadComplete2(object sender, FileUploadCompleteEventArgs e)
         {
             e.CallbackData = SavePostedFile_all2(e.UploadedFile);

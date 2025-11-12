@@ -18,64 +18,8 @@ namespace ShabAdmin
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            //DeleteUnlinkedImages();
+
         }
-
-        public static void DeleteUnlinkedImages()
-        {
-            string uploadsPath = HttpRuntime.AppDomainAppPath + "/assets/uploads/";
-            string connectionString = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
-
-            if (!Directory.Exists(uploadsPath))
-            {
-                Console.Write("❌ Uploads folder not found.");
-                return;
-            }
-
-            // Allowed image extensions
-            var allowedExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".jpg", ".jpeg", ".png" };
-
-            // 1. Get all image files in the uploads folder
-            var allFiles = Directory.GetFiles(uploadsPath)
-                                    .Where(f => allowedExtensions.Contains(Path.GetExtension(f)))
-                                    .Select(f => Path.GetFileName(f))
-                                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-            // 2. Get linked image file names from the database
-            var linkedImages = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand("SELECT imagePath FROM productsImages WHERE imagePath IS NOT NULL", conn);
-                SqlDataReader reader = cmd.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    string imagePath = reader["imagePath"].ToString();
-
-                    // ✅ Remove folder path, keep only filename
-                    string fileName = Path.GetFileName(imagePath);
-
-                    // ✅ Optionally: filter only image files (skip if not)
-                    if (allowedExtensions.Contains(Path.GetExtension(fileName)))
-                    {
-                        linkedImages.Add(fileName);
-                    }
-                }
-            }
-
-            // 3. Determine unlinked files
-            var unlinkedFiles = allFiles.Except(linkedImages).ToList();
-
-            // 4. Delete unlinked files
-            foreach (var filename in unlinkedFiles)
-            {
-                string fullPath = Path.Combine(uploadsPath, filename);
-                File.Delete(fullPath);
-            }
-        }
-
         protected void Page_Init(object sender, EventArgs e)
         {
             string username = MainHelper.M_Check(Request.Cookies["M_Username"]?.Value);

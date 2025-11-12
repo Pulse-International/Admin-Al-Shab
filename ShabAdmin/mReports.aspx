@@ -1403,16 +1403,6 @@ ORDER BY o.id DESC">
                                             <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
                                         </dx:GridViewDataSpinEditColumn>
 
-                                        <dx:GridViewDataTextColumn Caption="FCMToken" FieldName="FCMToken">
-                                            <PropertiesTextEdit>
-                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
-                                                    <RequiredField IsRequired="True"></RequiredField>
-                                                </ValidationSettings>
-                                            </PropertiesTextEdit>
-                                            <EditFormSettings Visible="False" />
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
-
-                                        </dx:GridViewDataTextColumn>
 
                                         <dx:GridViewDataTextColumn Caption="المنصة" FieldName="userPlatform">
                                             <PropertiesTextEdit>

@@ -16,9 +16,15 @@ namespace ShabAdmin
 {
     public partial class mRealOrders : Page
     {
+        public String Key;
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            if (!IsPostBack)
+            {
+                string googleKey = System.Configuration.ConfigurationManager.AppSettings["GoogleMapsApiKey"];
+                string scriptUrl = $"https://maps.googleapis.com/maps/api/js?key={googleKey}";
+                Key = scriptUrl;
+            }
         }
 
         protected void Page_Init(object sender, EventArgs e)

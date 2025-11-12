@@ -50,7 +50,7 @@
 
 
         </script>
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDse2PDyMsk1P9u8nq8BsFvv6fWz0cLgiU"></script>
+        <script src="<%=Key%>""></script>
 
         <script>
             let maps = {};

@@ -695,7 +695,6 @@
     <Content Include="assets\animations\Preparing.json" />
     <Content Include="assets\animations\Refund.json" />
     <Content Include="assets\animations\Danger.json" />
-    <Content Include="alshaeb-bed68-firebase-adminsdk-fbsvc-b63996d507.json" />
     <Content Include="assets\animations\bike.json" />
     <None Include="packages.config" />
     <Content Include="mSite.Master" />

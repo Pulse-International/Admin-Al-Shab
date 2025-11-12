@@ -469,6 +469,10 @@
                                     Font-Size="0.77em" RightToLeft="True" OnCustomCallback="GridOrders_CustomCallback" OnBeforePerformDataSelect="GridOrders_BeforePerformDataSelect">
                                     <Settings ShowFooter="True" ShowFilterRow="True" />
 
+                                    <Styles>
+                                        <PagerBottomPanel Font-Names="Cairo" Font-Size="Large" Font-Bold="true"></PagerBottomPanel>
+                                    </Styles>
+
 
                                     <ClientSideEvents RowClick="function(s, e) {OnRowClick(e);}" />
                                     <SettingsAdaptivity AdaptivityMode="HideDataCells">
@@ -885,6 +889,9 @@ ORDER BY o.id DESC">
                                     Font-Size="0.77em" RightToLeft="True" OnCustomCallback="GridOrdersInfo_CustomCallback" OnBeforePerformDataSelect="GridOrdersInfo_BeforePerformDataSelect">
                                     <Settings ShowFooter="True" ShowFilterRow="True" />
 
+                                    <Styles>
+                                        <PagerBottomPanel Font-Names="Cairo" Font-Size="Large" Font-Bold="true"></PagerBottomPanel>
+                                    </Styles>
 
                                     <ClientSideEvents RowClick="function(s, e) {OnRowClick(e);}" />
                                     <SettingsAdaptivity AdaptivityMode="HideDataCells">
@@ -1114,11 +1121,11 @@ ORDER BY o.id DESC">
                     </ContentCollection>
                 </dx:TabPage>
 
-                <dx:TabPage Text="مستخدمين التطبيق" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="X-Large">
+                <dx:TabPage Text="مصروفات المستخدمين" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="X-Large">
                     <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="X-Large"></TabStyle>
                     <ContentCollection>
                         <dx:ContentControl>
-                           
+
                             <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
                                 <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: center; padding-top: 25px;">
                                     <dx:ASPxComboBox
@@ -1242,6 +1249,9 @@ ORDER BY o.id DESC">
                                 <dx:ASPxGridView ID="GridAppUsers" runat="server" DataSourceID="db_AppUsers" KeyFieldName="id" ClientInstanceName="GridAppUsers" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="1em" RightToLeft="True" OnHtmlDataCellPrepared="GridUsers_HtmlDataCellPrepared" OnBeforePerformDataSelect="GridAppUsers_BeforePerformDataSelect" OnCustomCallback="GridAppUsers_CustomCallback">
                                     <Settings ShowFooter="True" ShowFilterRow="True" />
 
+                                    <Styles>
+                                        <PagerBottomPanel Font-Names="Cairo" Font-Size="Large" Font-Bold="true"></PagerBottomPanel>
+                                    </Styles>
 
                                     <SettingsAdaptivity AdaptivityMode="HideDataCells">
                                     </SettingsAdaptivity>
@@ -1345,7 +1355,7 @@ ORDER BY o.id DESC">
                                                 <%# Eval("TotalAmount") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
                                             </DataItemTemplate>
                                             <EditFormSettings Visible="False" />
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" Font-Bold="true" HorizontalAlign="Center" />
                                         </dx:GridViewDataColumn>
 
                                         <dx:GridViewDataColumn Caption="عدد الطلبات" FieldName="OrderCount">
@@ -1497,8 +1507,9 @@ ORDER BY o.id DESC">
                                     u.twoAuthenticationEnabled, u.userPoints, u.isDeleted,
                                     u.FCMToken, u.userPlatform, c.countryCode,c.id
                                 HAVING 
-                                    (@Option2 = 0)
-
+                                    (
+                                        @Option2 = 0 AND SUM(CASE WHEN CAST(o.userDate AS DATE) BETWEEN @FromDate2 AND @ToDate2 THEN o.totalAmount ELSE 0 END) &gt; 0
+                                    )
                                     OR (@Option2 = 1 AND COUNT(CASE WHEN o.id IS NOT NULL 
                                         AND CAST(o.userDate AS DATE) BETWEEN @FromDate2 AND @ToDate2 
                                         THEN o.id END) &gt; 0)
@@ -1525,10 +1536,11 @@ ORDER BY o.id DESC">
                                 SelectCommand="SELECT id, description FROM [L_UserLevel]" />
 
 
+
                         </dx:ContentControl>
                     </ContentCollection>
                 </dx:TabPage>
-                <dx:TabPage Text="الفروع" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="X-Large">
+                <dx:TabPage Text="مبيعات الفروع" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="X-Large">
                     <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="X-Large"></TabStyle>
                     <ContentCollection>
                         <dx:ContentControl>
@@ -1576,17 +1588,17 @@ ORDER BY o.id DESC">
                                         Theme="Moderno">
                                         <Image Url="~/assets/img/search.png" />
                                         <ClientSideEvents Click="function(s,e){
-                                            var fromDate = dateFrom3.GetDate();
-                                            var toDate = dateTo3.GetDate();
+                                        var fromDate = dateFrom3.GetDate();
+                                        var toDate = dateTo3.GetDate();
 
-                                            if(!fromDate) fromDate = new Date(2025, 0, 1);
-                                            if(!toDate) toDate = new Date();
+                                        if(!fromDate) fromDate = new Date(2025, 0, 1);
+                                        if(!toDate) toDate = new Date();
 
-                                            var from = fromDate.toISOString().split('T')[0];
-                                            var to = toDate.toISOString().split('T')[0];
+                                        var from = fromDate.toISOString().split('T')[0];
+                                        var to = toDate.toISOString().split('T')[0];
 
-                                            GridBranches.PerformCallback(from + '|' + to);
-                                        }" />
+                                        GridBranches.PerformCallback(from + '|' + to);
+                                    }" />
 
                                     </dx:ASPxButton>
 
@@ -1603,14 +1615,14 @@ ORDER BY o.id DESC">
                                         Theme="Moderno">
                                         <Image Url="~/assets/img/reset.png" />
                                         <ClientSideEvents Click="function(s,e){
-                                            dateFrom3.SetValue(null);
-                                            dateTo3.SetValue(null);
+                                        dateFrom3.SetValue(null);
+                                        dateTo3.SetValue(null);
 
-                                            var from = new Date(2025, 0, 1).toISOString().split('T')[0];
-                                            var to = new Date().toISOString().split('T')[0];
+                                        var from = new Date(2025, 0, 1).toISOString().split('T')[0];
+                                        var to = new Date().toISOString().split('T')[0];
 
-                                            GridBranches.PerformCallback(from + '|' + to);
-                                        }" />
+                                        GridBranches.PerformCallback(from + '|' + to);
+                                    }" />
 
                                     </dx:ASPxButton>
 
@@ -1619,6 +1631,10 @@ ORDER BY o.id DESC">
 
                                 <dx:ASPxGridView ID="GridBranches" runat="server" DataSourceID="db_Branches" KeyFieldName="id" ClientInstanceName="GridBranches" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="1em" RightToLeft="True" OnCustomCallback="GridBranches_CustomCallback" OnBeforePerformDataSelect="GridBranches_BeforePerformDataSelect">
                                     <Settings ShowFooter="True" ShowFilterRow="True" />
+
+                                    <Styles>
+                                        <PagerBottomPanel Font-Names="Cairo" Font-Size="Large" Font-Bold="true"></PagerBottomPanel>
+                                    </Styles>
 
                                     <ClientSideEvents RowClick="function(s, e) {OnRowClick(e);}" RowDblClick="function(s, e) {setTimeout(function(){GridBranches.StartEditRow(MyIndex);},100);}" />
                                     <SettingsAdaptivity AdaptivityMode="HideDataCells">
@@ -1724,7 +1740,7 @@ ORDER BY o.id DESC">
                                             <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                                             <DataItemTemplate>
                                                 <a href='<%# "https://maps.google.com/?q=" 
-                                         + Eval("latitude") + "," + Eval("longitude") %>'
+                                     + Eval("latitude") + "," + Eval("longitude") %>'
                                                     target="_blank">
                                                     <%# Eval("latitude") %>
                                                 </a>
@@ -1741,7 +1757,7 @@ ORDER BY o.id DESC">
                                             <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                                             <DataItemTemplate>
                                                 <a href='<%# "https://maps.google.com/?q=" 
-                                         + Eval("latitude") + "," + Eval("longitude") %>'
+                                     + Eval("latitude") + "," + Eval("longitude") %>'
                                                     target="_blank">
                                                     <%# Eval("longitude") %>
                                                 </a>
@@ -1771,7 +1787,7 @@ ORDER BY o.id DESC">
                                                 <%# Eval("TotalSales") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
                                             </DataItemTemplate>
                                             <EditFormSettings Visible="True" />
-                                            <CellStyle HorizontalAlign="Center" VerticalAlign="Middle">
+                                            <CellStyle HorizontalAlign="Center" Font-Bold="true" VerticalAlign="Middle">
                                             </CellStyle>
                                         </dx:GridViewDataColumn>
 
@@ -1811,38 +1827,38 @@ ORDER BY o.id DESC">
                                     runat="server"
                                     ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
                                     SelectCommand="
-        SELECT 
-            b.[id], 
-            b.[name], 
-            b.[l_branchStatus],
-            b.[countryId], 
-            b.[companyId], 
-            c.[companyName],
-            b.[cityId],
-            b.[latitude], 
-            b.[longitude], 
-            b.[phone], 
-            b.[extensionNumber],
-            b.[isMain],
-            ISNULL(SUM(o.totalAmount), 0) AS TotalSales
-        FROM branches b
-        LEFT JOIN companies c ON b.companyId = c.id
-        LEFT JOIN orders o ON o.branchId = b.id AND CAST(o.userDate AS DATE) BETWEEN @FromDate4 AND @ToDate4
-        GROUP BY 
-            b.[id], 
-            b.[name], 
-            b.[l_branchStatus],
-            b.[countryId], 
-            b.[companyId], 
-            c.[companyName],
-            b.[cityId],
-            b.[latitude], 
-            b.[longitude], 
-            b.[phone], 
-            b.[extensionNumber],
-            b.[isMain]
-        ORDER BY TotalSales DESC
-    ">
+    SELECT 
+        b.[id], 
+        b.[name], 
+        b.[l_branchStatus],
+        b.[countryId], 
+        b.[companyId], 
+        c.[companyName],
+        b.[cityId],
+        b.[latitude], 
+        b.[longitude], 
+        b.[phone], 
+        b.[extensionNumber],
+        b.[isMain],
+        ISNULL(SUM(o.totalAmount), 0) AS TotalSales
+    FROM branches b
+    LEFT JOIN companies c ON b.companyId = c.id
+    LEFT JOIN orders o ON o.branchId = b.id AND CAST(o.userDate AS DATE) BETWEEN @FromDate4 AND @ToDate4
+    GROUP BY 
+        b.[id], 
+        b.[name], 
+        b.[l_branchStatus],
+        b.[countryId], 
+        b.[companyId], 
+        c.[companyName],
+        b.[cityId],
+        b.[latitude], 
+        b.[longitude], 
+        b.[phone], 
+        b.[extensionNumber],
+        b.[isMain]
+    ORDER BY TotalSales DESC
+">
                                     <SelectParameters>
                                         <asp:Parameter Name="FromDate4" Type="DateTime" />
                                         <asp:Parameter Name="ToDate4" Type="DateTime" />
@@ -1858,7 +1874,6 @@ ORDER BY o.id DESC">
 
                                 <asp:SqlDataSource ID="DB_Cities" runat="server" ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>" SelectCommand="SELECT id,cityName FROM cities"></asp:SqlDataSource>
                             </div>
-
 
                         </dx:ContentControl>
                     </ContentCollection>

@@ -183,7 +183,9 @@ namespace ShabAdmin
                 u.twoAuthenticationEnabled, u.userPoints, u.isDeleted,
                 u.FCMToken, u.userPlatform, c.countryCode, c.id
             HAVING 
-                (@Option2 = 0)
+                (  
+                    @Option2 = 0 AND SUM(CASE WHEN CAST(o.userDate AS DATE) BETWEEN @FromDate2 AND @ToDate2 THEN o.totalAmount ELSE 0 END) > 0
+                )
                 OR (@Option2 = 1 AND COUNT(CASE WHEN o.id IS NOT NULL AND o.companyId = @companyId2
                     AND CAST(o.userDate AS DATE) BETWEEN @FromDate2 AND @ToDate2 
                     THEN o.id END) > 0)
@@ -380,7 +382,9 @@ namespace ShabAdmin
                 u.twoAuthenticationEnabled, u.userPoints, u.isDeleted,
                 u.FCMToken, u.userPlatform, c.countryCode, c.id
             HAVING 
-                (@Option2 = 0)
+                (  
+                    @Option2 = 0 AND SUM(CASE WHEN CAST(o.userDate AS DATE) BETWEEN @FromDate2 AND @ToDate2 THEN o.totalAmount ELSE 0 END) > 0
+                )
                 OR (@Option2 = 1 AND COUNT(CASE WHEN o.id IS NOT NULL 
                     AND CAST(o.userDate AS DATE) BETWEEN @FromDate2 AND @ToDate2 
                     THEN o.id END) > 0)
@@ -621,7 +625,7 @@ namespace ShabAdmin
         // GridOrders filters and Privelages 
         protected void GridOrders_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
         {
-            dsOrders.DataBind();
+            GridOrders.DataBind();
         }
         protected void GridOrders_BeforePerformDataSelect(object sender, EventArgs e)
         {
@@ -1062,7 +1066,7 @@ namespace ShabAdmin
             DateTime dateTo = (DateTo3 != null && DateTo3.Date >= SqlDateTime.MinValue.Value)
                 ? DateTo3.Date
                 : defaultToDate;
-            
+
 
             db_Branches.SelectParameters["FromDate4"].DefaultValue = dateFrom.ToString("yyyy-MM-dd");
             db_Branches.SelectParameters["ToDate4"].DefaultValue = dateTo.AddDays(1).ToString("yyyy-MM-dd");

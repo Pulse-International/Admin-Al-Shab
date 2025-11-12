@@ -12,13 +12,13 @@ public class FcmSender : Page
 
     public FcmSender()
     {
-        string serviceAccountFilePath = Server.MapPath("~/alshaeb-bed68-firebase-adminsdk-fbsvc-b63996d507.json");
+        string serviceAccountFilePath = Server.MapPath("~/alshaeb-click-firebase-adminsdk-fbsvc-1c66124f5a.json");
         _googleCredential = GoogleCredential.FromFile(serviceAccountFilePath).CreateScoped("https://www.googleapis.com/auth/firebase.messaging");
     }
 
     public string Send(string usersGroup, string actionType, string token, string title, string body, string imagePath = "", string companyId = "", string productId = "")
     {
-        string projectId = "alshaeb-bed68";
+        string projectId = "alshaeb-click";
         var _httpClient = new HttpClient();
 
         var task = _googleCredential.UnderlyingCredential.GetAccessTokenForRequestAsync();

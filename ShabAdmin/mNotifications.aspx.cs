@@ -187,7 +187,7 @@ namespace ShabAdmin
                     }
                     else
                     {
-                        foreach (object[] item in selectedValues)
+                        foreach (string item in selectedValues)
                         {
                             resultFCM = senderObj.Send(usersGroup, actionType, item[0].ToString(), title, body, imagePath, companyId, productId);
                         }

@@ -302,9 +302,9 @@
 
                                                 <dx:ASPxGridView ID="GridUsersApp" runat="server" DataSourceID="db_UsersApp" KeyFieldName="id" ClientInstanceName="GridUsersApp" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="1em" RightToLeft="True" OnCustomCallback="GridUsersApp_CustomCallback" OnBeforePerformDataSelect="GridUsersApp_BeforePerformDataSelect">
                                                     <ClientSideEvents EndCallback="function(s, e) { 
-                                                          if (s.cpResult == '1') {
-                                                              //labelContent.SetText('الرجاء اختيار مستخدمين حتى يتم إرسال الإشعارات');
-                                                              //Pop_DetailsNote.Show();
+                                                          if (s.cpResult == '10') {
+                                                              labelContent.SetText('حدث خطأ أثناء إرسال الإشعارات');
+                                                              Pop_DetailsNote.Show();
                                                           }
                                                           else if (s.cpResult == '100') {
                                                               labelContent.SetText('تم إرسال الإشعارات إلى المستخدمين بنجاح');

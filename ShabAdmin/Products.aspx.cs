@@ -447,7 +447,7 @@ namespace ShabAdmin
             if (!uploadedFile.IsValid)
                 return string.Empty;
             string UploadDirectory = "/assets/uploads/";
-            string Docs = Guid.NewGuid().ToString() + ".png";
+            string Docs = Guid.NewGuid().ToString() + ".jpg";
             fileName = Docs;
             try
             {
@@ -1254,7 +1254,7 @@ namespace ShabAdmin
             if (!uploadedFile.IsValid)
                 return string.Empty;
             string UploadDirectory = "/assets/uploads/options/";
-            string Docs = Guid.NewGuid().ToString() + ".png";
+            string Docs = Guid.NewGuid().ToString() + ".jpg";
             fileName = Docs;
             try
             {
@@ -1421,7 +1421,7 @@ namespace ShabAdmin
             if (!uploadedFile.IsValid)
                 return string.Empty;
             string UploadDirectory = "/assets/uploads/extras/";
-            string Docs = Guid.NewGuid().ToString() + ".png";
+            string Docs = Guid.NewGuid().ToString() + ".jpg";
             fileName = Docs;
             try
             {

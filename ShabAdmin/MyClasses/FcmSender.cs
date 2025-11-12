@@ -98,7 +98,9 @@ public class FcmSender : Page
         var url = "https://fcm.googleapis.com/v1/projects/" + projectId + "/messages:send";
 
         var response = _httpClient.PostAsync(url, content).Result;
-        var responseString = response.Content.ReadAsStringAsync().Result;
+        string responseString = response.Content.ReadAsStringAsync().Result.ToString();
+        if (!response.IsSuccessStatusCode)
+            responseString = "Error";
 
         return responseString;
     }

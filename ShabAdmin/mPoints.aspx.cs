@@ -52,7 +52,7 @@ namespace ShabAdmin
             if (!uploadedFile.IsValid)
                 return string.Empty;
             string UploadDirectory = "/assets/uploads/points/";
-            string Docs = Guid.NewGuid().ToString() + ".png";
+            string Docs = Guid.NewGuid().ToString() + ".jpg";
             fileName = Docs;
             try
             {

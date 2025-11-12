@@ -630,7 +630,7 @@ namespace ShabAdmin
             if (!uploadedFile.IsValid)
                 return string.Empty;
             string UploadDirectory = "/assets/uploads/delivery-users/";
-            string Docs = Guid.NewGuid().ToString() + ".png";
+            string Docs = Guid.NewGuid().ToString() + ".jpg";
             fileName = Docs;
             try
             {

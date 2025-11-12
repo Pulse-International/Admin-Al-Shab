@@ -48,7 +48,7 @@ namespace ShabAdmin
             if (!uploadedFile.IsValid)
                 return string.Empty;
             string UploadDirectory = "/assets/uploads/notifications/";
-            string Docs = Guid.NewGuid().ToString() + ".png";
+            string Docs = Guid.NewGuid().ToString() + ".jpg";
             fileName = Docs;
             try
             {
@@ -137,7 +137,8 @@ namespace ShabAdmin
             {
                 List<string> fieldNames = new List<string>();
                 fieldNames.Add("FCMToken");
-                List<Object> selectedValues = GridUsersApp.GetSelectedFieldValues(fieldNames.ToArray());
+                List<object> selectedValues = GridUsersApp.GetSelectedFieldValues(fieldNames.ToArray());
+
 
                 if (selectedValues.Count > 0 || checkAll.Checked)
                 {
@@ -187,12 +188,13 @@ namespace ShabAdmin
                     }
                     else
                     {
-                        foreach (string item in selectedValues)
+                        foreach (object item in selectedValues)
                         {
-                            resultFCM = senderObj.Send(usersGroup, actionType, item[0].ToString(), title, body, imagePath, companyId, productId);
+                            resultFCM = senderObj.Send(usersGroup, actionType, item.ToString(), title, body, imagePath, companyId, productId);
+                            if (resultFCM == "Error")
+                                GridUsersApp.JSProperties["cpResult"] = "10";
                         }
                     }
-
                     GridUsersApp.JSProperties["cpResult"] = "100";
                 }
                 else

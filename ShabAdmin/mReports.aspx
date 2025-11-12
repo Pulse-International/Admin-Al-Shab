@@ -261,11 +261,20 @@
             }
             function onTabChanged(s) {
                 var idx = s.GetActiveTabIndex(); // 0-based
-                if (idx === 1 || idx === 2) {
-                    cbCheckPrivileges.PerformCallback();
-                }
+                //if (idx === 1 || idx === 2) {
+                //    cbCheckPrivileges.PerformCallback();
+                //}
             }
+            function CitiesCombo_SelectedIndexChanged(s, e) {
+                var cityId = s.GetValue();
+                var editorCity = GridBranches.GetEditor("cityId");
+                if (editorCity != null)
+                    editorCity.PerformCallback(cityId);
 
+                var editorCompany = GridBranches.GetEditor("companyId");
+                if (editorCompany != null)
+                    editorCompany.PerformCallback("cityChanged|" + cityId);
+            }
             function onSaveCustomClick(s, e) {
                 // Check if there are any pending changes
                 if (GridOffers.batchEditApi.HasChanges()) {
@@ -407,6 +416,12 @@
                                         ClientInstanceName="dateFrom"
                                         EditFormat="Date"
                                         DisplayFormatString="yyyy-MM-dd">
+                                        <ClientSideEvents ValueChanged="function(s, e) {
+                                            var fromDate = s.GetDate();
+                                            if (fromDate) {
+                                                dateTo.SetMinDate(fromDate);
+                                            }
+                                        }" />
                                     </dx:ASPxDateEdit>
 
                                     <dx:ASPxDateEdit
@@ -830,6 +845,12 @@ ORDER BY o.id DESC">
                                         Font-Bold="True"
                                         Font-Size="Medium"
                                         ClientInstanceName="dateFrom1">
+                                        <ClientSideEvents ValueChanged="function(s, e) {
+                                            var fromDate = s.GetDate();
+                                            if (fromDate) {
+                                                dateTo1.SetMinDate(fromDate);
+                                            }
+                                        }" />
                                     </dx:ASPxDateEdit>
 
                                     <dx:ASPxDateEdit
@@ -1168,6 +1189,12 @@ ORDER BY o.id DESC">
                                         Font-Bold="True"
                                         Font-Size="Medium"
                                         ClientInstanceName="dateFrom2">
+                                        <ClientSideEvents ValueChanged="function(s, e) {
+                                            var fromDate = s.GetDate();
+                                            if (fromDate) {
+                                                dateTo2.SetMinDate(fromDate);
+                                            }
+                                        }" />
                                     </dx:ASPxDateEdit>
 
                                     <dx:ASPxDateEdit
@@ -1275,7 +1302,7 @@ ORDER BY o.id DESC">
                                         <FilterControl AutoUpdatePosition="False"></FilterControl>
                                     </SettingsPopup>
 
-                                    <SettingsSearchPanel CustomEditorID="tbToolbarSearch1" />
+                                    <SettingsSearchPanel CustomEditorID="tbToolbarSearch3" />
 
                                     <SettingsExport EnableClientSideExportAPI="true" ExcelExportMode="WYSIWYG" PaperKind="A4" RightToLeft="True" />
                                     <SettingsLoadingPanel Text="Please Wait &amp;hellip;" Mode="ShowAsPopup" />
@@ -1440,7 +1467,7 @@ ORDER BY o.id DESC">
 
                                                 <dx:GridViewToolbarItem Alignment="Right" Name="toolbarItemSearch" BeginGroup="true" AdaptivePriority="2">
                                                     <Template>
-                                                        <dx:ASPxButtonEdit ID="tbToolbarSearch1" runat="server" NullText="البحث..." Width="140" Font-Names="cairo" />
+                                                        <dx:ASPxButtonEdit ID="tbToolbarSearch3" runat="server" NullText="البحث..." Width="140" Font-Names="cairo" />
                                                     </Template>
                                                 </dx:GridViewToolbarItem>
 
@@ -1547,6 +1574,12 @@ ORDER BY o.id DESC">
                                         Font-Bold="True"
                                         Font-Size="Medium"
                                         ClientInstanceName="dateFrom3">
+                                        <ClientSideEvents ValueChanged="function(s, e) {
+                                            var fromDate = s.GetDate();
+                                            if (fromDate) {
+                                                dateTo3.SetMinDate(fromDate);
+                                            }
+                                        }" />
                                     </dx:ASPxDateEdit>
 
                                     <dx:ASPxDateEdit

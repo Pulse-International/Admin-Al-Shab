@@ -203,8 +203,6 @@
     <Content Include="assets\js\plugins\perfect-scrollbar.min.js" />
     <Content Include="assets\js\plugins\smooth-scrollbar.min.js" />
     <Content Include="assets\js\plugins\world.js" />
-    <Content Include="CheckOutReturn.aspx" />
-    <Content Include="CheckOut.aspx" />
     <Content Include="mCoupons.aspx" />
     <Content Include="mLookUps.aspx" />
     <Content Include="mNotifications.aspx" />
@@ -460,20 +458,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="CheckOutReturn.aspx.cs">
-      <DependentUpon>CheckOutReturn.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="CheckOutReturn.aspx.designer.cs">
-      <DependentUpon>CheckOutReturn.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="CheckOut.aspx.cs">
-      <DependentUpon>CheckOut.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="CheckOut.aspx.designer.cs">
-      <DependentUpon>CheckOut.aspx</DependentUpon>
-    </Compile>
     <Compile Include="mCoupons.aspx.cs">
       <DependentUpon>mCoupons.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

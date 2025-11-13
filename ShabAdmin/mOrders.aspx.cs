@@ -891,7 +891,7 @@ LEFT JOIN
                             amount: requestedRefund,
                             transactionRef: transactionRef,
                             description: "Refund to card - Order #" + orderId,
-                            test: "1"
+                            test: "0"
                         );
 
                         if (result == null || result.Status != "A")

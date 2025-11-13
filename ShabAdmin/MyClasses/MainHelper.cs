@@ -223,11 +223,14 @@ public class MainHelper
 
     public static TelrResponse TelrPaymentRefund(decimal amount = 0, string transactionRef = "", string description = "", string test = "1")
     {
+        string StoreID = System.Configuration.ConfigurationManager.AppSettings["StoreID"];
+        string StoreKey = System.Configuration.ConfigurationManager.AppSettings["StoreKey"];
+
         var xmlRequest = new XDocument(
              new XDeclaration("1.0", "UTF-8", null),
              new XElement("remote",
-                 new XElement("store", "33595"),
-                 new XElement("key", "kPGFd@z5ChK~5Jkm"),
+                 new XElement("store", StoreID),
+                 new XElement("key", StoreKey),
                  new XElement("tran",
                      new XElement("type", "refund"),
                      new XElement("class", "ecom"),

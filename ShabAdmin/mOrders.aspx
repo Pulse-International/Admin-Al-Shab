@@ -88,7 +88,7 @@
                 }, 100);
             }
             // ==================== Open Popup (Both Tabs) ====================
-            function ShowRefundPopup(orderId, totalAmount, refundedAmount) {
+            function ShowRefundPopup(orderId, totalAmount, refundedAmount, paymentMethod) {
                 popupRefund.cpId = orderId;
 
                 var t = parseFloat(totalAmount) || 0;
@@ -189,6 +189,14 @@
                 }
 
                 if (typeof pageTab !== "undefined") pageTab.SetActiveTabIndex(0);
+
+                if (paymentMethod == 1 || paymentMethod == 3) {
+                    pageTab.GetTab(1).SetVisible(false);
+                    pageTab.SetActiveTabIndex(0);
+                } else {
+                    pageTab.GetTab(1).SetVisible(true);
+                }
+
                 popupRefund.Show();
             }
 
@@ -521,16 +529,18 @@
                                 ? "<span style='color: green; font-weight: bold;'>تم الإرجاع</span>"
                                 : string.Format(@"
                                     <a href='javascript:void(0);' 
-                                       onclick='ShowRefundPopup({0}, {1}, {2})' 
+                                       onclick='ShowRefundPopup({0}, {1}, {2}, {3})' 
                                        title='طلب إرجاع'>
                                         <img src='/assets/img/refund.png' alt='إرجاع' style='width: 24px; height: 24px;' />
                                     </a>",
                                     Eval("id"),
                                     Eval("totalAmount"),
-                                    Eval("refundedAmount")
+                                    Eval("refundedAmount"),
+                                    Eval("l_paymentMethodId")
                                   )
                             %>
                         </DataItemTemplate>
+
                         <EditFormSettings Visible="False" />
                         <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
                     </dx:GridViewDataColumn>

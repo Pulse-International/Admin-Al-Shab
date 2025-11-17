@@ -1,0 +1,25 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true"  CodeBehind="LSite.master.cs" Inherits="ShabAdmin.LSite" %>
+<%@ Register Assembly="DevExpress.Web.v24.1, Version=24.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Namespace="DevExpress.Web" TagPrefix="dx" %>
+
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <title> Become part of Alshaeb today
+    </title>
+</head>
+
+<body class="g-sidenav-show rtl bg-gray-200">
+    <form runat="server">
+           <asp:ContentPlaceHolder
+       ID="MainContent"
+       runat="server">
+   </asp:ContentPlaceHolder>
+    </form>
+</body>
+
+</html>

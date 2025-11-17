@@ -203,6 +203,7 @@
     <Content Include="assets\js\plugins\perfect-scrollbar.min.js" />
     <Content Include="assets\js\plugins\smooth-scrollbar.min.js" />
     <Content Include="assets\js\plugins\world.js" />
+    <Content Include="LMain_page.aspx" />
     <Content Include="mCoupons.aspx" />
     <Content Include="mLookUps.aspx" />
     <Content Include="mNotifications.aspx" />
@@ -458,6 +459,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="LMain_page.aspx.cs">
+      <DependentUpon>LMain_page.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LMain_page.aspx.designer.cs">
+      <DependentUpon>LMain_page.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="LSite.Master.cs">
+      <DependentUpon>LSite.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LSite.Master.designer.cs">
+      <DependentUpon>LSite.Master</DependentUpon>
+    </Compile>
     <Compile Include="mCoupons.aspx.cs">
       <DependentUpon>mCoupons.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -697,6 +712,7 @@
     <Content Include="assets\animations\Danger.json" />
     <Content Include="assets\animations\bike.json" />
     <Content Include="alshaeb-click-firebase-adminsdk-fbsvc-1c66124f5a.json" />
+    <Content Include="LSite.Master" />
     <None Include="packages.config" />
     <Content Include="mSite.Master" />
     <None Include="Web.Debug.config">

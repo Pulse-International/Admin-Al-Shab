@@ -494,7 +494,7 @@
                                         <EditFormSettings RowSpan="12" VisibleIndex="1" Caption=" "></EditFormSettings>
                                         <DataItemTemplate>
                                             <div style="text-align: center; width: 100%">
-                                                <img id="<%# "DocsFile-" + Eval("id") %>" src="<%# (!string.IsNullOrEmpty(Eval("offerImage").ToString()) ? Eval("offerImage") : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>" style="width: 25em; border: 1px solid #c8c8c8; border-radius: 5px;" />
+                                                <img id="<%# "DocsFile-" + Eval("id") %>" src="<%# (!string.IsNullOrEmpty(Eval("offerImage").ToString()) ? Eval("offerImage") : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>" style="width: 20em; border: 1px solid #c8c8c8; border-radius: 5px;" />
                                             </div>
                                         </DataItemTemplate>
                                         <CellStyle VerticalAlign="Middle">

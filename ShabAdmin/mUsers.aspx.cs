@@ -257,7 +257,7 @@ namespace ShabAdmin
         new SqlParameter("@id", id)
     };
 
-            if (e.NewValues["password"] == e.OldValues["password"])
+            if (e.NewValues["password"] != e.OldValues["password"])
             {
                 HashSalt hashed = MainHelper.HashPassword(plainPassword);
                 sql = @"UPDATE [usersMachine]

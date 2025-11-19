@@ -77,6 +77,44 @@
                 box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
                 padding: 0 !important;
             }
+
+            @keyframes bulbEffect {
+                0% {
+                    background-color: #3512eb;
+                    color: white;
+                    box-shadow: 0 0 5px #3512eb;
+                }
+
+                25% {
+                    background-color: #6a3cff;
+                    color: white;
+                    box-shadow: 0 0 10px #6a3cff;
+                }
+
+                50% {
+                    background-color: #9b7aff;
+                    color: white;
+                    box-shadow: 0 0 15px #9b7aff;
+                }
+
+                75% {
+                    background-color: #6a3cff;
+                    color: white;
+                    box-shadow: 0 0 10px #6a3cff;
+                }
+
+                100% {
+                    background-color: #3512eb;
+                    color: white;
+                    box-shadow: 0 0 5px #3512eb;
+                }
+            }
+
+            .bulb-button {
+                font-weight: bold;
+                transition: all 0.2s ease;
+                animation: bulbEffect 1.5s infinite;
+            }
         </style>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js"></script>
@@ -373,6 +411,9 @@
                     popupImageViewer.Show();
                 }
             }
+
+
+
         </script>
 
         <script>
@@ -459,8 +500,8 @@
 
                                         <dx:GridViewDataTextColumn Caption="رمز الدولة" FieldName="countryCode">
                                             <PropertiesTextEdit>
-                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب" >
-<RequiredField IsRequired="True"></RequiredField>
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
                                                 </ValidationSettings>
                                             </PropertiesTextEdit>
                                             <EditFormSettings Visible="False" />
@@ -470,8 +511,8 @@
 
                                         <dx:GridViewDataTextColumn Caption="الاسم الأول" FieldName="firstName">
                                             <PropertiesTextEdit>
-                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب" >
-<RequiredField IsRequired="True"></RequiredField>
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
                                                 </ValidationSettings>
                                             </PropertiesTextEdit>
                                             <EditFormSettings Visible="False" />
@@ -481,8 +522,8 @@
 
                                         <dx:GridViewDataTextColumn Caption="الاسم الأخير" FieldName="lastName">
                                             <PropertiesTextEdit>
-                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب" >
-<RequiredField IsRequired="True"></RequiredField>
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
                                                 </ValidationSettings>
                                             </PropertiesTextEdit>
                                             <EditFormSettings Visible="False" />
@@ -492,8 +533,8 @@
 
                                         <dx:GridViewDataTextColumn Caption="اسم المستخدم" FieldName="username">
                                             <PropertiesTextEdit>
-                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب" >
-<RequiredField IsRequired="True"></RequiredField>
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
                                                 </ValidationSettings>
                                             </PropertiesTextEdit>
                                             <EditFormSettings Visible="False" />
@@ -507,8 +548,8 @@
                                                     <dx:ListEditItem Text="فعال" Value="True" />
                                                     <dx:ListEditItem Text="موقوف" Value="False" />
                                                 </Items>
-                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب" >
-<RequiredField IsRequired="True"></RequiredField>
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
                                                 </ValidationSettings>
                                             </PropertiesComboBox>
                                             <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
@@ -540,8 +581,8 @@
                                                 DataSourceID="db_UserLevel"
                                                 TextField="description"
                                                 ValueField="id">
-                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب" >
-<RequiredField IsRequired="True"></RequiredField>
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
                                                 </ValidationSettings>
                                             </PropertiesComboBox>
                                         </dx:GridViewDataComboBoxColumn>
@@ -552,8 +593,8 @@
                                                     <dx:ListEditItem Text="نعم" Value="True" />
                                                     <dx:ListEditItem Text="لا" Value="False" />
                                                 </Items>
-                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب" >
-<RequiredField IsRequired="True"></RequiredField>
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
                                                 </ValidationSettings>
                                             </PropertiesComboBox>
                                             <EditFormSettings Visible="False" />
@@ -576,8 +617,8 @@
 
                                         <dx:GridViewDataTextColumn Caption="FCMToken" FieldName="FCMToken">
                                             <PropertiesTextEdit>
-                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب" >
-<RequiredField IsRequired="True"></RequiredField>
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
                                                 </ValidationSettings>
                                             </PropertiesTextEdit>
                                             <EditFormSettings Visible="False" />
@@ -587,8 +628,8 @@
 
                                         <dx:GridViewDataTextColumn Caption="المنصة" FieldName="userPlatform">
                                             <PropertiesTextEdit>
-                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب" >
-<RequiredField IsRequired="True"></RequiredField>
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
                                                 </ValidationSettings>
                                             </PropertiesTextEdit>
                                             <EditFormSettings Visible="False" />
@@ -602,8 +643,8 @@
                                                     <dx:ListEditItem Text="نعم" Value="True" />
                                                     <dx:ListEditItem Text="لا" Value="False" />
                                                 </Items>
-                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب" >
-<RequiredField IsRequired="True"></RequiredField>
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
                                                 </ValidationSettings>
                                             </PropertiesComboBox>
                                             <EditFormSettings Visible="False" />
@@ -1082,9 +1123,59 @@
                     <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="X-Large"></TabStyle>
                     <ContentCollection>
                         <dx:ContentControl>
+
+                            <script>
+
+                                function ShowASPXPopup(action, userId, existingNote) {
+                                    hfPopupAction.Set("value", action);
+                                    hfPopupUserId.Set("value", userId);
+
+                                    // إخفاء الخطأ كل مرة
+                                    lblPopupError.SetVisible(false);
+                                    lblPopupError.SetText("");
+
+                                    if (action === "approve") {
+                                        lblPopupMessage.SetText("هل أنت متأكد من الموافقة على هذا المستخدم؟");
+                                        txtPopupNote.SetVisible(false);
+                                        txtPopupNote.SetText("");
+                                    }
+                                    else if (action === "reject") {
+                                        lblPopupMessage.SetText("الرجاء كتابة سبب الرفض:");
+                                        txtPopupNote.SetVisible(true);
+                                        txtPopupNote.SetText(existingNote || "");
+                                    }
+                                    else if (action === "incomplete") {
+                                        lblPopupMessage.SetText("الرجاء كتابة الملاحظة المطلوبة:");
+                                        txtPopupNote.SetVisible(true);
+                                        txtPopupNote.SetText(existingNote || "");
+                                    }
+
+                                    popupConfirm.Show();
+                                }
+
+                                function ConfirmPopupAction() {
+                                    var action = hfPopupAction.Get("value");
+                                    var userId = hfPopupUserId.Get("value");
+                                    var note = txtPopupNote.GetText().trim();
+
+                                    // شرط الملاحظة للحالات reject & incomplete
+                                    if (action === "reject" || action === "incomplete") {
+                                        var hasLetter = /[A-Za-z\u0600-\u06FF]/.test(note);
+                                        if (!hasLetter) {
+                                            lblPopupError.SetText("الرجاء كتابة الملاحظة.");
+                                            lblPopupError.SetVisible(true);
+                                            return;
+                                        }
+                                    }
+
+                                    GridDeliveryUsers.PerformCallback(action + ":" + userId + ":" + note);
+                                    popupConfirm.Hide();
+                                }
+
+                            </script>
                             <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
 
-                                <dx:ASPxGridView ID="GridDeliveryUsers" runat="server" DataSourceID="db_DeliveryUsers" KeyFieldName="id" ClientInstanceName="GridDeliveryUsers" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="1em" RightToLeft="True" OnRowInserting="GridDeliveryUsers_RowInserting" OnRowUpdating="GridDeliveryUsers_RowUpdating" OnRowValidating="GridDeliveryUsers_RowValidating" OnCancelRowEditing="GridDeliveryUsers_CancelRowEditing" OnRowDeleting="GridDeliveryUsers_RowDeleting" OnCellEditorInitialize="GridDeliveryUsers_CellEditorInitialize" OnHtmlDataCellPrepared="GridDeliveryUsers_HtmlDataCellPrepared">
+                                <dx:ASPxGridView ID="GridDeliveryUsers" runat="server" DataSourceID="db_DeliveryUsers" KeyFieldName="id" ClientInstanceName="GridDeliveryUsers" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="0.93em" RightToLeft="True" OnRowInserting="GridDeliveryUsers_RowInserting" OnRowUpdating="GridDeliveryUsers_RowUpdating" OnRowValidating="GridDeliveryUsers_RowValidating" OnCancelRowEditing="GridDeliveryUsers_CancelRowEditing" OnRowDeleting="GridDeliveryUsers_RowDeleting" OnCellEditorInitialize="GridDeliveryUsers_CellEditorInitialize" OnHtmlDataCellPrepared="GridDeliveryUsers_HtmlDataCellPrepared" OnHtmlRowPrepared="GridDeliveryUsers_HtmlRowPrepared" OnCustomCallback="GridDeliveryUsers_CustomCallback">
                                     <Settings ShowFooter="True" ShowFilterRow="True" />
 
                                     <EditFormLayoutProperties ColCount="3">
@@ -1152,7 +1243,7 @@
                                     <Columns>
                                         <dx:GridViewDataColumn Caption="الرقم" FieldName="id">
                                             <EditFormSettings Visible="False" />
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
                                         </dx:GridViewDataColumn>
 
 
@@ -1167,7 +1258,7 @@
                                                 </ValidationSettings>
                                             </PropertiesTextEdit>
                                             <EditFormSettings ColumnSpan="3" />
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
 
                                         <dx:GridViewDataComboBoxColumn Caption="البلد" FieldName="countryId">
@@ -1181,7 +1272,7 @@
                                                     <RequiredField IsRequired="True"></RequiredField>
                                                 </ValidationSettings>
                                             </PropertiesComboBox>
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
                                         </dx:GridViewDataComboBoxColumn>
 
                                         <dx:GridViewDataTextColumn Caption="كلمة السر" FieldName="password" Visible="false" VisibleIndex="3">
@@ -1195,7 +1286,7 @@
                                                 </ValidationSettings>
                                             </PropertiesTextEdit>
                                             <EditFormSettings ColumnSpan="3" Visible="True" />
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
 
                                         <dx:GridViewDataTextColumn Caption="الاسم الاول" FieldName="firstName">
@@ -1209,7 +1300,7 @@
                                                 </ValidationSettings>
                                             </PropertiesTextEdit>
                                             <EditFormSettings ColumnSpan="3" />
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
 
                                         <dx:GridViewDataTextColumn Caption="الاسم الاخير" FieldName="lastName">
@@ -1223,7 +1314,7 @@
                                                 </ValidationSettings>
                                             </PropertiesTextEdit>
                                             <EditFormSettings ColumnSpan="3" />
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
 
                                         <dx:GridViewDataTextColumn Caption="رقم الشصي" FieldName="vehiecleVin">
@@ -1237,7 +1328,7 @@
                                                 </ValidationSettings>
                                             </PropertiesTextEdit>
                                             <EditFormSettings ColumnSpan="3" />
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
 
                                         <dx:GridViewDataTextColumn Caption="رقم السيارة" FieldName="vehiecleNo">
@@ -1269,7 +1360,7 @@
                                                 </ValidationSettings>
                                             </PropertiesComboBox>
                                             <EditFormSettings ColumnSpan="2" />
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
                                         </dx:GridViewDataComboBoxColumn>
 
                                         <dx:GridViewDataComboBoxColumn Caption="نوع المركبة" FieldName="vehiecleType">
@@ -1303,21 +1394,21 @@
                                                         <div>
                                                             <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("image") %>')">
                                                                 <img src='<%# (!string.IsNullOrEmpty(Eval("image").ToString()) ? Eval("image").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
-                                                                    style="width: 6em; border: 1px solid #ccc; border-radius: 5px;" />
+                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
                                                             </a>
                                                             <div style="margin-top: 5px;">الصورة الشخصية</div>
                                                         </div>
                                                         <div>
                                                             <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("idFrontPicture") %>')">
                                                                 <img src='<%# (!string.IsNullOrEmpty(Eval("idFrontPicture").ToString()) ? Eval("idFrontPicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
-                                                                    style="width: 6em; border: 1px solid #ccc; border-radius: 5px;" />
+                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
                                                             </a>
                                                             <div style="margin-top: 5px;">الهوية من الأمام</div>
                                                         </div>
                                                         <div>
                                                             <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("idBackPicture") %>')">
                                                                 <img src='<%# (!string.IsNullOrEmpty(Eval("idBackPicture").ToString()) ? Eval("idBackPicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
-                                                                    style="width: 6em; border: 1px solid #ccc; border-radius: 5px;" />
+                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
                                                             </a>
                                                             <div style="margin-top: 5px;">الهوية من الخلف</div>
                                                         </div>
@@ -1328,21 +1419,21 @@
                                                         <div>
                                                             <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("carPicture") %>')">
                                                                 <img src='<%# (!string.IsNullOrEmpty(Eval("carPicture").ToString()) ? Eval("carPicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
-                                                                    style="width: 6em; border: 1px solid #ccc; border-radius: 5px;" />
+                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
                                                             </a>
                                                             <div style="margin-top: 5px;">صورة السيارة</div>
                                                         </div>
                                                         <div>
                                                             <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("carLicensePicture") %>')">
                                                                 <img src='<%# (!string.IsNullOrEmpty(Eval("carLicensePicture").ToString()) ? Eval("carLicensePicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
-                                                                    style="width: 6em; border: 1px solid #ccc; border-radius: 5px;" />
+                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
                                                             </a>
                                                             <div style="margin-top: 5px;">رخصة السيارة</div>
                                                         </div>
                                                         <div>
                                                             <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("licensePicture") %>')">
                                                                 <img src='<%# (!string.IsNullOrEmpty(Eval("licensePicture").ToString()) ? Eval("licensePicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
-                                                                    style="width: 6em; border: 1px solid #ccc; border-radius: 5px;" />
+                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
                                                             </a>
                                                             <div style="margin-top: 5px;">رخصة القيادة</div>
                                                         </div>
@@ -1530,7 +1621,51 @@
                                         </dx:GridViewDataColumn>
 
 
-                                        <dx:GridViewDataTextColumn Caption="" ShowInCustomizationForm="True" Width="100px" VisibleIndex="999">
+                                        <dx:GridViewDataComboBoxColumn Caption="حالة التسجيل" FieldName="l_DeliveryStatusId">
+                                            <EditFormSettings Visible="False" />
+                                            <PropertiesComboBox
+                                                DataSourceID="db_L_DeliveryStatus"
+                                                TextField="description"
+                                                ValueField="id">
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesComboBox>
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+                                        </dx:GridViewDataComboBoxColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="ملاحظة التسجيل">
+                                            <DataItemTemplate>
+                                                <%# 
+                                                    !string.IsNullOrEmpty(Eval("rejectNote")?.ToString()) 
+                                                    ? Eval("rejectNote") 
+                                                    : Eval("incompleteNote")
+                                                %>
+                                            </DataItemTemplate>
+                                            <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="حالة التسجيل" Width="220px" VisibleIndex="999">
+                                            <DataItemTemplate>
+
+                                                <dx:ASPxLabel ID="lblStatus" runat="server" Font-Names="Cairo"></dx:ASPxLabel>
+
+                                                <dx:ASPxLabel ID="lblUpdated" runat="server" Font-Names="Cairo" ForeColor="#007bff" Font-Bold="True"></dx:ASPxLabel>
+
+                                                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 5px;">
+                                                    <dx:ASPxButton ID="btnApprove" runat="server" Text="موافقة" Width="100%" Theme="Material" AutoPostBack="false" BackColor="Green" Font-Names="Cairo" />
+                                                    <dx:ASPxButton ID="btnReject" runat="server" Text="رفض" Width="100%" Theme="Material" AutoPostBack="false" BackColor="Red" Font-Names="Cairo" />
+
+                                                    <dx:ASPxButton ID="btnIncomplete" runat="server" Text="غير مكتمل" Width="100%" Theme="Material" AutoPostBack="false" Font-Names="Cairo" />
+
+                                                    <dx:ASPxButton ID="btnIncompleteBulb" runat="server" Text="غير مكتمل" Width="100%" Theme="Material" AutoPostBack="false"
+                                                        Font-Names="Cairo" CssClass="bulb-button" ClientVisible="False" />
+                                                </div>
+                                            </DataItemTemplate>
+                                        </dx:GridViewDataTextColumn>
+
+
+                                        <dx:GridViewDataTextColumn Caption="" ShowInCustomizationForm="True" Width="15%" VisibleIndex="999">
                                             <EditFormSettings Visible="False" />
                                             <DataItemTemplate>
                                                 <div style="width: 100%; float: left; text-align: center">
@@ -1580,7 +1715,7 @@
                                 ID="db_DeliveryUsers"
                                 runat="server"
                                 ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                                SelectCommand="SELECT id, username, userPicture AS image, carPicture ,carLicensePicture ,idFrontPicture,idBackPicture,licensePicture, password, firstName, lastName, vehiecleType, isActive, vehiecleVin, vehiecleNo ,isOnline,countryId FROM [usersDelivery]"
+                                SelectCommand="SELECT id, username, userPicture AS image, carPicture ,carLicensePicture ,idFrontPicture,idBackPicture,licensePicture, password, firstName, lastName, vehiecleType, isActive, vehiecleVin, vehiecleNo ,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated,isOnline,countryId FROM [usersDelivery] order by l_deliveryStatus "
                                 InsertCommand="INSERT INTO [usersDelivery] 
                                     (username, password, storedsalt, firstName, lastName, isActive, vehiecleType, userPicture ,carPicture,carLicensePicture,idFrontPicture,idBackPicture,licensePicture,vehiecleNo,vehiecleVin,isOnline,countryId, userDate)
                                     VALUES 
@@ -1651,6 +1786,12 @@
                                 </DeleteParameters>
                             </asp:SqlDataSource>
 
+                            <asp:SqlDataSource
+                                ID="db_L_DeliveryStatus"
+                                runat="server"
+                                ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
+                                SelectCommand="SELECT id, description FROM [l_DeliveryStatus]" />
+
                             <dx:ASPxPopupControl ID="popupImageViewer" runat="server"
                                 ClientInstanceName="popupImageViewer"
                                 HeaderText="عرض الصورة"
@@ -1673,14 +1814,68 @@
                                             <img id="popupImage" runat="server" clientidmode="Static"
                                                 src="/assets/uploads/noFile.png"
                                                 style="max-width: 90vw; max-height: 80vh; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);" />
-                                        &nbsp;</div>
+                                            &nbsp;
+                                        </div>
                                     </dx:PopupControlContentControl>
                                 </ContentCollection>
                             </dx:ASPxPopupControl>
 
+                            <dx:ASPxPopupControl ID="popupConfirm" runat="server" Modal="True"
+                                ClientInstanceName="popupConfirm"
+                                PopupHorizontalAlign="WindowCenter"
+                                PopupVerticalAlign="WindowCenter"
+                                CloseAction="CloseButton"
+                                HeaderText="تأكيد الإجراء"
+                                Width="400px"
+                                Font-Names="Cairo">
 
+                                <ContentCollection>
+                                    <dx:PopupControlContentControl runat="server" Font-Names="Cairo">
 
+                                        <dx:ASPxLabel ID="lblPopupMessage" runat="server"
+                                            Text=""
+                                            Font-Names="Cairo"
+                                            ClientInstanceName="lblPopupMessage"
+                                            Width="100%">
+                                        </dx:ASPxLabel>
 
+                                        <dx:ASPxLabel ID="lblPopupError" runat="server"
+                                            Text=""
+                                            Font-Names="Cairo"
+                                            ClientInstanceName="lblPopupError"
+                                            Width="100%"
+                                            ForeColor="Red"
+                                            ClientVisible="False">
+                                        </dx:ASPxLabel>
+
+                                        <br />
+
+                                        <dx:ASPxMemo ID="txtPopupNote" runat="server"
+                                            Width="100%" Height="90px"
+                                            Font-Names="Cairo"
+                                            ClientInstanceName="txtPopupNote"
+                                            ClientVisible="False">
+                                        </dx:ASPxMemo>
+
+                                        <br />
+                                        <br />
+
+                                        <dx:ASPxButton ID="btnConfirmAction" runat="server" Text="نعم" AutoPostBack="false"
+                                            Font-Names="Cairo">
+                                            <ClientSideEvents Click="function(s,e){ ConfirmPopupAction(); }" />
+                                        </dx:ASPxButton>
+
+                                        <dx:ASPxButton ID="btnCancelPopup" runat="server" Text="إلغاء" AutoPostBack="false"
+                                            Font-Names="Cairo">
+                                            <ClientSideEvents Click="function(s,e){ popupConfirm.Hide(); }" />
+                                        </dx:ASPxButton>
+
+                                        <dx:ASPxHiddenField ID="hfPopupAction" runat="server" ClientInstanceName="hfPopupAction" />
+                                        <dx:ASPxHiddenField ID="hfPopupUserId" runat="server" ClientInstanceName="hfPopupUserId" />
+
+                                    </dx:PopupControlContentControl>
+                                </ContentCollection>
+                            </dx:ASPxPopupControl>
 
                             <dx:ASPxPopupControl runat="server" ID="Pop_Del_usersDelivery"
                                 PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter"

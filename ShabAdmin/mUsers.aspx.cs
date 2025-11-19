@@ -6,6 +6,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.IO;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using static MainHelper;
 
 
@@ -33,7 +34,7 @@ namespace ShabAdmin
             {
                 db_DeliveryUsers.SelectCommand = @"
             SELECT id, username, userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
-                   licensePicture, password, firstName, lastName, vehiecleType, isActive, vehiecleVin, vehiecleNo, 
+                   licensePicture, password, firstName, lastName, vehiecleType, isActive, vehiecleVin,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated vehiecleNo, 
                    isOnline, countryId
             FROM [usersDelivery]
             WHERE countryId = @countryId";
@@ -91,7 +92,7 @@ namespace ShabAdmin
             {
                 db_DeliveryUsers.SelectCommand = @"
             SELECT id, username, userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
-                   licensePicture, password, firstName, lastName, vehiecleType, isActive, vehiecleVin, vehiecleNo, 
+                   licensePicture, password, firstName, lastName, vehiecleType, isActive,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated, vehiecleVin, vehiecleNo, 
                    isOnline, countryId
             FROM [usersDelivery]
             WHERE countryId = @countryId";
@@ -146,7 +147,7 @@ namespace ShabAdmin
                 // No filtering
                 db_DeliveryUsers.SelectCommand = @"
             SELECT id, username, userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
-                   licensePicture, password, firstName, lastName, vehiecleType, isActive, vehiecleVin, vehiecleNo, 
+                   licensePicture, password, firstName, lastName, vehiecleType,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated, isActive, vehiecleVin, vehiecleNo, 
                    isOnline, countryId
             FROM [usersDelivery]";
 
@@ -541,7 +542,7 @@ namespace ShabAdmin
         new SqlParameter("@id", id)
     };
 
-            if (e.NewValues["password"] == e.OldValues["password"])
+            if (e.NewValues["password"] != e.OldValues["password"])
             {
                 HashSalt hashed = MainHelper.HashPassword(plainPassword);
                 sql = @"UPDATE [usersDelivery]
@@ -800,6 +801,112 @@ namespace ShabAdmin
             }
 
             return markup;
+        }
+
+        protected void GridDeliveryUsers_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            string[] parts = e.Parameters.Split(':');
+
+            string action = parts[0];
+            int userId = int.Parse(parts[1]);
+            string note = parts.Length > 2 ? parts[2] : "";
+
+            using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
+            {
+                conn.Open();
+                SqlCommand cmd = null;
+
+                switch (action)
+                {
+                    case "approve":
+                        cmd = new SqlCommand(
+                            "UPDATE usersDelivery SET l_deliveryStatusId=@status WHERE id=@id", conn);
+                        cmd.Parameters.AddWithValue("@status", 3);
+                        break;
+
+                    case "reject":
+                        cmd = new SqlCommand(
+                            "UPDATE usersDelivery SET l_deliveryStatusId=@status, rejectNote=@note WHERE id=@id", conn);
+                        cmd.Parameters.AddWithValue("@status", 4);
+                        cmd.Parameters.AddWithValue("@note", note);
+                        break;
+
+                    case "incomplete":
+                        cmd = new SqlCommand(
+                            "UPDATE usersDelivery SET l_deliveryStatusId=@status, incompleteNote=@note WHERE id=@id", conn);
+                        cmd.Parameters.AddWithValue("@status", 2);
+                        cmd.Parameters.AddWithValue("@note", note);
+                        break;
+                }
+
+                cmd.Parameters.AddWithValue("@id", userId);
+                cmd.ExecuteNonQuery();
+            }
+
+            GridDeliveryUsers.DataBind();
+        }
+
+        protected void GridDeliveryUsers_HtmlRowPrepared(object sender, ASPxGridViewTableRowEventArgs e)
+        {
+            if (e.RowType != DevExpress.Web.GridViewRowType.Data) return;
+
+            int statusId = Convert.ToInt32(GridDeliveryUsers.GetRowValues(e.VisibleIndex, "l_DeliveryStatusId"));
+            int recordId = Convert.ToInt32(GridDeliveryUsers.GetRowValues(e.VisibleIndex, "id"));
+            int isUpdated = Convert.ToInt32(GridDeliveryUsers.GetRowValues(e.VisibleIndex, "isUpdated"));
+
+            ASPxButton btnApprove = (ASPxButton)GridDeliveryUsers.FindRowCellTemplateControl(e.VisibleIndex, null, "btnApprove");
+            ASPxButton btnReject = (ASPxButton)GridDeliveryUsers.FindRowCellTemplateControl(e.VisibleIndex, null, "btnReject");
+            ASPxButton btnIncomplete = (ASPxButton)GridDeliveryUsers.FindRowCellTemplateControl(e.VisibleIndex, null, "btnIncomplete");
+            ASPxButton btnIncompleteBulb = (ASPxButton)GridDeliveryUsers.FindRowCellTemplateControl(e.VisibleIndex, null, "btnIncompleteBulb");
+            ASPxLabel lblStatus = (ASPxLabel)GridDeliveryUsers.FindRowCellTemplateControl(e.VisibleIndex, null, "lblStatus");
+            ASPxLabel lblUpdated = (ASPxLabel)GridDeliveryUsers.FindRowCellTemplateControl(e.VisibleIndex, null, "lblUpdated");
+
+            // إعدادات الأزرار حسب الحالة
+            if (statusId == 3)
+            {
+                lblStatus.Text = "تم الموافقة";
+                lblStatus.ForeColor = System.Drawing.Color.FromArgb(0x28, 0xa7, 0x45);
+                lblStatus.Font.Bold = true;
+                lblStatus.Font.Size = 15;
+                lblStatus.Font.Name = "Cairo";
+
+                btnApprove.Visible = btnReject.Visible = btnIncomplete.Visible = btnIncompleteBulb.ClientVisible = false;
+                lblUpdated.Text = "";
+            }
+            else if (statusId == 4)
+            {
+                lblStatus.Text = "مرفوض";
+                lblStatus.ForeColor = System.Drawing.Color.FromArgb(0xdc, 0x35, 0x45);
+                lblStatus.Font.Bold = true;
+                lblStatus.Font.Size = 15;
+                lblStatus.Font.Name = "Cairo";
+
+                btnApprove.Visible = btnReject.Visible = btnIncomplete.Visible = btnIncompleteBulb.ClientVisible = false;
+                lblUpdated.Text = "";
+            }
+            else
+            {
+                lblStatus.Text = "";
+
+                btnApprove.ClientSideEvents.Click = $"function(s,e){{ ShowASPXPopup('approve',{recordId}); }}";
+                btnReject.ClientSideEvents.Click = $"function(s,e){{ ShowASPXPopup('reject',{recordId}); }}";
+
+                // إذا المستخدم حدث بياناته
+                if (statusId == 2 && isUpdated == 1)
+                {
+                    lblUpdated.Text = "قام المستخدم بتحديث بياناته";
+                    btnIncomplete.Visible = false;
+                    btnIncompleteBulb.ClientVisible = true;
+                    btnIncompleteBulb.ClientSideEvents.Click = $"function(s,e){{ ShowASPXPopup('incomplete',{recordId}); }}";
+                }
+                else
+                {
+                    lblUpdated.Text = "";
+                    btnIncomplete.Visible = true;
+                    btnIncompleteBulb.ClientVisible = false;
+                    btnIncomplete.ClientSideEvents.Click = $"function(s,e){{ ShowASPXPopup('incomplete',{recordId}); }}";
+                }
+            }
         }
 
 

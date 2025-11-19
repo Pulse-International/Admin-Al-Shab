@@ -213,6 +213,15 @@ namespace ShabAdmin
         protected global::System.Web.UI.WebControls.SqlDataSource db_DeliveryUsers;
 
         /// <summary>
+        /// db_L_DeliveryStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource db_L_DeliveryStatus;
+
+        /// <summary>
         /// popupImageViewer control.
         /// </summary>
         /// <remarks>
@@ -229,6 +238,78 @@ namespace ShabAdmin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlImage popupImage;
+
+        /// <summary>
+        /// popupConfirm control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxPopupControl popupConfirm;
+
+        /// <summary>
+        /// lblPopupMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxLabel lblPopupMessage;
+
+        /// <summary>
+        /// lblPopupError control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxLabel lblPopupError;
+
+        /// <summary>
+        /// txtPopupNote control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxMemo txtPopupNote;
+
+        /// <summary>
+        /// btnConfirmAction control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton btnConfirmAction;
+
+        /// <summary>
+        /// btnCancelPopup control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton btnCancelPopup;
+
+        /// <summary>
+        /// hfPopupAction control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxHiddenField hfPopupAction;
+
+        /// <summary>
+        /// hfPopupUserId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxHiddenField hfPopupUserId;
 
         /// <summary>
         /// Pop_Del_usersDelivery control.

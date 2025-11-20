@@ -834,8 +834,10 @@ LEFT JOIN
                     {
                         string getOrderSql = @"
                 SELECT o.username, o.totalAmount, o.refundedAmount, 
-                       o.realTotalAmount, o.realTax, o.transactionRef, o.l_refundType
+                       o.realTotalAmount, o.realTax, pa.transactionRef AS paymentTR,o.transactionRef, o.l_refundType
                 FROM Orders o
+                LEFT JOIN 
+                    [payments] pa ON o.id = pa.orderId
                 WHERE o.id = @orderId";
 
                         string username = "", transactionRef = "";
@@ -857,7 +859,7 @@ LEFT JOIN
                                 username = r["username"]?.ToString() ?? "";
                                 totalAmount = r["totalAmount"] == DBNull.Value ? 0m : Convert.ToDecimal(r["totalAmount"]);
                                 refundedAmount = r["refundedAmount"] == DBNull.Value ? 0m : Convert.ToDecimal(r["refundedAmount"]);
-                                transactionRef = r["transactionRef"]?.ToString() ?? "";
+                                transactionRef = r["paymentTR"]?.ToString() ?? "";
                                 refundType = r["l_refundType"] == DBNull.Value ? 0 : Convert.ToInt32(r["l_refundType"]);
                             }
                         }

@@ -133,9 +133,8 @@
                     chkWallet.disabled = (available <= 0);
                 }
 
-                // ==================== Tab 2: Card Refund ====================
                 var RefundCard = 0;
-                var isRefundedBefore = r > 0; // يوجد إرجاع سابق؟
+                var isRefundedBefore = r > 0; // هل يوجد إرجاع سابق؟
 
                 if (isRefundedBefore) {
                     RefundCard = r;
@@ -143,14 +142,20 @@
                     RefundCard = available;
                 }
 
+                // تثبيت القيمة لتكون 3 خانات
+                RefundCard = parseFloat(RefundCard.toFixed(3));
+
                 spinRefundCardQty.SetMaxValue(RefundCard);
-                spinRefundCardQty.SetValue(RefundCard > 0 ? RefundCard : 0);
+
+                // القيمة داخل SpinEdit يجب أن تكون 3 خانات كذلك
+                spinRefundCardQty.SetValue(RefundCard > 0 ? parseFloat(RefundCard.toFixed(3)) : 0);
 
                 var txtCard = document.getElementById("maxRefundTextCard");
                 var chkCard = document.getElementById("chkMaxRefundCard");
                 var btnCard = document.getElementById("btnConfirmRefundCard");
 
                 if (isRefundedBefore) {
+
                     spinRefundCardQty.SetEnabled(false);
 
                     if (chkCard) {
@@ -164,15 +169,19 @@
                         btnCard.style.cursor = "not-allowed";
                     }
 
+                    // ✔ 3 خانات بعد النقطة
                     if (txtCard) {
-                        txtCard.innerText = "الحد الأقصى الممكن إرجاعه: " + RefundCard.toFixed(2) + " دينار";
+                        txtCard.innerText = "الحد الأقصى الممكن إرجاعه: " + RefundCard.toFixed(3) + " دينار";
                         txtCard.style.color = "#28a745";
                     }
+
                 } else {
+
                     spinRefundCardQty.SetEnabled(true);
 
+                    // ✔ 3 خانات بعد النقطة
                     if (txtCard) {
-                        txtCard.innerText = "الحد الأقصى الممكن إرجاعه: " + RefundCard.toFixed(2) + " دينار";
+                        txtCard.innerText = "الحد الأقصى الممكن إرجاعه: " + RefundCard.toFixed(3) + " دينار";
                         txtCard.style.color = "#d9534f";
                     }
 

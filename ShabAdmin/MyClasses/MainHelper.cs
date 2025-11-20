@@ -236,7 +236,7 @@ public class MainHelper
                      new XElement("type", "refund"),
                      new XElement("class", "ecom"),
                      new XElement("currency", "JOD"),
-                     new XElement("amount", amount.ToString("0.##")),
+                     new XElement("amount", amount.ToString("0.###")),
                      new XElement("ref", transactionRef),
                      new XElement("test", test)
                  )

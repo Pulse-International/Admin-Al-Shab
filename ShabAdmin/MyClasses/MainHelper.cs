@@ -317,8 +317,11 @@ public class MainHelper
             var request = new HttpRequestMessage(HttpMethod.Post,
                 "https://zsms.jo.zain.com/core/user/rest/user/generateintegrationtoken");
 
-            request.Headers.Add("username", "962791448258");
-            request.Headers.Add("password", "Salah@2025");
+            var smsUsername = ConfigurationManager.AppSettings["SmsUsername"];
+            var smsPassword = ConfigurationManager.AppSettings["SmsPassword"];
+
+            request.Headers.Add("username", smsUsername);
+            request.Headers.Add("password", smsPassword);
 
             var response = await client.SendAsync(request);
             var content = await response.Content.ReadAsStringAsync();

@@ -38,7 +38,7 @@ namespace ShabAdmin
             {
                 db_DeliveryUsers.SelectCommand = @"
             SELECT id, username, userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
-                   licensePicture, password, firstName, lastName, vehiecleType, isActive, vehiecleVin,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated vehiecleNo, 
+                   licensePicture, password, firstName, lastName, l_vehicleType, isActive, vehicleVin,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated vehicleNo, 
                    isOnline, countryId
             FROM [usersDelivery]
             WHERE countryId = @countryId";
@@ -96,7 +96,7 @@ namespace ShabAdmin
             {
                 db_DeliveryUsers.SelectCommand = @"
             SELECT id, username, userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
-                   licensePicture, password, firstName, lastName, vehiecleType, isActive,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated, vehiecleVin, vehiecleNo, 
+                   licensePicture, password, firstName, lastName, l_vehicleType, isActive,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated, vehicleVin, vehicleNo, 
                    isOnline, countryId
             FROM [usersDelivery]
             WHERE countryId = @countryId";
@@ -151,7 +151,7 @@ namespace ShabAdmin
                 // No filtering
                 db_DeliveryUsers.SelectCommand = @"
             SELECT id, username, userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
-                   licensePicture, password, firstName, lastName, vehiecleType,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated, isActive, vehiecleVin, vehiecleNo, 
+                   licensePicture, password, firstName, lastName, l_vehicleType,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated, isActive, vehicleVin, vehicleNo, 
                    isOnline, countryId
             FROM [usersDelivery]";
 
@@ -498,8 +498,8 @@ namespace ShabAdmin
             string username = e.NewValues["username"]?.ToString();
             string plainPassword = e.NewValues["password"]?.ToString();
             string firstName = e.NewValues["firstName"]?.ToString();
-            string vehiecleVin = e.NewValues["vehiecleVin"]?.ToString();
-            string vehiecleNo = e.NewValues["vehiecleNo"]?.ToString();
+            string vehicleVin = e.NewValues["vehicleVin"]?.ToString();
+            string vehicleNo = e.NewValues["vehicleNo"]?.ToString();
             string image = l_item_file.Text.ToString();
             string carPicture = l_car_file.Text.ToString();
             string carLicensePicture = l_carLicense_file.Text.ToString();
@@ -507,7 +507,7 @@ namespace ShabAdmin
             string idBackPicture = l_idBack_file.Text.ToString();
             string licensePicture = l_license_file.Text.ToString();
             string lastName = e.NewValues["lastName"]?.ToString();
-            string vehiecleType = e.NewValues["vehiecleType"]?.ToString();
+            string l_vehicleType = e.NewValues["l_vehicleType"]?.ToString();
             bool isActive = Convert.ToBoolean(e.NewValues["isActive"]);
 
             /////////////
@@ -533,10 +533,10 @@ namespace ShabAdmin
         new SqlParameter("@username", username),
         new SqlParameter("@firstName", firstName),
         new SqlParameter("@lastName", lastName),
-        new SqlParameter("@vehiecleType", vehiecleType),
+        new SqlParameter("@l_vehicleType", l_vehicleType),
         new SqlParameter("@isActive", isActive),
-        new SqlParameter("@vehiecleVin", vehiecleVin),
-        new SqlParameter("@vehiecleNo", vehiecleNo),
+        new SqlParameter("@vehicleVin", vehicleVin),
+        new SqlParameter("@vehicleNo", vehicleNo),
         new SqlParameter("@image", image),
         new SqlParameter("@carPicture", carPicture),
         new SqlParameter("@carLicensePicture", carLicensePicture),
@@ -555,11 +555,11 @@ namespace ShabAdmin
                     storedsalt = @storedsalt,
                     firstName = @firstName,
                     lastName = @lastName,
-                    vehiecleNo = @vehiecleNo,
-                    vehiecleVin = @vehiecleVin,
+                    vehicleNo = @vehicleNo,
+                    vehicleVin = @vehicleVin,
                     isActive = @isActive,
                     userPicture = @image,
-                    vehiecleType = @vehiecleType,
+                    l_vehicleType = @l_vehicleType,
                     carLicensePicture = @carLicensePicture,
                     idFrontPicture = @idFrontPicture,
                     idBackPicture = @idBackPicture,
@@ -575,11 +575,11 @@ namespace ShabAdmin
                 SET username = @username,
                     firstName = @firstName,
                     lastName = @lastName,
-                    vehiecleNo = @vehiecleNo,
-                    vehiecleVin = @vehiecleVin,
+                    vehicleNo = @vehicleNo,
+                    vehicleVin = @vehicleVin,
                     isActive = @isActive,
                     userPicture = @image,
-                    vehiecleType = @vehiecleType,
+                    l_vehicleType = @l_vehicleType,
                     carLicensePicture = @carLicensePicture,
                     idFrontPicture = @idFrontPicture,
                     idBackPicture = @idBackPicture,
@@ -769,9 +769,9 @@ namespace ShabAdmin
             }
         }
 
-        protected string GetLottieMarkup(object vehiecleType)
+        protected string GetLottieMarkup(object l_vehicleType)
         {
-            string type = vehiecleType?.ToString();
+            string type = l_vehicleType?.ToString();
             string markup = "";
 
             if (type == "1")

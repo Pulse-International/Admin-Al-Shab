@@ -375,7 +375,7 @@ namespace ShabAdmin
                 {
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(@"
-                    SELECT ol.latitude, ol.longitude, u.vehiecleType
+                    SELECT ol.latitude, ol.longitude, u.l_vehicleType
                         FROM ordersLocation ol
                         JOIN Orders o ON ol.orderId = o.id
                         JOIN usersDelivery u ON o.usersDeliveryId = u.id
@@ -391,7 +391,7 @@ namespace ShabAdmin
                         {
                             lat = Convert.ToString(reader["latitude"]),
                             lng = Convert.ToString(reader["longitude"]),
-                            vehiecleType = Convert.ToString(reader["vehiecleType"]),
+                            l_vehicleType = Convert.ToString(reader["l_vehicleType"]),
                             mapId = "map_" + locationId,
                             title = "عنوان الطلب",
                             city = "عمّان",
@@ -435,7 +435,7 @@ namespace ShabAdmin
                 ol.orderId,
                 u.firstName,
                 u.lastName,
-                u.vehiecleType
+                u.l_vehicleType
             FROM ordersLocation ol
             JOIN Orders o ON ol.orderId = o.id
             JOIN usersDelivery u ON o.usersDeliveryId = u.id
@@ -451,7 +451,7 @@ namespace ShabAdmin
                             longitude = reader["longitude"].ToString(),
                             orderId = reader["orderId"].ToString(),
                             firstName = reader["firstName"].ToString(),
-                            vehiecleType = reader["vehiecleType"].ToString(),
+                            l_vehicleType = reader["l_vehicleType"].ToString(),
                             lastName = reader["lastName"].ToString()
                         });
                     }

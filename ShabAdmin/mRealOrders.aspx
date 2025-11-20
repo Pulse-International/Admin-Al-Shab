@@ -252,7 +252,7 @@
            }
 
            // ✅ اختر صورة الدراجة أو السيارة حسب نوع المركبة
-           var imageUrl = result.vehiecleType === '2'
+           var imageUrl = result.l_vehicleType === '2'
                ? '/assets/animations/bike.png'
                : '/assets/animations/WhiteCar.png';
 
@@ -706,11 +706,11 @@
                                         const last = lastPositions1[id];
                                         const rotation = last ? calculateBearing(last, pos) : 0;
 
-                                        const imageUrl = loc.vehiecleType === "2"
+                                        const imageUrl = loc.l_vehicleType === "2"
                                             ? "/assets/animations/bike.png"
                                             : "/assets/animations/WhiteCar.png";
 
-                                        const isBike = loc.vehiecleType === "2";
+                                        const isBike = loc.l_vehicleType === "2";
 
                                         if (!driverOverlays[id]) {
                                             const overlay = new RotatingCarOverlay(pos, driversMap, imageUrl, rotation, isBike);

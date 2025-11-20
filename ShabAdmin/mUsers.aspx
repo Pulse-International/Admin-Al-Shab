@@ -1215,9 +1215,9 @@
                                                     <dx:GridViewColumnLayoutItem ColumnName="lastName" />
                                                     <dx:GridViewColumnLayoutItem ColumnName="password" />
                                                     <dx:GridViewColumnLayoutItem ColumnName="isActive" />
-                                                    <dx:GridViewColumnLayoutItem ColumnName="vehiecleType" />
-                                                    <dx:GridViewColumnLayoutItem ColumnName="vehiecleNo" />
-                                                    <dx:GridViewColumnLayoutItem ColumnName="vehiecleVin" />
+                                                    <dx:GridViewColumnLayoutItem ColumnName="l_vehicleType" />
+                                                    <dx:GridViewColumnLayoutItem ColumnName="vehicleNo" />
+                                                    <dx:GridViewColumnLayoutItem ColumnName="vehicleVin" />
                                                 </Items>
                                             </dx:GridViewLayoutGroup>
 
@@ -1344,7 +1344,7 @@
                                             <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
 
-                                        <dx:GridViewDataTextColumn Caption="رقم الشصي" FieldName="vehiecleVin">
+                                        <dx:GridViewDataTextColumn Caption="رقم الشصي" FieldName="vehicleVin">
                                             <PropertiesTextEdit>
                                                 <ValidationSettings
                                                     RequiredField-IsRequired="true"
@@ -1358,7 +1358,7 @@
                                             <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
 
-                                        <dx:GridViewDataTextColumn Caption="رقم السيارة" FieldName="vehiecleNo">
+                                        <dx:GridViewDataTextColumn Caption="رقم السيارة" FieldName="vehicleNo">
                                             <PropertiesTextEdit>
                                                 <ValidationSettings
                                                     RequiredField-IsRequired="true"
@@ -1390,7 +1390,7 @@
                                             <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
                                         </dx:GridViewDataComboBoxColumn>
 
-                                        <dx:GridViewDataComboBoxColumn Caption="نوع المركبة" FieldName="vehiecleType">
+                                        <dx:GridViewDataComboBoxColumn Caption="نوع المركبة" FieldName="l_vehicleType">
                                             <PropertiesComboBox ValueType="System.Int32">
                                                 <Items>
                                                     <dx:ListEditItem Text="سيارة" Value="1" />
@@ -1407,7 +1407,7 @@
                                             <EditFormSettings ColumnSpan="2" />
                                             <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
                                             <DataItemTemplate>
-                                                <%# GetLottieMarkup(Eval("vehiecleType")) %>
+                                                <%# GetLottieMarkup(Eval("l_vehicleType")) %>
                                             </DataItemTemplate>
                                         </dx:GridViewDataComboBoxColumn>
 
@@ -1743,11 +1743,11 @@
                                 ID="db_DeliveryUsers"
                                 runat="server"
                                 ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                                SelectCommand="SELECT id, username, userPicture AS image, carPicture ,carLicensePicture ,idFrontPicture,idBackPicture,licensePicture, password, firstName, lastName, vehiecleType, isActive, vehiecleVin, vehiecleNo ,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated,isOnline,countryId FROM [usersDelivery] order by l_deliveryStatus "
+                                SelectCommand="SELECT id, username, userPicture AS image, carPicture ,carLicensePicture ,idFrontPicture,idBackPicture,licensePicture, password, firstName, lastName, l_vehicleType, isActive, vehicleVin, vehicleNo ,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated,isOnline,countryId FROM [usersDelivery] order by l_deliveryStatus "
                                 InsertCommand="INSERT INTO [usersDelivery] 
-                                    (username, password, storedsalt, firstName, lastName, isActive, vehiecleType, userPicture ,carPicture,carLicensePicture,idFrontPicture,idBackPicture,licensePicture,vehiecleNo,vehiecleVin,isOnline,countryId, userDate)
+                                    (username, password, storedsalt, firstName, lastName, isActive, l_vehicleType, userPicture ,carPicture,carLicensePicture,idFrontPicture,idBackPicture,licensePicture,vehicleNo,vehicleVin,isOnline,countryId,l_DeliveryStatusId, userDate)
                                     VALUES 
-                                    (@username, @password, @storedsalt, @firstName, @lastName, @isActive,@vehiecleType, @image,@carPicture,@carLicensePicture,@idFrontPicture,@idBackPicture,@licensePicture, @vehiecleNo, @vehiecleVin, @isOnline,@countryId, getDate())"
+                                    (@username, @password, @storedsalt, @firstName, @lastName, @isActive,@l_vehicleType, @image,@carPicture,@carLicensePicture,@idFrontPicture,@idBackPicture,@licensePicture, @vehicleNo, @vehicleVin, @isOnline,@countryId,3, getDate())"
                                 UpdateCommand="UPDATE [usersDelivery]
                                     SET
                                         username = @username,
@@ -1755,9 +1755,9 @@
                                         storedsalt = @storedsalt,
                                         firstName = @firstName,
                                         lastName = @lastName,
-                                        vehiecleType = @vehiecleType,
-                                        vehiecleVin = @vehiecleVin,
-                                        vehiecleNo = @vehiecleNo,
+                                        l_vehicleType = @l_vehicleType,
+                                        vehicleVin = @vehicleVin,
+                                        vehicleNo = @vehicleNo,
                                         isOnline = @isOnline,
                                         userPicture = @image,
                                         carPicture = @carPicture,
@@ -1776,11 +1776,11 @@
                                     <asp:Parameter Name="storedsalt" />
                                     <asp:Parameter Name="firstName" Type="String" />
                                     <asp:Parameter Name="lastName" Type="String" />
-                                    <asp:Parameter Name="vehiecleVin" Type="String" />
+                                    <asp:Parameter Name="vehicleVin" Type="String" />
                                     <asp:Parameter Name="isOnline" Type="String" />
-                                    <asp:Parameter Name="vehiecleNo" Type="String" />
+                                    <asp:Parameter Name="vehicleNo" Type="String" />
                                     <asp:Parameter Name="isActive" Type="Boolean" />
-                                    <asp:Parameter Name="vehiecleType" Type="string" />
+                                    <asp:Parameter Name="l_vehicleType" Type="string" />
                                     <asp:Parameter Name="countryId" Type="string" />
                                     <asp:ControlParameter ControlID="l_item_file" Name="image" PropertyName="Text" />
                                     <asp:ControlParameter ControlID="l_car_file" Name="carPicture" PropertyName="Text" />
@@ -1795,11 +1795,11 @@
                                     <asp:Parameter Name="storedsalt" Type="Object" />
                                     <asp:Parameter Name="firstName" Type="String" />
                                     <asp:Parameter Name="lastName" Type="String" />
-                                    <asp:Parameter Name="vehiecleVin" Type="String" />
+                                    <asp:Parameter Name="vehicleVin" Type="String" />
                                     <asp:Parameter Name="isOnline" Type="String" />
-                                    <asp:Parameter Name="vehiecleNo" Type="String" />
+                                    <asp:Parameter Name="vehicleNo" Type="String" />
                                     <asp:Parameter Name="isActive" Type="Boolean" />
-                                    <asp:Parameter Name="vehiecleType" Type="string" />
+                                    <asp:Parameter Name="l_vehicleType" Type="string" />
                                     <asp:Parameter Name="countryId" Type="string" />
                                     <asp:ControlParameter ControlID="l_item_file" Name="image" PropertyName="Text" />
                                     <asp:ControlParameter ControlID="l_car_file" Name="carPicture" PropertyName="Text" />

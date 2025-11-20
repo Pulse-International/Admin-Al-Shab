@@ -78,42 +78,69 @@
                 padding: 0 !important;
             }
 
-            @keyframes bulbEffect {
-                0% {
-                    background-color: #3512eb;
-                    color: white;
-                    box-shadow: 0 0 5px #3512eb;
+            .water-button-wrapper {
+                position: relative;
+                width: 100%;
+                overflow: hidden;
+                background-color: #727272 !important;
+                border-radius: 4px;
+                box-shadow: 0 0 30px rgba(114, 114, 114, 0.8), 0 0 50px rgba(200, 200, 200, 0.6), 0 0 70px rgba(150, 150, 150, 0.4);
+                animation: shadowPulse 2s ease-in-out infinite, buttonPulse 2s ease-in-out infinite;
+            }
+
+                .water-button-wrapper::after {
+                    content: '';
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    top: 0;
+                    left: 0;
+                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+                    animation: shine 1.2s ease-in-out infinite;
+                    pointer-events: none;
+                    z-index: 2;
                 }
 
-                25% {
-                    background-color: #6a3cff;
-                    color: white;
-                    box-shadow: 0 0 10px #6a3cff;
+            @keyframes shine {
+                0% {
+                    transform: translateX(-100%);
                 }
 
                 50% {
-                    background-color: #9b7aff;
-                    color: white;
-                    box-shadow: 0 0 15px #9b7aff;
-                }
-
-                75% {
-                    background-color: #6a3cff;
-                    color: white;
-                    box-shadow: 0 0 10px #6a3cff;
+                    opacity: 1;
                 }
 
                 100% {
-                    background-color: #3512eb;
-                    color: white;
-                    box-shadow: 0 0 5px #3512eb;
+                    transform: translateX(100%);
                 }
             }
 
-            .bulb-button {
-                font-weight: bold;
-                transition: all 0.2s ease;
-                animation: bulbEffect 1.5s infinite;
+            @keyframes shadowPulse {
+                0% {
+                    box-shadow: 0 0 15px rgba(114, 114, 114, 0.8), 0 0 25px rgba(200, 200, 200, 0.4), 0 0 35px rgba(150, 150, 150, 0.2);
+                }
+
+                50% {
+                    box-shadow: 0 0 20px rgba(114, 114, 114, 1), 0 0 35px rgba(200, 200, 200, 0.8), 0 0 50px rgba(150, 150, 150, 0.6);
+                }
+
+                100% {
+                    box-shadow: 0 0 15px rgba(114, 114, 114, 0.8), 0 0 25px rgba(200, 200, 200, 0.4), 0 0 35px rgba(150, 150, 150, 0.2);
+                }
+            }
+
+            @keyframes buttonPulse {
+                0% {
+                    transform: scale(1);
+                }
+
+                50% {
+                    transform: scale(1.05);
+                }
+
+                100% {
+                    transform: scale(1);
+                }
             }
         </style>
 
@@ -1650,7 +1677,6 @@
 
                                                 <dx:ASPxLabel ID="lblStatus" runat="server" Font-Names="Cairo"></dx:ASPxLabel>
 
-                                                <dx:ASPxLabel ID="lblUpdated" runat="server" Font-Names="Cairo" ForeColor="#007bff" Font-Bold="True"></dx:ASPxLabel>
 
                                                 <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 5px;">
                                                     <dx:ASPxButton ID="btnApprove" runat="server" Text="موافقة" Width="100%" Theme="Material" AutoPostBack="false" BackColor="Green" Font-Names="Cairo" />
@@ -1658,9 +1684,11 @@
 
                                                     <dx:ASPxButton ID="btnIncomplete" runat="server" Text="غير مكتمل" Width="100%" Theme="Material" AutoPostBack="false" Font-Names="Cairo" />
 
-                                                    <dx:ASPxButton ID="btnIncompleteBulb" runat="server" Text="غير مكتمل" Width="100%" Theme="Material" AutoPostBack="false"
-                                                        Font-Names="Cairo" CssClass="bulb-button" ClientVisible="False" />
-                                                </div>
+                                                    <div class="water-button-wrapper">
+                                                        <dx:ASPxButton ID="btnIncompleteBulb" runat="server" Text="غير مكتمل&#10;تم التحديث"
+                                                            Width="100%" Theme="Material" AutoPostBack="false"
+                                                            Font-Names="Cairo" ClientVisible="False" />
+                                                    </div>
                                             </DataItemTemplate>
                                         </dx:GridViewDataTextColumn>
 

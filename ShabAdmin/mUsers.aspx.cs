@@ -5,9 +5,13 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.IO;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Services.Description;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using static MainHelper;
+
 
 
 namespace ShabAdmin
@@ -606,7 +610,7 @@ namespace ShabAdmin
                     string fileToDelete = fileOld.Substring(pos + 1);
                     string[] fileList = Directory.GetFiles(Server.MapPath("~/assets/uploads/delivery-users"), fileToDelete);
                     foreach (string file in fileList)
-                        File.Delete(file);
+                        System.IO.File.Delete(file);
                 }
             }
         }
@@ -822,6 +826,9 @@ namespace ShabAdmin
                         cmd = new SqlCommand(
                             "UPDATE usersDelivery SET l_deliveryStatusId=@status WHERE id=@id", conn);
                         cmd.Parameters.AddWithValue("@status", 3);
+
+                        SendSmsNowAsync1("962798579769", "تم الموافقة عليك اخي");
+
                         break;
 
                     case "reject":
@@ -859,7 +866,6 @@ namespace ShabAdmin
             ASPxButton btnIncomplete = (ASPxButton)GridDeliveryUsers.FindRowCellTemplateControl(e.VisibleIndex, null, "btnIncomplete");
             ASPxButton btnIncompleteBulb = (ASPxButton)GridDeliveryUsers.FindRowCellTemplateControl(e.VisibleIndex, null, "btnIncompleteBulb");
             ASPxLabel lblStatus = (ASPxLabel)GridDeliveryUsers.FindRowCellTemplateControl(e.VisibleIndex, null, "lblStatus");
-            ASPxLabel lblUpdated = (ASPxLabel)GridDeliveryUsers.FindRowCellTemplateControl(e.VisibleIndex, null, "lblUpdated");
 
             // إعدادات الأزرار حسب الحالة
             if (statusId == 3)
@@ -871,7 +877,6 @@ namespace ShabAdmin
                 lblStatus.Font.Name = "Cairo";
 
                 btnApprove.Visible = btnReject.Visible = btnIncomplete.Visible = btnIncompleteBulb.ClientVisible = false;
-                lblUpdated.Text = "";
             }
             else if (statusId == 4)
             {
@@ -882,7 +887,6 @@ namespace ShabAdmin
                 lblStatus.Font.Name = "Cairo";
 
                 btnApprove.Visible = btnReject.Visible = btnIncomplete.Visible = btnIncompleteBulb.ClientVisible = false;
-                lblUpdated.Text = "";
             }
             else
             {
@@ -894,14 +898,14 @@ namespace ShabAdmin
                 // إذا المستخدم حدث بياناته
                 if (statusId == 2 && isUpdated == 1)
                 {
-                    lblUpdated.Text = "قام المستخدم بتحديث بياناته";
                     btnIncomplete.Visible = false;
                     btnIncompleteBulb.ClientVisible = true;
+                    btnIncompleteBulb.Text = HttpUtility.HtmlEncode("غير مكتمل") + "<br/>" + HttpUtility.HtmlEncode("تم التحديث");
+                    btnIncompleteBulb.ClientSideEvents.Init = "function(s, e) { s.GetMainElement().innerHTML = 'غير مكتمل<br/>تم التحديث'; }";
                     btnIncompleteBulb.ClientSideEvents.Click = $"function(s,e){{ ShowASPXPopup('incomplete',{recordId}); }}";
                 }
                 else
                 {
-                    lblUpdated.Text = "";
                     btnIncomplete.Visible = true;
                     btnIncompleteBulb.ClientVisible = false;
                     btnIncomplete.ClientSideEvents.Click = $"function(s,e){{ ShowASPXPopup('incomplete',{recordId}); }}";
@@ -909,6 +913,14 @@ namespace ShabAdmin
             }
         }
 
+        protected void SendSmsNowAsync1(string phone, string message)
+        {
+            Task.Run(async () =>
+            {
+                string token = await GenerateSMSToken();
+                await SendSmsNowAsync(token, phone, message);
+            });
+        }
 
     }
 }

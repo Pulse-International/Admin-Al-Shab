@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml.Linq;
@@ -57,7 +58,7 @@ public class MainHelper
         {
             return "-";
         }
-    }   
+    }
     public static string Encrypt_User(string Username)
     {
         string EncryptString = Encrypt_Me(Encrypt_Me(Encrypt_Me(Username, true), true), true);
@@ -308,4 +309,62 @@ public class MainHelper
         public string CardCountry { get; set; }
         public object AllResult { get; set; }
     }
+
+    public static async Task<string> GenerateSMSToken()
+    {
+        using (var client = new HttpClient())
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post,
+                "https://zsms.jo.zain.com/core/user/rest/user/generateintegrationtoken");
+
+            request.Headers.Add("username", "962791448258");
+            request.Headers.Add("password", "Salah@2025");
+
+            var response = await client.SendAsync(request);
+            var content = await response.Content.ReadAsStringAsync();
+            var jsonDoc = JsonDocument.Parse(content);
+
+            return jsonDoc.RootElement
+                .GetProperty("result")
+                .GetProperty("integration_token")
+                .GetString() ?? "";
+        }
+    }
+
+
+    public static async Task<bool> SendSmsNowAsync(string token, string phone, string message)
+    {
+        using (var client = new HttpClient())
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post,
+                "https://zsms.jo.zain.com/core/corpsms/sendOTP");
+
+            request.Headers.Add("integration_token", token);
+
+            var body = new
+            {
+                service_type = "bulk_sms",
+                recipient_numbers_type = "single_numbers",
+                phone_numbers = new[] { phone },
+                content = message,
+                sender_id = "Shaeb_Click"
+            };
+
+            request.Content = new StringContent(
+                JsonSerializer.Serialize(body),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            var response = await client.SendAsync(request);
+            var content = await response.Content.ReadAsStringAsync();
+            var jsonDoc = JsonDocument.Parse(content);
+
+            return jsonDoc.RootElement
+                .GetProperty("result")
+                .GetProperty("valid_numbers_count")
+                .GetInt32() == 1;
+        }
+    }
+
 }

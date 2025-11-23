@@ -12,6 +12,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Configuration;
 using System.Xml.Linq;
 using static Google.Apis.Requests.BatchRequest;
 
@@ -69,7 +70,7 @@ public class MainHelper
         string PreCode = Decrypt_Me(Decrypt_Me(Decrypt_Me(Username, true), true), true);
         return PreCode;
     }
-    public static string Encrypt_Me(string toEncrypt, bool useHashing) // this is public for poll_admin
+    public static string Encrypt_Me(string toEncrypt, bool useHashing) 
     {
         try
         {
@@ -310,64 +311,41 @@ public class MainHelper
         public object AllResult { get; set; }
     }
 
-    public static async Task<string> GenerateSMSToken()
+    public static async Task<string> SendSms(string mobileNumber, string messageBody)
     {
-        using (var client = new HttpClient())
+        try
         {
-            var request = new HttpRequestMessage(HttpMethod.Post,
-                "https://zsms.jo.zain.com/core/user/rest/user/generateintegrationtoken");
+            var apiToken = WebConfigurationManager.AppSettings["Sms:ApiToken"];
+            var senderText = WebConfigurationManager.AppSettings["Sms:senderText"];
 
-            var smsUsername = ConfigurationManager.AppSettings["SmsUsername"];
-            var smsPassword = ConfigurationManager.AppSettings["SmsPassword"];
+            using (var client = new HttpClient())
+            {
+                var encodedMessage = Uri.EscapeDataString(messageBody);
 
-            request.Headers.Add("username", smsUsername);
-            request.Headers.Add("password", smsPassword);
+                var url = $"https://vtelsms.com/api/Campaign/SendMessage" +
+                          $"?api-token={apiToken}" +
+                          $"&SenderText={senderText}" +
+                          $"&MessageBody={encodedMessage}" +
+                          $"&MobileNumber={mobileNumber}";
 
-            var response = await client.SendAsync(request);
-            var content = await response.Content.ReadAsStringAsync();
-            var jsonDoc = JsonDocument.Parse(content);
+                var response = await client.GetAsync(url);
+                var result = await response.Content.ReadAsStringAsync();
 
-            return jsonDoc.RootElement
-                .GetProperty("result")
-                .GetProperty("integration_token")
-                .GetString() ?? "";
+                return result;
+            }
+        }
+        catch (Exception ex)
+        {
+            return $"Error: {ex.Message}";
         }
     }
 
-
-    public static async Task<bool> SendSmsNowAsync(string token, string phone, string message)
+    public static void SendSmsBackground(string mobileNumber, string messageBody)
     {
-        using (var client = new HttpClient())
+        Task.Run(async () =>
         {
-            var request = new HttpRequestMessage(HttpMethod.Post,
-                "https://zsms.jo.zain.com/core/corpsms/sendOTP");
-
-            request.Headers.Add("integration_token", token);
-
-            var body = new
-            {
-                service_type = "bulk_sms",
-                recipient_numbers_type = "single_numbers",
-                phone_numbers = new[] { phone },
-                content = message,
-                sender_id = "Shaeb_Click"
-            };
-
-            request.Content = new StringContent(
-                JsonSerializer.Serialize(body),
-                Encoding.UTF8,
-                "application/json"
-            );
-
-            var response = await client.SendAsync(request);
-            var content = await response.Content.ReadAsStringAsync();
-            var jsonDoc = JsonDocument.Parse(content);
-
-            return jsonDoc.RootElement
-                .GetProperty("result")
-                .GetProperty("valid_numbers_count")
-                .GetInt32() == 1;
-        }
+            await SendSms(mobileNumber, messageBody);
+        });
     }
 
 }

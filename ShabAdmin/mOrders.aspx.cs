@@ -834,7 +834,7 @@ LEFT JOIN
                     {
                         string getOrderSql = @"
                 SELECT o.username, o.totalAmount, o.refundedAmount, 
-                       o.realTotalAmount, o.realTax, pa.transactionRef AS paymentTR,o.transactionRef, o.l_refundType
+                       o.realTotalAmount, o.realTax, pa.transactionRef AS paymentTR,o.VerifiedTransactionRef, o.l_refundType
                 FROM Orders o
                 LEFT JOIN 
                     [payments] pa ON o.id = pa.orderId

@@ -88,7 +88,7 @@
             <dx:ASPxPageControl ID="pageTab" runat="server" CssClass="divSTARProviders" ActiveTabIndex="0" ClientInstanceName="pageTab" Theme="Material" Width="100%" EnableCallbackAnimation="True" >
                 <TabPages>
                     <dx:TabPage Text="نوع العنوان" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="Medium">
-                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="Small"></TabStyle>
+                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="x-large"></TabStyle>
                         <ContentCollection>
                             <dx:ContentControl>
 
@@ -222,7 +222,7 @@
                     </dx:TabPage>
 
                     <dx:TabPage Text="حالة الشركة" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="Medium">
-                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="Small"></TabStyle>
+                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="x-large"></TabStyle>
                         <ContentCollection>
                             <dx:ContentControl>
 
@@ -357,7 +357,7 @@
                     </dx:TabPage>
 
                     <dx:TabPage Text="نوع القسيمة" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="Medium">
-                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="Small"></TabStyle>
+                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="x-large"></TabStyle>
                         <ContentCollection>
                             <dx:ContentControl>
 
@@ -492,7 +492,7 @@
                     </dx:TabPage>
 
                     <dx:TabPage Text="نوع البطاقة" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="Medium">
-                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="Small"></TabStyle>
+                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="x-large"></TabStyle>
                         <ContentCollection>
                             <dx:ContentControl>
 
@@ -627,7 +627,7 @@
                     </dx:TabPage>
 
                     <dx:TabPage Text="نوع الخصم" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="Medium">
-                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="Small"></TabStyle>
+                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="x-large"></TabStyle>
                         <ContentCollection>
                             <dx:ContentControl>
 
@@ -762,7 +762,7 @@
                     </dx:TabPage>
 
                     <dx:TabPage Text="نوع الاعلان" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="Medium">
-                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="Small"></TabStyle>
+                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="x-large"></TabStyle>
                         <ContentCollection>
                             <dx:ContentControl>
 
@@ -896,7 +896,7 @@
                     </dx:TabPage>
 
                     <dx:TabPage Text="مكان الاعلان" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="Medium">
-                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="Small"></TabStyle>
+                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="x-large"></TabStyle>
                         <ContentCollection>
                             <dx:ContentControl>
 
@@ -1030,7 +1030,7 @@
                     </dx:TabPage>
 
                     <dx:TabPage Text="حالة الطلب" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="Medium">
-                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="Small"></TabStyle>
+                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="x-large"></TabStyle>
                         <ContentCollection>
                             <dx:ContentControl>
 
@@ -1164,7 +1164,7 @@
                     </dx:TabPage>
 
                     <dx:TabPage Text="نوع الدفع" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="Medium">
-                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="Small"></TabStyle>
+                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="x-large"></TabStyle>
                         <ContentCollection>
                             <dx:ContentControl>
 
@@ -1298,7 +1298,7 @@
                     </dx:TabPage>
 
                     <dx:TabPage Text="نوع المرتجعات" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="Medium">
-                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="Small"></TabStyle>
+                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="x-large"></TabStyle>
                         <ContentCollection>
                             <dx:ContentControl>
 
@@ -1432,7 +1432,7 @@
                     </dx:TabPage>
 
                     <dx:TabPage Text="حالة المستخدم" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="Medium">
-                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="Small"></TabStyle>
+                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="x-large"></TabStyle>
                         <ContentCollection>
                             <dx:ContentControl>
 
@@ -1566,7 +1566,7 @@
                     </dx:TabPage>
 
                     <dx:TabPage Text="مستوى المستخدم" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="Medium">
-                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="Small"></TabStyle>
+                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="x-large"></TabStyle>
                         <ContentCollection>
                             <dx:ContentControl>
 
@@ -1700,7 +1700,7 @@
                     </dx:TabPage>
 
                     <dx:TabPage Text="نوع المستخدم" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="Medium">
-                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="Small"></TabStyle>
+                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="x-large"></TabStyle>
                         <ContentCollection>
                             <dx:ContentControl>
 
@@ -1832,6 +1832,273 @@
                             </dx:ContentControl>
                         </ContentCollection>
                     </dx:TabPage>
+                    <dx:TabPage Text="حالة تسجيل السائق" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="Medium">
+                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="x-large"></TabStyle>
+                        <ContentCollection>
+                            <dx:ContentControl>
+
+                                <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
+
+                                    <div style="margin: 0 auto; width: 100%;">
+                                        <div class="content-div">
+                                            <dx:ASPxGridView ID="Grid_L_DeliveryStatus" runat="server" DataSourceID="db_L_DeliveryStatus" KeyFieldName="id"
+                                                ClientInstanceName="Grid_L_DeliveryStatus" Width="100%" AutoGenerateColumns="False"
+                                                EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="1em" RightToLeft="True">
+                                                <%--<ClientSideEvents RowClick="function(s,e){ OnRowClick(e); }" />--%>
+                                                <SettingsAdaptivity AdaptivityMode="HideDataCells"></SettingsAdaptivity>
+                                                <Settings ShowFooter="True" />
+                                                <SettingsCommandButton>
+                                                    <NewButton Text="جديد"></NewButton>
+                                                    <UpdateButton Text=" حفظ ">
+                                                        <Image Url="~/assets/img/save.png" SpriteProperties-Left="50">
+                                                            <SpriteProperties Left="50px"></SpriteProperties>
+                                                        </Image>
+                                                    </UpdateButton>
+                                                    <CancelButton Text=" الغاء ">
+                                                        <Image Url="~/assets/img/cancel.png"></Image>
+                                                    </CancelButton>
+                                                </SettingsCommandButton>
+                                                <SettingsPopup>
+                                                    <FilterControl AutoUpdatePosition="False"></FilterControl>
+                                                </SettingsPopup>
+                                                <SettingsSearchPanel CustomEditorID="tbToolbarSearch14" />
+                                                <SettingsExport EnableClientSideExportAPI="true" ExcelExportMode="WYSIWYG" PaperKind="A4" RightToLeft="True" />
+                                                <SettingsLoadingPanel Text="Please Wait &amp;hellip;" Mode="ShowAsPopup" />
+                                                <SettingsText SearchPanelEditorNullText="ابحث في الجدول..." EmptyDataRow="لا يوجد" />
+
+                                                <Columns>
+
+                                                    <dx:GridViewDataColumn Caption="الرقم" FieldName="id">
+                                                        <EditFormSettings Visible="False" />
+                                                        <CellStyle VerticalAlign="Middle" HorizontalAlign="Center"></CellStyle>
+                                                    </dx:GridViewDataColumn>
+
+                                                    <dx:GridViewDataColumn Caption="الوصف" FieldName="description">
+                                                        <EditFormSettings />
+                                                        <CellStyle VerticalAlign="Middle" HorizontalAlign="Center"></CellStyle>
+                                                    </dx:GridViewDataColumn>
+
+                                                    <dx:GridViewDataTextColumn Caption="" Width="100px">
+                                                        <DataItemTemplate>
+                                                            <div style="text-align: center">
+                                                                <img src="/assets/img/update.png" width="32" height="32" title="تعديل"
+                                                                    style="cursor: pointer"
+                                                                    onclick="onUpdateClickGeneric('Grid_L_DeliveryStatus','<%# Container.KeyValue %>');" />
+
+                                                                <img src="/assets/img/delete.png" width="32" height="32" title="حذف"
+                                                                    style="cursor: pointer"
+                                                                    onclick="showDeletePopup('Grid_L_DeliveryStatus','<%# Container.KeyValue %>');" />
+                                                            </div>
+                                                        </DataItemTemplate>
+                                                        <EditFormSettings Visible="False" />
+                                                    </dx:GridViewDataTextColumn>
+
+
+                                                </Columns>
+
+                                                <Toolbars>
+                                                    <dx:GridViewToolbar ItemAlign="left">
+                                                        <SettingsAdaptivity Enabled="true" EnableCollapseRootItemsToIcons="true" />
+                                                        <Items>
+                                                            <dx:GridViewToolbarItem Command="New" Text="جديد" />
+                                                            <dx:GridViewToolbarItem Command="Refresh" BeginGroup="true" AdaptivePriority="1" Text="تحديث الجدول" />
+                                                            <dx:GridViewToolbarItem Command="ExportToXlsx" BeginGroup="true" />
+                                                            <dx:GridViewToolbarItem Command="ExportToPdf" />
+                                                            <dx:GridViewToolbarItem Alignment="Right" Name="toolbarItemSearch" BeginGroup="true" AdaptivePriority="2">
+                                                                <Template>
+                                                                    <dx:ASPxButtonEdit ID="tbToolbarSearch14" runat="server" NullText="البحث..." Width="140" Font-Names="cairo" />
+                                                                </Template>
+                                                            </dx:GridViewToolbarItem>
+                                                        </Items>
+                                                    </dx:GridViewToolbar>
+                                                </Toolbars>
+
+                                                <TotalSummary>
+                                                    <dx:ASPxSummaryItem FieldName="id" SummaryType="Count" DisplayFormat="العدد = {0}" />
+                                                </TotalSummary>
+
+                                                <Styles>
+                                                    <AlternatingRow BackColor="#F0F0F0"></AlternatingRow>
+                                                    <Footer Font-Names="cairo"></Footer>
+                                                </Styles>
+                                                <Paddings Padding="2em" />
+                                            </dx:ASPxGridView>
+                                        </div>
+                                    </div>
+
+                                    <asp:SqlDataSource
+                                        ID="db_L_DeliveryStatus"
+                                        runat="server"
+                                        ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
+                                        CancelSelectOnNullParameter="false"
+                                        SelectCommand="
+                        SELECT 
+                            id,
+                            description
+                        FROM L_DeliveryStatus"
+                                        InsertCommand="
+                        INSERT INTO L_DeliveryStatus (description)
+                        VALUES (@description)"
+                                        UpdateCommand="
+                        UPDATE L_DeliveryStatus
+                        SET description = @description
+                        WHERE id = @id"
+                                        DeleteCommand="
+                        DELETE FROM L_DeliveryStatus
+                        WHERE id = @id">
+                                        <InsertParameters>
+                                            <asp:Parameter Name="description" Type="String" />
+                                        </InsertParameters>
+
+                                        <UpdateParameters>
+                                            <asp:Parameter Name="description" Type="String" />
+                                            <asp:Parameter Name="id" Type="Int32" />
+                                        </UpdateParameters>
+
+                                        <DeleteParameters>
+                                            <asp:Parameter Name="id" Type="Int32" />
+                                        </DeleteParameters>
+                                    </asp:SqlDataSource>
+
+                                </div>
+
+                            </dx:ContentControl>
+                        </ContentCollection>
+                    </dx:TabPage>
+                    
+                    <dx:TabPage Text="نوع المركبة" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="Medium">
+                        <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="x-large"></TabStyle>
+                        <ContentCollection>
+                            <dx:ContentControl>
+
+                                <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
+
+                                    <div style="margin: 0 auto; width: 100%;">
+                                        <div class="content-div">
+                                            <dx:ASPxGridView ID="Grid_L_VehicleType" runat="server" DataSourceID="db_L_VehicleType" KeyFieldName="id"
+                                                ClientInstanceName="Grid_L_VehicleType" Width="100%" AutoGenerateColumns="False"
+                                                EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="1em" RightToLeft="True">
+                                                <%--<ClientSideEvents RowClick="function(s,e){ OnRowClick(e); }" />--%>
+                                                <SettingsAdaptivity AdaptivityMode="HideDataCells"></SettingsAdaptivity>
+                                                <Settings ShowFooter="True" />
+                                                <SettingsCommandButton>
+                                                    <NewButton Text="جديد"></NewButton>
+                                                    <UpdateButton Text=" حفظ ">
+                                                        <Image Url="~/assets/img/save.png" SpriteProperties-Left="50">
+                                                            <SpriteProperties Left="50px"></SpriteProperties>
+                                                        </Image>
+                                                    </UpdateButton>
+                                                    <CancelButton Text=" الغاء ">
+                                                        <Image Url="~/assets/img/cancel.png"></Image>
+                                                    </CancelButton>
+                                                </SettingsCommandButton>
+                                                <SettingsPopup>
+                                                    <FilterControl AutoUpdatePosition="False"></FilterControl>
+                                                </SettingsPopup>
+                                                <SettingsSearchPanel CustomEditorID="tbToolbarSearch15" />
+                                                <SettingsExport EnableClientSideExportAPI="true" ExcelExportMode="WYSIWYG" PaperKind="A4" RightToLeft="True" />
+                                                <SettingsLoadingPanel Text="Please Wait &amp;hellip;" Mode="ShowAsPopup" />
+                                                <SettingsText SearchPanelEditorNullText="ابحث في الجدول..." EmptyDataRow="لا يوجد" />
+
+                                                <Columns>
+
+                                                    <dx:GridViewDataColumn Caption="الرقم" FieldName="id">
+                                                        <EditFormSettings Visible="False" />
+                                                        <CellStyle VerticalAlign="Middle" HorizontalAlign="Center"></CellStyle>
+                                                    </dx:GridViewDataColumn>
+
+                                                    <dx:GridViewDataColumn Caption="الوصف" FieldName="description">
+                                                        <EditFormSettings />
+                                                        <CellStyle VerticalAlign="Middle" HorizontalAlign="Center"></CellStyle>
+                                                    </dx:GridViewDataColumn>
+
+                                                    <dx:GridViewDataTextColumn Caption="" Width="100px">
+                                                        <DataItemTemplate>
+                                                            <div style="text-align: center">
+                                                                <img src="/assets/img/update.png" width="32" height="32" title="تعديل"
+                                                                    style="cursor: pointer"
+                                                                    onclick="onUpdateClickGeneric('Grid_L_VehicleType','<%# Container.KeyValue %>');" />
+
+                                                                <img src="/assets/img/delete.png" width="32" height="32" title="حذف"
+                                                                    style="cursor: pointer"
+                                                                    onclick="showDeletePopup('Grid_L_VehicleType','<%# Container.KeyValue %>');" />
+                                                            </div>
+                                                        </DataItemTemplate>
+                                                        <EditFormSettings Visible="False" />
+                                                    </dx:GridViewDataTextColumn>
+
+
+                                                </Columns>
+
+                                                <Toolbars>
+                                                    <dx:GridViewToolbar ItemAlign="left">
+                                                        <SettingsAdaptivity Enabled="true" EnableCollapseRootItemsToIcons="true" />
+                                                        <Items>
+                                                            <dx:GridViewToolbarItem Command="New" Text="جديد" />
+                                                            <dx:GridViewToolbarItem Command="Refresh" BeginGroup="true" AdaptivePriority="1" Text="تحديث الجدول" />
+                                                            <dx:GridViewToolbarItem Command="ExportToXlsx" BeginGroup="true" />
+                                                            <dx:GridViewToolbarItem Command="ExportToPdf" />
+                                                            <dx:GridViewToolbarItem Alignment="Right" Name="toolbarItemSearch" BeginGroup="true" AdaptivePriority="2">
+                                                                <Template>
+                                                                    <dx:ASPxButtonEdit ID="tbToolbarSearch15" runat="server" NullText="البحث..." Width="140" Font-Names="cairo" />
+                                                                </Template>
+                                                            </dx:GridViewToolbarItem>
+                                                        </Items>
+                                                    </dx:GridViewToolbar>
+                                                </Toolbars>
+
+                                                <TotalSummary>
+                                                    <dx:ASPxSummaryItem FieldName="id" SummaryType="Count" DisplayFormat="العدد = {0}" />
+                                                </TotalSummary>
+
+                                                <Styles>
+                                                    <AlternatingRow BackColor="#F0F0F0"></AlternatingRow>
+                                                    <Footer Font-Names="cairo"></Footer>
+                                                </Styles>
+                                                <Paddings Padding="2em" />
+                                            </dx:ASPxGridView>
+                                        </div>
+                                    </div>
+
+                                    <asp:SqlDataSource
+                                        ID="db_L_VehicleType"
+                                        runat="server"
+                                        ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
+                                        CancelSelectOnNullParameter="false"
+                                        SelectCommand="
+                        SELECT 
+                            id,
+                            description
+                        FROM L_VehicleType"
+                                        InsertCommand="
+                        INSERT INTO L_VehicleType (description)
+                        VALUES (@description)"
+                                        UpdateCommand="
+                        UPDATE L_VehicleType
+                        SET description = @description
+                        WHERE id = @id"
+                                        DeleteCommand="
+                        DELETE FROM L_VehicleType
+                        WHERE id = @id">
+                                        <InsertParameters>
+                                            <asp:Parameter Name="description" Type="String" />
+                                        </InsertParameters>
+
+                                        <UpdateParameters>
+                                            <asp:Parameter Name="description" Type="String" />
+                                            <asp:Parameter Name="id" Type="Int32" />
+                                        </UpdateParameters>
+
+                                        <DeleteParameters>
+                                            <asp:Parameter Name="id" Type="Int32" />
+                                        </DeleteParameters>
+                                    </asp:SqlDataSource>
+
+                                </div>
+
+                            </dx:ContentControl>
+                        </ContentCollection>
+                    </dx:TabPage>
 
                 </TabPages>
             </dx:ASPxPageControl>
@@ -1848,7 +2115,7 @@
                         <div style="padding: 20px; font-family: 'Cairo', sans-serif; text-align: center">
                             <dx:ASPxLabel ID="lblDeleteMessage" runat="server"
                                 Text="هل أنت متأكد أنك تريد الحذف؟"
-                                Font-Names="Cairo" Font-Size="Large" ForeColor="#333333" />
+                                Font-Names="Cairo" Font-Size="x-large" ForeColor="#333333" />
 
                             <div style="margin-top: 25px;">
                                 <dx:ASPxButton ID="btnConfirmDelete" runat="server" AutoPostBack="False" Text="حذف"

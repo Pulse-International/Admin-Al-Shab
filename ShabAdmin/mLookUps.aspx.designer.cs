@@ -258,6 +258,42 @@ namespace ShabAdmin
         protected global::System.Web.UI.WebControls.SqlDataSource db_L_UsersType;
 
         /// <summary>
+        /// Grid_L_DeliveryStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxGridView Grid_L_DeliveryStatus;
+
+        /// <summary>
+        /// db_L_DeliveryStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource db_L_DeliveryStatus;
+
+        /// <summary>
+        /// Grid_L_VehicleType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxGridView Grid_L_VehicleType;
+
+        /// <summary>
+        /// db_L_VehicleType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource db_L_VehicleType;
+
+        /// <summary>
         /// Pop_DeleteConfirm control.
         /// </summary>
         /// <remarks>

@@ -50,7 +50,7 @@
 
 
         </script>
-        <script src="<%=Key%>""></script>
+        <script src="<%= Key %>"></script>
 
         <script>
             let maps = {};
@@ -227,6 +227,35 @@
                     }, 300); // wait for popup layout, then refresh
                 }, 100);
             }
+
+
+            function ShowRejectPopup(orderId) {
+                document.getElementById("lblRejectOrderId").value = orderId;
+                document.getElementById("txtRejectNote").value = "";
+                document.getElementById("rejectNoteError").style.display = "none"; // إخفاء رسالة الخطأ عند فتح البوب أب
+                popupReject.Show();
+            }
+
+            // تأكيد الرفض وإرسال callback
+            function ConfirmReject() {
+                var id = document.getElementById("lblRejectOrderId").value;
+                var note = document.getElementById("txtRejectNote").value;
+                var errorDiv = document.getElementById("rejectNoteError");
+
+                if (!note || note.trim() === "") {
+                    errorDiv.style.display = "block"; // عرض رسالة الخطأ باللون الأحمر
+                    return;
+                }
+
+                errorDiv.style.display = "none"; // إخفاء الرسالة إذا كل شيء صحيح
+
+                // إرسال الكول باك للـ ASPxGridView
+                GridOrders.PerformCallback("reject:" + id + ":" + note);
+
+                // إغلاق البوب أب
+                popupReject.Hide();
+            }
+
         </script>
 
         <dx:ASPxCallback ID="callbackLocation" runat="server" ClientInstanceName="callbackLocation"
@@ -313,7 +342,7 @@
                             <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
                                 <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
 
-                                    <dx:ASPxGridView ID="GridOrders" runat="server" DataSourceID="db_Orders" KeyFieldName="id" ClientInstanceName="GridOrders" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="1em" RightToLeft="True">
+                                    <dx:ASPxGridView ID="GridOrders" runat="server" DataSourceID="db_Orders" KeyFieldName="id" ClientInstanceName="GridOrders" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="1em" OnCustomCallback="GridOrders_CustomCallback" RightToLeft="True">
                                         <Settings ShowFooter="True" ShowFilterRow="True" />
 
 
@@ -478,6 +507,16 @@
                                             </dx:GridViewDataColumn>
 
 
+                                            <dx:GridViewDataColumn Caption="رفض">
+                                                <DataItemTemplate>
+                                                    <dx:ASPxButton ID="btnReject" runat="server" Text="رفض" AutoPostBack="false" Theme="Material" BackColor="Red" Font-Names="cairo"
+                                                        OnClick='<%# string.Format("ShowRejectPopup({0}); return false;", Eval("id")) %>'>
+                                                    </dx:ASPxButton>
+                                                </DataItemTemplate>
+                                                <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                                            </dx:GridViewDataColumn>
+
+
                                         </Columns>
                                         <Toolbars>
                                             <dx:GridViewToolbar ItemAlign="left">
@@ -560,6 +599,65 @@
                                             LEFT JOIN [usersDelivery] ud ON o.[usersDeliveryId] = ud.[id]
                                             WHERE ((o.[l_orderStatus] = 1) or (o.[l_orderStatus] = 2) or (o.[l_orderStatus] = 3))  order by o.id desc" />
                                 </div>
+
+                                <dx:ASPxPopupControl ID="popupReject" runat="server"
+                                    Width="430px"
+                                    PopupHorizontalAlign="WindowCenter"
+                                    PopupVerticalAlign="WindowCenter"
+                                    CloseAction="CloseButton"
+                                    HeaderText="رفض الطلب"
+                                    ClientInstanceName="popupReject"
+                                    Modal="True"
+                                    AllowDragging="True"
+                                    HeaderStyle-Font-Names="Cairo"
+                                    HeaderStyle-Font-Size="18px"
+                                    BackColor="#ffffff"
+                                    Border-BorderStyle="Solid"
+                                    Border-BorderWidth="2px"
+                                    Border-BorderColor="#b7b7b7"
+                                    PopupAnimationType="Fade">
+
+                                    <ContentCollection>
+                                        <dx:PopupControlContentControl>
+                                            <!-- نص إرشادي -->
+                                            <div style="font-family: Cairo; font-size: 15px; margin-bottom: 8px; color: #444;">
+                                                الرجاء كتابة سبب الرفض:
+           
+                                            </div>
+
+                                            <!-- Textarea لكتابة سبب الرفض -->
+                                            <textarea id="txtRejectNote" style="width: 100%; height: 140px; font-family: Cairo; font-size: 14px; padding: 8px; border: 1px solid #ccc; border-radius: 5px; resize: none;"></textarea>
+
+                                            <!-- رسالة خطأ -->
+                                            <div id="rejectNoteError" style="color: red; font-family: Cairo; font-size: 14px; margin-top: 5px; display: none;">
+                                                الرجاء كتابة سبب الرفض
+                                            </div>
+
+                                            <!-- مخفي لتخزين رقم الطلب -->
+                                            <input type="hidden" id="lblRejectOrderId" />
+
+                                            <!-- أزرار التأكيد والإلغاء -->
+                                            <div style="display: flex; justify-content: space-between; gap: 5px; margin-top: 12px;">
+                                                <!-- زر الإلغاء -->
+                                                <button type="button" onclick="popupReject.Hide()" style="flex: 1; padding: 12px; margin-right: 8px; background: #777; color: white; border: none; border-radius: 8px; font-family: Cairo; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: 0.2s;"
+                                                    onmouseover="this.style.background='#555'"
+                                                    onmouseout="this.style.background='#777'">
+                                                    إلغاء
+               
+                                                </button>
+
+                                                <!-- زر التأكيد -->
+                                                <button type="button" onclick="ConfirmReject()" style="flex: 1; padding: 12px; background: #b00000; color: white; border: none; border-radius: 8px; font-family: Cairo; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: 0.2s;"
+                                                    onmouseover="this.style.background='#d30000'"
+                                                    onmouseout="this.style.background='#b00000'">
+                                                    تأكيد الرفض
+               
+                                                </button>
+                                            </div>
+                                        </dx:PopupControlContentControl>
+                                    </ContentCollection>
+                                </dx:ASPxPopupControl>
+
 
                                 <dx:ASPxPopupControl ID="popupAddress" runat="server" ClientInstanceName="popupAddress"
                                     Width="950px" Font-Names="Cairo" HeaderText="تتبع السائق" ShowCloseButton="true"

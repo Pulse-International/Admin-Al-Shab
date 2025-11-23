@@ -87,6 +87,15 @@ namespace ShabAdmin
         protected global::System.Web.UI.WebControls.SqlDataSource db_Orders;
 
         /// <summary>
+        /// popupReject control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxPopupControl popupReject;
+
+        /// <summary>
         /// popupAddress control.
         /// </summary>
         /// <remarks>

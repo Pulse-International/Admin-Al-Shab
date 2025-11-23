@@ -540,5 +540,34 @@ namespace ShabAdmin
 
             return $"{total:F3}";
         }
+
+        protected void GridOrders_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            string[] parts = e.Parameters.Split(':');
+
+            if (parts[0] == "reject")
+            {
+                int orderId = Convert.ToInt32(parts[1]);
+                string rejectNote = parts[2];
+
+                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(@"
+                UPDATE orders 
+                SET l_orderStatus = 9,
+                    rejectNote = @note
+                WHERE id = @id
+            ", conn);
+
+                    cmd.Parameters.AddWithValue("@id", orderId);
+                    cmd.Parameters.AddWithValue("@note", rejectNote);
+
+                    cmd.ExecuteNonQuery();
+                }
+
+                GridOrders.DataBind();
+            }
+        }
     }
 }

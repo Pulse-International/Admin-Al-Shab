@@ -1274,18 +1274,28 @@
                                         </dx:GridViewDataColumn>
 
 
-                                        <dx:GridViewDataTextColumn Caption="اسم المستخدم" FieldName="username">
+
+                                        <dx:GridViewDataColumn Caption="المستخدم" FieldName="username">
+                                            <DataItemTemplate>
+                                                <div style="font-family: Cairo; text-align: center;">
+                                                    <div style="font-weight: bold;"><%# Eval("fullName") %></div>
+                                                    <div style="color: #888; font-size: 12px;"><%# Eval("username") %></div>
+                                                </div>
+                                            </DataItemTemplate>
+                                            <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                                        </dx:GridViewDataColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="البريد الالكتروني" Width="5%" FieldName="email">
                                             <PropertiesTextEdit>
                                                 <ValidationSettings
                                                     RequiredField-IsRequired="true"
-                                                    ErrorText="اسم المستخدم مطلوب"
+                                                    ErrorText="البريد الالكتروني مطلوب"
                                                     Display="Dynamic"
                                                     SetFocusOnError="true">
                                                     <RequiredField IsRequired="True"></RequiredField>
                                                 </ValidationSettings>
                                             </PropertiesTextEdit>
-                                            <EditFormSettings ColumnSpan="3" />
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
 
                                         <dx:GridViewDataComboBoxColumn Caption="البلد" FieldName="countryId">
@@ -1299,7 +1309,7 @@
                                                     <RequiredField IsRequired="True"></RequiredField>
                                                 </ValidationSettings>
                                             </PropertiesComboBox>
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataComboBoxColumn>
 
                                         <dx:GridViewDataTextColumn Caption="كلمة السر" FieldName="password" Visible="false" VisibleIndex="3">
@@ -1313,35 +1323,7 @@
                                                 </ValidationSettings>
                                             </PropertiesTextEdit>
                                             <EditFormSettings ColumnSpan="3" Visible="True" />
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
-                                        </dx:GridViewDataTextColumn>
-
-                                        <dx:GridViewDataTextColumn Caption="الاسم الاول" FieldName="firstName">
-                                            <PropertiesTextEdit>
-                                                <ValidationSettings
-                                                    RequiredField-IsRequired="true"
-                                                    ErrorText="الاسم الأول مطلوب"
-                                                    Display="Dynamic"
-                                                    SetFocusOnError="true">
-                                                    <RequiredField IsRequired="True"></RequiredField>
-                                                </ValidationSettings>
-                                            </PropertiesTextEdit>
-                                            <EditFormSettings ColumnSpan="3" />
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
-                                        </dx:GridViewDataTextColumn>
-
-                                        <dx:GridViewDataTextColumn Caption="الاسم الاخير" FieldName="lastName">
-                                            <PropertiesTextEdit>
-                                                <ValidationSettings
-                                                    RequiredField-IsRequired="true"
-                                                    ErrorText="الاسم الأخير مطلوب"
-                                                    Display="Dynamic"
-                                                    SetFocusOnError="true">
-                                                    <RequiredField IsRequired="True"></RequiredField>
-                                                </ValidationSettings>
-                                            </PropertiesTextEdit>
-                                            <EditFormSettings ColumnSpan="3" />
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
 
                                         <dx:GridViewDataTextColumn Caption="رقم الشصي" FieldName="vehicleVin">
@@ -1355,7 +1337,7 @@
                                                 </ValidationSettings>
                                             </PropertiesTextEdit>
                                             <EditFormSettings ColumnSpan="3" />
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
 
                                         <dx:GridViewDataTextColumn Caption="رقم السيارة" FieldName="vehicleNo">
@@ -1369,7 +1351,7 @@
                                                 </ValidationSettings>
                                             </PropertiesTextEdit>
                                             <EditFormSettings ColumnSpan="3" />
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
 
                                         <dx:GridViewDataComboBoxColumn Caption="فعال" FieldName="isActive">
@@ -1387,7 +1369,7 @@
                                                 </ValidationSettings>
                                             </PropertiesComboBox>
                                             <EditFormSettings ColumnSpan="2" />
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataComboBoxColumn>
 
                                         <dx:GridViewDataComboBoxColumn Caption="نوع المركبة" FieldName="l_vehicleType">
@@ -1658,7 +1640,7 @@
                                                     <RequiredField IsRequired="True"></RequiredField>
                                                 </ValidationSettings>
                                             </PropertiesComboBox>
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataComboBoxColumn>
 
                                         <dx:GridViewDataTextColumn Caption="ملاحظة التسجيل">
@@ -1669,7 +1651,7 @@
                                                     : Eval("incompleteNote")
                                                 %>
                                             </DataItemTemplate>
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
 
                                         <dx:GridViewDataTextColumn Caption="حالة التسجيل" Width="220px" VisibleIndex="999">
@@ -1743,7 +1725,7 @@
                                 ID="db_DeliveryUsers"
                                 runat="server"
                                 ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                                SelectCommand="SELECT id, username, userPicture AS image, carPicture ,carLicensePicture ,idFrontPicture,idBackPicture,licensePicture, password, firstName, lastName, l_vehicleType, isActive, vehicleVin, vehicleNo ,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated,isOnline,countryId FROM [usersDelivery] order by l_deliveryStatus "
+                                SelectCommand="SELECT id, username,email,firstName + ' ' + lastName AS fullName, userPicture AS image, carPicture ,carLicensePicture ,idFrontPicture,idBackPicture,licensePicture, password, firstName, lastName, l_vehicleType, isActive, vehicleVin, vehicleNo ,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated,isOnline,countryId FROM [usersDelivery] order by l_deliveryStatus "
                                 InsertCommand="INSERT INTO [usersDelivery] 
                                     (username, password, storedsalt, firstName, lastName, isActive, l_vehicleType, userPicture ,carPicture,carLicensePicture,idFrontPicture,idBackPicture,licensePicture,vehicleNo,vehicleVin,isOnline,countryId,l_DeliveryStatusId, userDate)
                                     VALUES 

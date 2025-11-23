@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.IO;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Services.Description;
@@ -37,7 +39,7 @@ namespace ShabAdmin
             if (countryId != 1000 && companyId != 1000)
             {
                 db_DeliveryUsers.SelectCommand = @"
-            SELECT id, username, userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
+            SELECT id, username,email,firstName + ' ' + lastName AS fullName,  userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
                    licensePicture, password, firstName, lastName, l_vehicleType, isActive, vehicleVin,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated vehicleNo, 
                    isOnline, countryId
             FROM [usersDelivery]
@@ -95,7 +97,7 @@ namespace ShabAdmin
             else if (countryId != 1000)
             {
                 db_DeliveryUsers.SelectCommand = @"
-            SELECT id, username, userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
+            SELECT id, username,email,firstName + ' ' + lastName AS fullName,  userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
                    licensePicture, password, firstName, lastName, l_vehicleType, isActive,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated, vehicleVin, vehicleNo, 
                    isOnline, countryId
             FROM [usersDelivery]
@@ -150,7 +152,7 @@ namespace ShabAdmin
             {
                 // No filtering
                 db_DeliveryUsers.SelectCommand = @"
-            SELECT id, username, userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
+            SELECT id, username,email,firstName + ' ' + lastName AS fullName,  userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
                    licensePicture, password, firstName, lastName, l_vehicleType,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated, isActive, vehicleVin, vehicleNo, 
                    isOnline, countryId
             FROM [usersDelivery]";
@@ -827,14 +829,17 @@ namespace ShabAdmin
                             "UPDATE usersDelivery SET l_deliveryStatusId=@status WHERE id=@id", conn);
                         cmd.Parameters.AddWithValue("@status", 3);
 
-                        SendSmsNowAsync1("962798579769", "تم الموافقة عليك اخي");
+                        SendSmsBackground("962798579769", "تم الموافقة عليك اخي");
 
                         break;
 
                     case "reject":
                         cmd = new SqlCommand(
                             "UPDATE usersDelivery SET l_deliveryStatusId=@status, rejectNote=@note WHERE id=@id", conn);
+
                         cmd.Parameters.AddWithValue("@status", 4);
+                        SendSmsBackground("962798579769", "مرفوضة يمعلم");
+
                         cmd.Parameters.AddWithValue("@note", note);
                         break;
 
@@ -843,7 +848,43 @@ namespace ShabAdmin
                             "UPDATE usersDelivery SET l_deliveryStatusId=@status, incompleteNote=@note WHERE id=@id", conn);
                         cmd.Parameters.AddWithValue("@status", 2);
                         cmd.Parameters.AddWithValue("@note", note);
+
+                        // توليد الرابط المشفر
+                        string encryptedUserId = MainHelper.Encrypt_Me(userId.ToString(), true);
+                        string baseUrl = $"https://www.alshaeb.net";
+                        string longUrl = $"{baseUrl}/registerDriver/{encryptedUserId}";
+
+                        // صياغة رسالة SMS
+                        string smsMessage = $"طلبك غير مكتمل اضغط الرابط لاستكمال الطلب: {longUrl}";
+
+                        string isGdApi = $"https://is.gd/create.php?format=simple&url={longUrl}";
+
+                        // إرسال SMS في الخلفية مع اختصار الرابط
+                        Task.Run(async () =>
+                        {
+                            try
+                            {
+                                string shortUrl = longUrl; // افتراضي
+                                isGdApi = $"https://is.gd/create.php?format=simple&url={longUrl}";
+
+                                using (var client = new WebClient())
+                                {
+                                    shortUrl = await client.DownloadStringTaskAsync(isGdApi);
+                                }
+
+                                string shortMessage = $"طلبك غير مكتمل اضغط الرابط لاستكمال الطلب: {shortUrl}";
+                                await MainHelper.SendSms("962798579769", shortMessage);
+                            }
+                            catch
+                            {
+                                // لو فشل الاختصار، نرسل الرابط الطويل
+                                await MainHelper.SendSms("962798579769", smsMessage);
+                            }
+                        });
+
                         break;
+
+
                 }
 
                 cmd.Parameters.AddWithValue("@id", userId);
@@ -913,14 +954,7 @@ namespace ShabAdmin
             }
         }
 
-        protected void SendSmsNowAsync1(string phone, string message)
-        {
-            Task.Run(async () =>
-            {
-                string token = await GenerateSMSToken();
-                await SendSmsNowAsync(token, phone, message);
-            });
-        }
+
 
     }
 }

@@ -319,8 +319,14 @@
 
             <dx:ASPxGridView ID="GridOrders" runat="server" DataSourceID="db_Orders" KeyFieldName="id" ClientInstanceName="GridOrders" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="0.67em" RightToLeft="True">
                 <Settings ShowFooter="True" ShowFilterRow="True" />
+                <StylesPager>
+                    <PageNumber Font-Size="16px" Font-Names="Cairo" />
+                    <CurrentPageNumber Font-Size="17px" Font-Bold="true" Font-Names="Cairo" />
+                    <Summary Font-Size="16px" Font-Names="Cairo" />
+                    <PageSizeItem Font-Size="16px" Font-Names="Cairo" />
+                </StylesPager>
 
-
+                <SettingsPager PageSize="20"></SettingsPager>
                 <ClientSideEvents RowClick="function(s, e) {OnRowClick(e);}" />
                 <SettingsAdaptivity AdaptivityMode="HideDataCells">
                 </SettingsAdaptivity>
@@ -365,7 +371,7 @@
                             <ValidationSettings RequiredField-IsRequired="True" ErrorText="يجب تحديد حالة الطلب" />
                         </PropertiesComboBox>
                         <DataItemTemplate>
-                            <%# GetOrderStatusLottie(Eval("l_orderStatus").ToString()) %>
+                            <%# GetOrderStatusLottie(Eval("l_orderStatus").ToString(),Eval("id").ToString()) %>
                         </DataItemTemplate>
                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                     </dx:GridViewDataComboBoxColumn>
@@ -464,9 +470,11 @@
 
                     <dx:GridViewDataColumn Caption="نقاط الشركة" FieldName="pointId">
                         <DataItemTemplate>
-                            <%# Convert.ToInt32(Eval("pointId")) > 0 
-            ? Eval("points") + " نقطة - خصم " + Eval("discountAmount") + " " + MainHelper.GetCurrency(Eval("countryId")) 
-            : "لا يوجد" %>
+                            <%# 
+                                Convert.ToInt32(Eval("pointId")) > 0 
+                                ? Eval("points") + " نقطة - خصم " + Eval("discountAmount") + " " + MainHelper.GetCurrency(Eval("countryId")) 
+                                : "لا يوجد" 
+                            %>
                         </DataItemTemplate>
                         <EditFormSettings Visible="False" />
                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
@@ -531,28 +539,41 @@
                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                     </dx:GridViewDataColumn>
 
-                    <dx:GridViewDataColumn Caption="إرجاع" Width="80px">
+                    <dx:GridViewDataColumn Caption="إرجاع"  Width="80px">
                         <DataItemTemplate>
                             <%# 
-                                Convert.ToInt32(Eval("l_refundType")) == 2 
-                                ? "<span style='color: green; font-weight: bold;'>تم الإرجاع</span>"
-                                : string.Format(@"
-                                    <a href='javascript:void(0);' 
-                                       onclick='ShowRefundPopup({0}, {1}, {2}, {3})' 
-                                       title='طلب إرجاع'>
-                                        <img src='/assets/img/refund.png' alt='إرجاع' style='width: 24px; height: 24px;' />
-                                    </a>",
-                                    Eval("id"),
-                                    Eval("totalAmount"),
-                                    Eval("refundedAmount"),
-                                    Eval("l_paymentMethodId")
-                                  )
+                                Convert.ToInt32(Eval("l_orderStatus")) >= 7 
+                                ? "الارجاع غير مسموح" 
+                                :
+                                (
+                                    Convert.ToInt32(Eval("l_refundType")) == 2 
+                                    ? "<span style='color: green; font-weight: bold;'>تم الإرجاع</span>"
+                                    :
+                                    (
+                                        ( (Convert.ToInt32(Eval("l_paymentMethodId")) == 1 || Convert.ToInt32(Eval("l_paymentMethodId")) == 3)
+                                          && Convert.ToDecimal(Eval("refundedAmount")) == Convert.ToDecimal(Eval("totalAmount")) )
+                                        ? "تم الإرجاع بالكامل"
+                                        : string.Format(@"
+                                            <a href='javascript:void(0);' 
+                                               onclick='ShowRefundPopup({0}, {1}, {2}, {3})' 
+                                               title='طلب إرجاع'>
+                                                <img src='/assets/img/refund.png' alt='إرجاع' style='width: 24px; height: 24px;' />
+                                            </a>",
+                                            Eval("id"),
+                                            Eval("totalAmount"),
+                                            Eval("refundedAmount"),
+                                            Eval("l_paymentMethodId")
+                                          )
+                                    )
+                                )
                             %>
                         </DataItemTemplate>
 
                         <EditFormSettings Visible="False" />
                         <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
                     </dx:GridViewDataColumn>
+
+
 
 
 
@@ -580,7 +601,7 @@
                 <Styles>
                     <AlternatingRow BackColor="#F0F0F0">
                     </AlternatingRow>
-                    <Footer Font-Names="cairo">
+                    <Footer Font-Names="cairo" Font-Size="16px">
                     </Footer>
                 </Styles>
                 <Paddings Padding="2em" />

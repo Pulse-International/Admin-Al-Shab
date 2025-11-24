@@ -642,7 +642,7 @@
                                             <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
                                         </dx:GridViewDataSpinEditColumn>
 
-                                        <dx:GridViewDataTextColumn Caption="FCMToken" FieldName="FCMToken">
+                                     <%--   <dx:GridViewDataTextColumn Caption="FCMToken" FieldName="FCMToken">
                                             <PropertiesTextEdit>
                                                 <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
                                                     <RequiredField IsRequired="True"></RequiredField>
@@ -651,7 +651,7 @@
                                             <EditFormSettings Visible="False" />
                                             <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
 
-                                        </dx:GridViewDataTextColumn>
+                                        </dx:GridViewDataTextColumn> --%>
 
                                         <dx:GridViewDataTextColumn Caption="المنصة" FieldName="userPlatform">
                                             <PropertiesTextEdit>
@@ -678,6 +678,12 @@
                                             <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
 
                                         </dx:GridViewDataComboBoxColumn>
+
+                                        <dx:GridViewDataDateColumn FieldName="userDate" Caption="التاريخ">
+                                            <PropertiesDateEdit DisplayFormatString="yyyy/MM/dd hh:mm tt" />
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                                        </dx:GridViewDataDateColumn>
 
                                         <dx:GridViewDataTextColumn Caption="" ShowInCustomizationForm="True" Width="100px" VisibleIndex="999">
                                             <EditFormSettings Visible="False" />
@@ -726,7 +732,7 @@
                                 ID="db_AppUsers"
                                 runat="server"
                                 ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                                SelectCommand="SELECT id, countryCode, LEFT(FCMToken, 5) AS FCMToken, userPlatform, firstName, lastName, username, isActive, balance, l_userLevelId, twoAuthenticationEnabled, userPoints, isDeleted, freeDeliveryCount
+                                SelectCommand="SELECT id, countryCode, LEFT(FCMToken, 5) AS FCMToken, userPlatform, firstName, lastName, username, isActive, balance, l_userLevelId, twoAuthenticationEnabled, userPoints, isDeleted, freeDeliveryCount,userDate
                                         FROM [usersApp]
                                         ORDER BY isDeleted ASC, id desc"
                                 UpdateCommand="UPDATE [usersApp]
@@ -806,7 +812,14 @@
                                     <Settings ShowFooter="True" ShowFilterRow="True" />
 
 
-                                    <ClientSideEvents RowClick="function(s, e) {OnRowClick(e);}" RowDblClick="function(s, e) {setTimeout(function(){GridMachineUsers.StartEditRow(MyIndex);},100);}" />
+                                    <ClientSideEvents RowClick="function(s, e) {OnRowClick(e);}" EndCallback="function(s,e){
+                                            if(s.cpUsernameError){
+                                                popupUsernameError.SetContentHtml( s.cpUsernameError );
+                                                popupUsernameError.Show();
+                                                s.cpUsernameError = null; 
+                                            }
+                                        }"
+                                        RowDblClick="function(s, e) {setTimeout(function(){GridMachineUsers.StartEditRow(MyIndex);},100);}" />
                                     <SettingsAdaptivity AdaptivityMode="HideDataCells">
                                     </SettingsAdaptivity>
                                     <Settings ShowFilterRow="True" ShowFilterRowMenu="False" ShowHeaderFilterButton="False" AutoFilterCondition="Contains" />
@@ -964,7 +977,11 @@
 
                                         </dx:GridViewDataComboBoxColumn>
 
-
+                                        <dx:GridViewDataDateColumn FieldName="userDate" Caption="التاريخ">
+                                            <PropertiesDateEdit DisplayFormatString="yyyy/MM/dd hh:mm tt" />
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                                        </dx:GridViewDataDateColumn>
 
                                         <dx:GridViewDataTextColumn Caption="" ShowInCustomizationForm="True" Width="100px" VisibleIndex="999">
                                             <EditFormSettings Visible="False" />
@@ -1010,7 +1027,26 @@
 
                                 </dx:ASPxGridView>
                             </div>
+                            <dx:ASPxPopupControl ID="popupUsernameError" runat="server" ClientInstanceName="popupUsernameError"
+                                HeaderText="خطأ"
+                                Modal="True"
+                                CloseAction="CloseButton"
+                                PopupHorizontalAlign="WindowCenter"
+                                Width="300"
+                                Height="100"
+                                HeaderStyle-Font-Names="Cairo" HeaderStyle-Font-Size="20px"
+                                OnClientShown="function(s,e){s.UpdatePosition();}"
+                                Font-Names="Cairo" Font-Size="16px"
+                                CloseButton-Visible="False">
 
+                                <ContentCollection>
+                                    <dx:PopupControlContentControl>
+                                        <div style="font-family: Cairo; font-size: 16px; color: #D8000C; line-height: 1.5; background-color: #FFD2D2; padding: 15px; border-radius: 10px;">
+                                            <div id="popupUsernameErrorContent"></div>
+                                        </div>
+                                    </dx:PopupControlContentControl>
+                                </ContentCollection>
+                            </dx:ASPxPopupControl>
 
 
 
@@ -1018,7 +1054,7 @@
                                 ID="db_MachineUsers"
                                 runat="server"
                                 ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                                SelectCommand="SELECT id, username, password, firstName, lastName, isActive, countryId, companyId, branchId FROM [usersMachine]"
+                                SelectCommand="SELECT id, username, password, firstName, lastName, isActive, countryId, companyId, branchId,userDate FROM [usersMachine]"
                                 InsertCommand="INSERT INTO [usersMachine] 
                                     (username, password, storedsalt, firstName, lastName, isActive, countryId, companyId, branchId, userDate)
                                     VALUES 
@@ -1211,6 +1247,7 @@
                                                 <Items>
                                                     <dx:GridViewColumnLayoutItem ColumnName="countryId" />
                                                     <dx:GridViewColumnLayoutItem ColumnName="username" />
+                                                    <dx:GridViewColumnLayoutItem ColumnName="email" />
                                                     <dx:GridViewColumnLayoutItem ColumnName="firstName" />
                                                     <dx:GridViewColumnLayoutItem ColumnName="lastName" />
                                                     <dx:GridViewColumnLayoutItem ColumnName="password" />
@@ -1239,7 +1276,14 @@
 
 
 
-                                    <ClientSideEvents BeginCallback="OnGridBeginCallback1" RowClick="function(s, e) {OnRowClick1(e);}" RowDblClick="function(s, e) {setTimeout(function(){GridDeliveryUsers.StartEditRow(MyIndex);},100);}" />
+                                    <ClientSideEvents BeginCallback="OnGridBeginCallback1" EndCallback="function(s, e) {
+                                            if(s.cpErrorMessage){
+                                                popupError.SetContentHtml(s.cpErrorMessage);
+                                                popupError.Show();
+                                                s.cpErrorMessage = null; // إزالة الرسالة بعد العرض
+                                            }
+                                        }"
+                                        RowClick="function(s, e) {OnRowClick1(e);}" RowDblClick="function(s, e) {setTimeout(function(){GridDeliveryUsers.StartEditRow(MyIndex);},100);}" />
                                     <SettingsAdaptivity AdaptivityMode="HideDataCells">
                                     </SettingsAdaptivity>
                                     <Settings ShowFilterRow="True" ShowFilterRowMenu="False" ShowHeaderFilterButton="False" AutoFilterCondition="Contains" />
@@ -1284,6 +1328,34 @@
                                             </DataItemTemplate>
                                             <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
                                         </dx:GridViewDataColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="الاسم الاول" Visible="false" Width="5%" FieldName="firstName">
+                                            <PropertiesTextEdit>
+                                                <ValidationSettings
+                                                    RequiredField-IsRequired="true"
+                                                    ErrorText="الاسم الاول مطلوب"
+                                                    Display="Dynamic"
+                                                    SetFocusOnError="true">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesTextEdit>
+                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
+                                            <EditFormSettings Visible="True" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="الاسم الاخير" Visible="false" Width="5%" FieldName="lastName">
+                                            <PropertiesTextEdit>
+                                                <ValidationSettings
+                                                    RequiredField-IsRequired="true"
+                                                    ErrorText="الاسم الاخير مطلوب"
+                                                    Display="Dynamic"
+                                                    SetFocusOnError="true">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesTextEdit>
+                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
+                                            <EditFormSettings Visible="True" />
+                                        </dx:GridViewDataTextColumn>
 
                                         <dx:GridViewDataTextColumn Caption="البريد الالكتروني" Width="5%" FieldName="email">
                                             <PropertiesTextEdit>
@@ -1393,64 +1465,6 @@
                                             </DataItemTemplate>
                                         </dx:GridViewDataComboBoxColumn>
 
-                                        <dx:GridViewDataColumn Caption="الصور" ShowInCustomizationForm="True">
-                                            <EditFormSettings Visible="False" />
-                                            <DataItemTemplate>
-                                                <div style="text-align: center; font-family: Cairo;">
-
-                                                    <!-- Row 1: الصورة الشخصية، الهوية من الأمام، الهوية من الخلف -->
-                                                    <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 10px;">
-                                                        <div>
-                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("image") %>')">
-                                                                <img src='<%# (!string.IsNullOrEmpty(Eval("image").ToString()) ? Eval("image").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
-                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
-                                                            </a>
-                                                            <div style="margin-top: 5px;">الصورة الشخصية</div>
-                                                        </div>
-                                                        <div>
-                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("idFrontPicture") %>')">
-                                                                <img src='<%# (!string.IsNullOrEmpty(Eval("idFrontPicture").ToString()) ? Eval("idFrontPicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
-                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
-                                                            </a>
-                                                            <div style="margin-top: 5px;">الهوية من الأمام</div>
-                                                        </div>
-                                                        <div>
-                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("idBackPicture") %>')">
-                                                                <img src='<%# (!string.IsNullOrEmpty(Eval("idBackPicture").ToString()) ? Eval("idBackPicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
-                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
-                                                            </a>
-                                                            <div style="margin-top: 5px;">الهوية من الخلف</div>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Row 2: صورة السيارة، رخصة السيارة، رخصة القيادة -->
-                                                    <div style="display: flex; justify-content: center; gap: 20px;">
-                                                        <div>
-                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("carPicture") %>')">
-                                                                <img src='<%# (!string.IsNullOrEmpty(Eval("carPicture").ToString()) ? Eval("carPicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
-                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
-                                                            </a>
-                                                            <div style="margin-top: 5px;">صورة السيارة</div>
-                                                        </div>
-                                                        <div>
-                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("carLicensePicture") %>')">
-                                                                <img src='<%# (!string.IsNullOrEmpty(Eval("carLicensePicture").ToString()) ? Eval("carLicensePicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
-                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
-                                                            </a>
-                                                            <div style="margin-top: 5px;">رخصة السيارة</div>
-                                                        </div>
-                                                        <div>
-                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("licensePicture") %>')">
-                                                                <img src='<%# (!string.IsNullOrEmpty(Eval("licensePicture").ToString()) ? Eval("licensePicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
-                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
-                                                            </a>
-                                                            <div style="margin-top: 5px;">رخصة القيادة</div>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </DataItemTemplate>
-                                        </dx:GridViewDataColumn>
 
 
                                         <dx:GridViewDataColumn Caption="الصورة الشخصية" Visible="false" FieldName="image">
@@ -1481,8 +1495,6 @@
                                             <EditFormSettings Visible="True" />
 
                                         </dx:GridViewDataColumn>
-
-
 
                                         <dx:GridViewDataColumn Caption="صورة السيارة" Visible="false" FieldName="carPicture">
                                             <CellStyle VerticalAlign="Middle">
@@ -1629,32 +1641,7 @@
 
                                         </dx:GridViewDataColumn>
 
-
-                                        <dx:GridViewDataComboBoxColumn Caption="حالة التسجيل" FieldName="l_DeliveryStatusId">
-                                            <EditFormSettings Visible="False" />
-                                            <PropertiesComboBox
-                                                DataSourceID="db_L_DeliveryStatus"
-                                                TextField="description"
-                                                ValueField="id">
-                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
-                                                    <RequiredField IsRequired="True"></RequiredField>
-                                                </ValidationSettings>
-                                            </PropertiesComboBox>
-                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
-                                        </dx:GridViewDataComboBoxColumn>
-
-                                        <dx:GridViewDataTextColumn Caption="ملاحظة التسجيل">
-                                            <DataItemTemplate>
-                                                <%# 
-                                                    !string.IsNullOrEmpty(Eval("rejectNote")?.ToString()) 
-                                                    ? Eval("rejectNote") 
-                                                    : Eval("incompleteNote")
-                                                %>
-                                            </DataItemTemplate>
-                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
-                                        </dx:GridViewDataTextColumn>
-
-                                        <dx:GridViewDataTextColumn Caption="حالة التسجيل" Width="220px" VisibleIndex="999">
+                                        <dx:GridViewDataTextColumn Caption="حالة التسجيل" Width="130px">
                                             <DataItemTemplate>
 
                                                 <dx:ASPxLabel ID="lblStatus" runat="server" Font-Names="Cairo"></dx:ASPxLabel>
@@ -1674,8 +1661,85 @@
                                             </DataItemTemplate>
                                         </dx:GridViewDataTextColumn>
 
+                                        <dx:GridViewDataTextColumn Caption="ملاحظة التسجيل">
+                                            <DataItemTemplate>
+                                                <%# 
+                                                    Convert.ToInt32(Eval("l_DeliveryStatusId")) == 4
+                                                    ? Eval("rejectNote")
+                                                    : Convert.ToInt32(Eval("l_DeliveryStatusId")) == 2
+                                                        ? Eval("incompleteNote")
+                                                        : "لا يوجد"
+                                                %>
+                                            </DataItemTemplate>
+                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
+                                        </dx:GridViewDataTextColumn>
 
-                                        <dx:GridViewDataTextColumn Caption="" ShowInCustomizationForm="True" Width="15%" VisibleIndex="999">
+                                        <dx:GridViewDataColumn Caption="الصور" ShowInCustomizationForm="True">
+                                            <EditFormSettings Visible="False" />
+                                            <DataItemTemplate>
+                                                <div style="text-align: center; font-family: Cairo;">
+
+                                                    <!-- Row 1: الصورة الشخصية، الهوية من الأمام، الهوية من الخلف -->
+                                                    <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 10px;">
+                                                        <div>
+                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("image") %>')">
+                                                                <img src='<%# (!string.IsNullOrEmpty(Eval("image").ToString()) ? Eval("image").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
+                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
+                                                            </a>
+                                                            <div style="margin-top: 5px;">الصورة الشخصية</div>
+                                                        </div>
+                                                        <div>
+                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("idFrontPicture") %>')">
+                                                                <img src='<%# (!string.IsNullOrEmpty(Eval("idFrontPicture").ToString()) ? Eval("idFrontPicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
+                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
+                                                            </a>
+                                                            <div style="margin-top: 5px;">الهوية من الأمام</div>
+                                                        </div>
+                                                        <div>
+                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("idBackPicture") %>')">
+                                                                <img src='<%# (!string.IsNullOrEmpty(Eval("idBackPicture").ToString()) ? Eval("idBackPicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
+                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
+                                                            </a>
+                                                            <div style="margin-top: 5px;">الهوية من الخلف</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Row 2: صورة السيارة، رخصة السيارة، رخصة القيادة -->
+                                                    <div style="display: flex; justify-content: center; gap: 20px;">
+                                                        <div>
+                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("carPicture") %>')">
+                                                                <img src='<%# (!string.IsNullOrEmpty(Eval("carPicture").ToString()) ? Eval("carPicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
+                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
+                                                            </a>
+                                                            <div style="margin-top: 5px;">صورة السيارة</div>
+                                                        </div>
+                                                        <div>
+                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("carLicensePicture") %>')">
+                                                                <img src='<%# (!string.IsNullOrEmpty(Eval("carLicensePicture").ToString()) ? Eval("carLicensePicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
+                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
+                                                            </a>
+                                                            <div style="margin-top: 5px;">رخصة السيارة</div>
+                                                        </div>
+                                                        <div>
+                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("licensePicture") %>')">
+                                                                <img src='<%# (!string.IsNullOrEmpty(Eval("licensePicture").ToString()) ? Eval("licensePicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
+                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
+                                                            </a>
+                                                            <div style="margin-top: 5px;">رخصة القيادة</div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </DataItemTemplate>
+                                        </dx:GridViewDataColumn>
+
+                                        <dx:GridViewDataDateColumn FieldName="userDate" Caption="التاريخ">
+                                            <PropertiesDateEdit DisplayFormatString="yyyy/MM/dd hh:mm tt" />
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                                        </dx:GridViewDataDateColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="" ShowInCustomizationForm="True" VisibleIndex="999">
                                             <EditFormSettings Visible="False" />
                                             <DataItemTemplate>
                                                 <div style="width: 100%; float: left; text-align: center">
@@ -1719,23 +1783,50 @@
                             </div>
 
 
+                            <dx:ASPxPopupControl ID="popupError" runat="server" ClientInstanceName="popupError"
+                                HeaderText="خطأ"
+                                Modal="True"
+                                CloseAction="CloseButton"
+                                PopupHorizontalAlign="WindowCenter"
+                                PopupVerticalAlign="WindowCenter"
+                                ShowOnPageLoad="False"
+                                OnClientShown="function(s,e){s.UpdatePosition();}"
+                                Width="300px"
+                                Height="100px"
+                                HeaderStyle-Font-Names="Cairo" HeaderStyle-Font-Size="20px"
+                                Font-Names="Cairo" Font-Size="16px">
+
+                                <ContentCollection>
+                                    <dx:PopupControlContentControl>
+                                        <div style="font-family: Cairo; font-size: 16px; color: #D8000C; line-height: 1.5; background-color: #FFD2D2; padding: 15px; border-radius: 10px;">
+                                            <div id="popupErrorContent"></div>
+                                            <div style="text-align: center; margin-top: 20px;">
+                                                <asp:Button ID="btnClosePopup" runat="server" Text="إغلاق"
+                                                    OnClientClick="popupError.Hide(); return false;"
+                                                    Style="font-family: Cairo; font-size: 16px; padding: 8px 20px; border-radius: 5px; background-color: #D8000C; color: white; border: none; cursor: pointer;" />
+                                            </div>
+                                        </div>
+                                    </dx:PopupControlContentControl>
+                                </ContentCollection>
+                            </dx:ASPxPopupControl>
 
 
                             <asp:SqlDataSource
                                 ID="db_DeliveryUsers"
                                 runat="server"
                                 ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                                SelectCommand="SELECT id, username,email,firstName + ' ' + lastName AS fullName, userPicture AS image, carPicture ,carLicensePicture ,idFrontPicture,idBackPicture,licensePicture, password, firstName, lastName, l_vehicleType, isActive, vehicleVin, vehicleNo ,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated,isOnline,countryId FROM [usersDelivery] order by l_deliveryStatus "
+                                SelectCommand="SELECT id, username,email, firstName + ' ' + lastName AS fullName, userPicture AS image, carPicture ,carLicensePicture ,idFrontPicture,idBackPicture,licensePicture, password, firstName, lastName, l_vehicleType, isActive, vehicleVin, vehicleNo ,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated,isOnline,countryId,userDate FROM [usersDelivery] order by l_deliveryStatus "
                                 InsertCommand="INSERT INTO [usersDelivery] 
-                                    (username, password, storedsalt, firstName, lastName, isActive, l_vehicleType, userPicture ,carPicture,carLicensePicture,idFrontPicture,idBackPicture,licensePicture,vehicleNo,vehicleVin,isOnline,countryId,l_DeliveryStatusId, userDate)
+                                    (username, password, storedsalt, email, firstName, lastName, isActive, l_vehicleType, userPicture ,carPicture,carLicensePicture,idFrontPicture,idBackPicture,licensePicture,vehicleNo,vehicleVin,isOnline,countryId,l_DeliveryStatusId, userDate)
                                     VALUES 
-                                    (@username, @password, @storedsalt, @firstName, @lastName, @isActive,@l_vehicleType, @image,@carPicture,@carLicensePicture,@idFrontPicture,@idBackPicture,@licensePicture, @vehicleNo, @vehicleVin, @isOnline,@countryId,3, getDate())"
+                                    (@username, @password, @storedsalt,@email, @firstName, @lastName, @isActive,@l_vehicleType, @image,@carPicture,@carLicensePicture,@idFrontPicture,@idBackPicture,@licensePicture, @vehicleNo, @vehicleVin, @isOnline,@countryId,3, getDate())"
                                 UpdateCommand="UPDATE [usersDelivery]
                                     SET
                                         username = @username,
                                         password = @password,
                                         storedsalt = @storedsalt,
                                         firstName = @firstName,
+                                        email = @email,
                                         lastName = @lastName,
                                         l_vehicleType = @l_vehicleType,
                                         vehicleVin = @vehicleVin,
@@ -1756,6 +1847,7 @@
                                     <asp:Parameter Name="username" Type="String" />
                                     <asp:Parameter Name="password" Type="String" />
                                     <asp:Parameter Name="storedsalt" />
+                                    <asp:Parameter Name="email" Type="String" />
                                     <asp:Parameter Name="firstName" Type="String" />
                                     <asp:Parameter Name="lastName" Type="String" />
                                     <asp:Parameter Name="vehicleVin" Type="String" />
@@ -1775,6 +1867,7 @@
                                     <asp:Parameter Name="username" Type="String" />
                                     <asp:Parameter Name="password" Type="String" />
                                     <asp:Parameter Name="storedsalt" Type="Object" />
+                                    <asp:Parameter Name="email" Type="String" />
                                     <asp:Parameter Name="firstName" Type="String" />
                                     <asp:Parameter Name="lastName" Type="String" />
                                     <asp:Parameter Name="vehicleVin" Type="String" />
@@ -1876,9 +1969,10 @@
                                         </dx:ASPxButton>
 
                                         <dx:ASPxButton ID="btnCancelPopup" runat="server" Text="إلغاء" AutoPostBack="false"
-                                            Font-Names="Cairo">
+                                            Font-Names="Cairo" Style="margin-right: 100px;">
                                             <ClientSideEvents Click="function(s,e){ popupConfirm.Hide(); }" />
                                         </dx:ASPxButton>
+
 
                                         <dx:ASPxHiddenField ID="hfPopupAction" runat="server" ClientInstanceName="hfPopupAction" />
                                         <dx:ASPxHiddenField ID="hfPopupUserId" runat="server" ClientInstanceName="hfPopupUserId" />

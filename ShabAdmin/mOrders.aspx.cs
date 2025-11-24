@@ -418,7 +418,7 @@ LEFT JOIN
         }
 
 
-        public string GetOrderStatusLottie(string status)
+        public string GetOrderStatusLottie(string status, string id)
         {
             if (status == "1")
             {
@@ -493,6 +493,46 @@ LEFT JOIN
                         autoplay>
                     </lottie-player>
                     <div style='margin-top: 5px; font-size: 0.95em; color: #d9534f;'>ملغي من الإدارة</div>
+                </div>";
+            }
+            else if (status == "9")
+            {
+                string orderId = id;
+
+                // اجلب ملاحظة الرفض من قاعدة البيانات
+                string rejectNote = "";
+                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand("SELECT rejectNote FROM orders WHERE id=@id", conn);
+                    cmd.Parameters.AddWithValue("@id", orderId);
+
+                    var result = cmd.ExecuteScalar();
+                    rejectNote = result != DBNull.Value ? result.ToString() : "";
+                }
+
+                // لو ما في ملاحظة خليها فراغ
+                if (string.IsNullOrWhiteSpace(rejectNote))
+                    rejectNote = "—";
+
+                return $@"
+                <div style='width: 100px; margin: auto; text-align: center; font-family: Cairo;'>
+                    <lottie-player 
+                        src='/assets/animations/canceled.json' 
+                        background='transparent' 
+                        speed='1' 
+                        style='width: 110px; height: 110px; margin: 0 auto;'
+                        loop 
+                        autoplay>
+                    </lottie-player>
+
+                    <div style='margin-top: 5px; font-size: 0.95em; color: #d9534f;'>ملغي من الإدارة</div>
+
+                    <div style='margin-top: 5px; font-size: 0.85em;font-weight:bold; color: #555;'>
+                        ملاحظة الرفض: 
+<br/>
+                        {rejectNote}
+                    </div>
                 </div>";
             }
             else if (status == "7")

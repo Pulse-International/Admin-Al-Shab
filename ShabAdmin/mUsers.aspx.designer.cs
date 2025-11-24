@@ -96,6 +96,15 @@ namespace ShabAdmin
         protected global::DevExpress.Web.ASPxGridView GridMachineUsers;
 
         /// <summary>
+        /// popupUsernameError control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxPopupControl popupUsernameError;
+
+        /// <summary>
         /// db_MachineUsers control.
         /// </summary>
         /// <remarks>
@@ -202,6 +211,24 @@ namespace ShabAdmin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxGridView GridDeliveryUsers;
+
+        /// <summary>
+        /// popupError control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxPopupControl popupError;
+
+        /// <summary>
+        /// btnClosePopup control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnClosePopup;
 
         /// <summary>
         /// db_DeliveryUsers control.

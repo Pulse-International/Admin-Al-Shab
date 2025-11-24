@@ -345,6 +345,14 @@
                                     <dx:ASPxGridView ID="GridOrders" runat="server" DataSourceID="db_Orders" KeyFieldName="id" ClientInstanceName="GridOrders" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="1em" OnCustomCallback="GridOrders_CustomCallback" RightToLeft="True">
                                         <Settings ShowFooter="True" ShowFilterRow="True" />
 
+                                        <StylesPager>
+                                            <PageNumber Font-Size="16px" Font-Names="Cairo" />
+                                            <CurrentPageNumber Font-Size="17px" Font-Bold="true" Font-Names="Cairo" />
+                                            <Summary Font-Size="16px" Font-Names="Cairo" />
+                                            <PageSizeItem Font-Size="16px" Font-Names="Cairo" />
+                                        </StylesPager>
+
+                                        <SettingsPager PageSize="20"></SettingsPager>
 
                                         <ClientSideEvents RowClick="function(s, e) {OnRowClick(e);}" />
                                         <SettingsAdaptivity AdaptivityMode="HideDataCells">
@@ -506,15 +514,18 @@
                                                 <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
                                             </dx:GridViewDataColumn>
 
-
                                             <dx:GridViewDataColumn Caption="رفض">
                                                 <DataItemTemplate>
-                                                    <dx:ASPxButton ID="btnReject" runat="server" Text="رفض" AutoPostBack="false" Theme="Material" BackColor="Red" Font-Names="cairo"
-                                                        OnClick='<%# string.Format("ShowRejectPopup({0}); return false;", Eval("id")) %>'>
-                                                    </dx:ASPxButton>
+                                                    <%# 
+            Convert.ToInt32(Eval("l_orderStatus")) == 1 
+            ? "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" style='background-color:red;color:white;font-family:Cairo; width:90px;border:none;padding:5px 10px;border-radius:4px;'>رفض</button>"
+            : ""
+        %>
                                                 </DataItemTemplate>
+
                                                 <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
                                             </dx:GridViewDataColumn>
+
 
 
                                         </Columns>
@@ -619,38 +630,31 @@
 
                                     <ContentCollection>
                                         <dx:PopupControlContentControl>
-                                            <!-- نص إرشادي -->
                                             <div style="font-family: Cairo; font-size: 15px; margin-bottom: 8px; color: #444;">
                                                 الرجاء كتابة سبب الرفض:
            
                                             </div>
 
-                                            <!-- Textarea لكتابة سبب الرفض -->
                                             <textarea id="txtRejectNote" style="width: 100%; height: 140px; font-family: Cairo; font-size: 14px; padding: 8px; border: 1px solid #ccc; border-radius: 5px; resize: none;"></textarea>
 
-                                            <!-- رسالة خطأ -->
                                             <div id="rejectNoteError" style="color: red; font-family: Cairo; font-size: 14px; margin-top: 5px; display: none;">
                                                 الرجاء كتابة سبب الرفض
                                             </div>
 
-                                            <!-- مخفي لتخزين رقم الطلب -->
                                             <input type="hidden" id="lblRejectOrderId" />
 
-                                            <!-- أزرار التأكيد والإلغاء -->
                                             <div style="display: flex; justify-content: space-between; gap: 5px; margin-top: 12px;">
-                                                <!-- زر الإلغاء -->
-                                                <button type="button" onclick="popupReject.Hide()" style="flex: 1; padding: 12px; margin-right: 8px; background: #777; color: white; border: none; border-radius: 8px; font-family: Cairo; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: 0.2s;"
-                                                    onmouseover="this.style.background='#555'"
-                                                    onmouseout="this.style.background='#777'">
-                                                    إلغاء
-               
-                                                </button>
-
-                                                <!-- زر التأكيد -->
                                                 <button type="button" onclick="ConfirmReject()" style="flex: 1; padding: 12px; background: #b00000; color: white; border: none; border-radius: 8px; font-family: Cairo; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: 0.2s;"
                                                     onmouseover="this.style.background='#d30000'"
                                                     onmouseout="this.style.background='#b00000'">
                                                     تأكيد الرفض
+               
+                                                </button>
+
+                                                <button type="button" onclick="popupReject.Hide()" style="flex: 1; padding: 12px; margin-right: 8px; background: #777; color: white; border: none; border-radius: 8px; font-family: Cairo; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: 0.2s;"
+                                                    onmouseover="this.style.background='#555'"
+                                                    onmouseout="this.style.background='#777'">
+                                                    إلغاء
                
                                                 </button>
                                             </div>

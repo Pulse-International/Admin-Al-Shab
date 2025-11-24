@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Services.Description;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -41,14 +42,14 @@ namespace ShabAdmin
                 db_DeliveryUsers.SelectCommand = @"
             SELECT id, username,email,firstName + ' ' + lastName AS fullName,  userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
                    licensePicture, password, firstName, lastName, l_vehicleType, isActive, vehicleVin,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated vehicleNo, 
-                   isOnline, countryId
+                   isOnline, countryId, userDate
             FROM [usersDelivery]
             WHERE countryId = @countryId";
 
                 db_DeliveryUsers.SelectParameters.Add("countryId", countryId.ToString());
 
                 db_MachineUsers.SelectCommand = @"
-            SELECT id, username, password, firstName, lastName, isActive, countryId, companyId, branchId
+            SELECT id, username, password, firstName, lastName, isActive, countryId, companyId, branchId,userDate
             FROM [usersMachine]
             WHERE countryId = @countryId AND companyId = @companyId";
 
@@ -65,7 +66,7 @@ namespace ShabAdmin
 
                 db_AppUsers.SelectCommand = @"
             SELECT id, countryCode, firstName, LEFT(FCMToken, 5) AS FCMToken, userPlatform, lastName, username, isActive, balance, 
-                   l_userLevelId, twoAuthenticationEnabled, userPoints, isDeleted, freeDeliveryCount
+                   l_userLevelId, twoAuthenticationEnabled, userPoints, isDeleted, freeDeliveryCount,userDate
             FROM [usersApp]
             WHERE countryCode = (SELECT countryCode FROM countries WHERE id = @countryId)
             ORDER BY isDeleted ASC, id desc";
@@ -99,14 +100,14 @@ namespace ShabAdmin
                 db_DeliveryUsers.SelectCommand = @"
             SELECT id, username,email,firstName + ' ' + lastName AS fullName,  userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
                    licensePicture, password, firstName, lastName, l_vehicleType, isActive,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated, vehicleVin, vehicleNo, 
-                   isOnline, countryId
+                   isOnline, countryId,userDate
             FROM [usersDelivery]
             WHERE countryId = @countryId";
 
                 db_DeliveryUsers.SelectParameters.Add("countryId", countryId.ToString());
 
                 db_MachineUsers.SelectCommand = @"
-            SELECT id, username, password, firstName, lastName, isActive, countryId, companyId, branchId
+            SELECT id, username, password, firstName, lastName, isActive, countryId, companyId, branchId, userDate
             FROM [usersMachine]
             WHERE countryId = @countryId";
 
@@ -121,7 +122,7 @@ namespace ShabAdmin
 
                 db_AppUsers.SelectCommand = @"
             SELECT id, countryCode, firstName, LEFT(FCMToken, 5) AS FCMToken, userPlatform, lastName, username, isActive, balance, 
-                   l_userLevelId, twoAuthenticationEnabled, userPoints, isDeleted, freeDeliveryCount
+                   l_userLevelId, twoAuthenticationEnabled, userPoints, isDeleted, freeDeliveryCount, userDate
             FROM [usersApp]
             WHERE countryCode = (SELECT countryCode FROM countries WHERE id = @countryId)
             ORDER BY isDeleted ASC, id desc";
@@ -154,11 +155,11 @@ namespace ShabAdmin
                 db_DeliveryUsers.SelectCommand = @"
             SELECT id, username,email,firstName + ' ' + lastName AS fullName,  userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
                    licensePicture, password, firstName, lastName, l_vehicleType,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated, isActive, vehicleVin, vehicleNo, 
-                   isOnline, countryId
+                   isOnline, countryId, userDate
             FROM [usersDelivery]";
 
                 db_MachineUsers.SelectCommand = @"
-            SELECT id, username, password, firstName, lastName, isActive, countryId, companyId, branchId
+            SELECT id, username, password, firstName, lastName, isActive, countryId, companyId, branchId, userDate
             FROM [usersMachine]";
 
                 db_Products.SelectCommand = @"
@@ -167,7 +168,7 @@ namespace ShabAdmin
 
                 db_AppUsers.SelectCommand = @"
             SELECT id, countryCode, firstName, lastName, LEFT(FCMToken, 5) AS FCMToken, userPlatform, username, isActive, balance, 
-                   l_userLevelId, twoAuthenticationEnabled, userPoints, isDeleted, freeDeliveryCount
+                   l_userLevelId, twoAuthenticationEnabled, userPoints, isDeleted, freeDeliveryCount, userDate
             FROM [usersApp]
             ORDER BY isDeleted ASC, id desc";
 
@@ -225,6 +226,40 @@ namespace ShabAdmin
                 {
                     e.RowError = "كلمة المرور مطلوبة";
                     return;
+                }
+            }
+
+            int id = e.Keys["id"] != null ? Convert.ToInt32(e.Keys["id"]) : 0;
+            string newUsername = e.NewValues["username"]?.ToString();
+            string oldUsername = e.OldValues["username"]?.ToString();
+            var grid = GridMachineUsers;
+
+            if (string.IsNullOrWhiteSpace(newUsername))
+            {
+                e.RowError = "اسم المستخدم مطلوب";
+                grid.JSProperties["cpUsernameError"] = e.RowError;
+                return;
+            }
+
+            using (SqlConnection conn = new SqlConnection(WebConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
+            {
+                conn.Open();
+                if (id == 0 || !string.Equals(newUsername, oldUsername, StringComparison.OrdinalIgnoreCase))
+                {
+                    using (SqlCommand cmd = new SqlCommand(
+                        "SELECT COUNT(*) FROM usersMachine WHERE username = @username AND id <> @id", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@username", newUsername ?? string.Empty);
+                        cmd.Parameters.AddWithValue("@id", id);
+
+                        int found = (int)cmd.ExecuteScalar();
+                        if (found > 0)
+                        {
+                            string errorMsg = "اسم المستخدم موجود مسبقاً.";
+                            e.RowError = errorMsg;
+                            grid.JSProperties["cpUsernameError"] = errorMsg;
+                        }
+                    }
                 }
             }
         }
@@ -481,6 +516,76 @@ namespace ShabAdmin
                     e.RowError = "كلمة المرور مطلوبة";
                     return;
                 }
+            }
+
+            int id = e.Keys["id"] != null ? Convert.ToInt32(e.Keys["id"]) : 0;
+
+            string newUsername = e.NewValues["username"]?.ToString();
+            string newEmail = e.NewValues["email"]?.ToString();
+
+            string oldUsername = e.OldValues["username"]?.ToString();
+            string oldEmail = e.OldValues["email"]?.ToString();
+
+            var grid = GridDeliveryUsers;
+
+            using (SqlConnection conn = new SqlConnection(WebConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
+            {
+                conn.Open();
+
+                if (id == 0 || !string.Equals(newUsername, oldUsername, StringComparison.OrdinalIgnoreCase))
+                {
+                    using (SqlCommand cmd = new SqlCommand(
+                        "SELECT COUNT(*) FROM usersDelivery WHERE username = @username AND id <> @id", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@username", newUsername ?? string.Empty);
+                        cmd.Parameters.AddWithValue("@id", id);
+
+                        int found = (int)cmd.ExecuteScalar();
+                        if (found > 0)
+                        {
+                            var col = grid.Columns["username"] as DevExpress.Web.GridViewDataColumn;
+                            string errorMsg = "اسم المستخدم موجود مسبقاً.";
+                            if (col != null)
+                                e.Errors[col] = errorMsg;
+                            else
+                                e.RowError = errorMsg;
+                        }
+                    }
+                }
+
+                if (id == 0 || !string.Equals(newEmail, oldEmail, StringComparison.OrdinalIgnoreCase))
+                {
+                    using (SqlCommand cmd = new SqlCommand(
+                        "SELECT COUNT(*) FROM usersDelivery WHERE email = @Email AND id <> @id", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Email", newEmail ?? string.Empty);
+                        cmd.Parameters.AddWithValue("@id", id);
+
+                        int found = (int)cmd.ExecuteScalar();
+                        if (found > 0)
+                        {
+                            var col = grid.Columns["email"] as DevExpress.Web.GridViewDataColumn;
+                            string errorMsg = "البريد الإلكتروني مستخدم مسبقاً.";
+                            if (col != null)
+                                e.Errors[col] = errorMsg;
+                            else
+                                e.RowError = errorMsg;
+                        }
+                    }
+                }
+
+                
+            }
+
+            if (e.Errors.Count > 0 || !string.IsNullOrEmpty(e.RowError))
+            {
+                string message = e.RowError ?? "";
+                foreach (var error in e.Errors.Values)
+                {
+                    message += "\n" + error.ToString();
+                }
+
+                GridDeliveryUsers.JSProperties["cpErrorMessage"] = message;
             }
         }
 
@@ -826,8 +931,7 @@ namespace ShabAdmin
                 {
                     case "approve":
                         cmd = new SqlCommand(
-                            "UPDATE usersDelivery SET l_deliveryStatusId=@status WHERE id=@id", conn);
-                        cmd.Parameters.AddWithValue("@status", 3);
+                            "UPDATE usersDelivery SET l_deliveryStatusId=3,isActive=1 WHERE id=@id", conn);
 
                         SendSmsBackground("962798579769", "تم الموافقة عليك اخي");
 
@@ -835,9 +939,8 @@ namespace ShabAdmin
 
                     case "reject":
                         cmd = new SqlCommand(
-                            "UPDATE usersDelivery SET l_deliveryStatusId=@status, rejectNote=@note WHERE id=@id", conn);
+                            "UPDATE usersDelivery SET l_deliveryStatusId=4, rejectNote=@note WHERE id=@id", conn);
 
-                        cmd.Parameters.AddWithValue("@status", 4);
                         SendSmsBackground("962798579769", "مرفوضة يمعلم");
 
                         cmd.Parameters.AddWithValue("@note", note);
@@ -949,6 +1052,8 @@ namespace ShabAdmin
                 {
                     btnIncomplete.Visible = true;
                     btnIncompleteBulb.ClientVisible = false;
+                    btnApprove.Enabled = false;
+                    btnReject.Enabled = false;
                     btnIncomplete.ClientSideEvents.Click = $"function(s,e){{ ShowASPXPopup('incomplete',{recordId}); }}";
                 }
             }

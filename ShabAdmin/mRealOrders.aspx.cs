@@ -553,21 +553,126 @@ namespace ShabAdmin
                 using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
                 {
                     conn.Open();
-                    SqlCommand cmd = new SqlCommand(@"
-                UPDATE orders 
-                SET l_orderStatus = 9,
-                    rejectNote = @note
-                WHERE id = @id
-            ", conn);
+                    using (var tx = conn.BeginTransaction())
+                    {
+                        try
+                        {
+                            string getOrderSql = @"
+                        SELECT id, username, totalAmount, l_paymentMethodId, l_paymentMethodId2, l_paymentMethodId2Amount, refundedAmount
+                        FROM orders
+                        WHERE id = @orderId
+                    ";
 
-                    cmd.Parameters.AddWithValue("@id", orderId);
-                    cmd.Parameters.AddWithValue("@note", rejectNote);
+                            string username = "";
+                            decimal totalAmount = 0;
+                            int l_paymentMethodId = 0, l_paymentMethodId2 = 0;
+                            decimal l_paymentMethodId2Amount = 0;
+                            decimal existingRefundedAmount = 0;
 
-                    cmd.ExecuteNonQuery();
+                            using (SqlCommand cmd = new SqlCommand(getOrderSql, conn, tx))
+                            {
+                                cmd.Parameters.AddWithValue("@orderId", orderId);
+                                using (SqlDataReader r = cmd.ExecuteReader())
+                                {
+                                    if (!r.Read())
+                                    {
+                                        tx.Rollback();
+                                        (sender as ASPxGridView).JSProperties["cpMessage"] = "الطلب غير موجود";
+                                        return;
+                                    }
+
+                                    username = r["username"]?.ToString();
+                                    totalAmount = r["totalAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(r["totalAmount"]);
+                                    l_paymentMethodId = r["l_paymentMethodId"] == DBNull.Value ? 0 : Convert.ToInt32(r["l_paymentMethodId"]);
+                                    l_paymentMethodId2 = r["l_paymentMethodId2"] == DBNull.Value ? 0 : Convert.ToInt32(r["l_paymentMethodId2"]);
+                                    l_paymentMethodId2Amount = r["l_paymentMethodId2Amount"] == DBNull.Value ? 0 : Convert.ToDecimal(r["l_paymentMethodId2Amount"]);
+                                    existingRefundedAmount = r["refundedAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(r["refundedAmount"]);
+                                }
+                            }
+
+                            decimal refundToBalance = 0;
+
+                            if (l_paymentMethodId > 0 && l_paymentMethodId2 == 0)
+                            {
+                                if (l_paymentMethodId == 2 || l_paymentMethodId == 3)
+                                    refundToBalance = totalAmount;
+                                else
+                                    refundToBalance = 0; 
+                            }
+                            else if (l_paymentMethodId > 0 && l_paymentMethodId2 > 0)
+                            {
+                                if (l_paymentMethodId == 1)
+                                {
+                                    refundToBalance = l_paymentMethodId2Amount;
+                                }
+                                else if ((l_paymentMethodId == 2 || l_paymentMethodId == 3) && l_paymentMethodId2 == 1)
+                                {
+                                    refundToBalance = totalAmount - l_paymentMethodId2Amount;
+                                }
+                                else if ((l_paymentMethodId == 2 || l_paymentMethodId == 3) && (l_paymentMethodId == 2 || l_paymentMethodId == 3))
+                                {
+                                    refundToBalance = totalAmount;
+                                }
+                                else
+                                {
+                                    refundToBalance = 0;
+                                }
+                            }
+                            else
+                            {
+                                refundToBalance = 0;
+                            }
+
+                            string user = MainHelper.M_Check(Request.Cookies["M_Username"]?.Value);
+
+                            string updateOrderSql = @"
+                        UPDATE orders
+                        SET l_orderStatus = 9,
+                            rejectNote = @note,
+                            l_refundType = 3,
+                            refundedAmount = @refundedAmount,
+                            refundedUser = @refundedUser
+                        WHERE id = @id
+                    ";
+
+                            using (SqlCommand cmd = new SqlCommand(updateOrderSql, conn, tx))
+                            {
+                                cmd.Parameters.AddWithValue("@id", orderId);
+                                cmd.Parameters.AddWithValue("@note", rejectNote);
+                                cmd.Parameters.AddWithValue("@refundedAmount", refundToBalance > 0 ? refundToBalance : 0);
+                                cmd.Parameters.AddWithValue("@refundedUser", user);
+                                cmd.ExecuteNonQuery();
+                            }
+
+\                            if (refundToBalance > 0)
+                            {
+                                string updateUserBalanceSql = @"
+                            UPDATE usersApp
+                            SET balance = balance + @refund
+                            WHERE username = @username
+                        ";
+
+                                using (SqlCommand cmd = new SqlCommand(updateUserBalanceSql, conn, tx))
+                                {
+                                    cmd.Parameters.AddWithValue("@refund", refundToBalance);
+                                    cmd.Parameters.AddWithValue("@username", username);
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+                            tx.Commit();
+                            GridOrders.DataBind();
+                            (sender as ASPxGridView).JSProperties["cpMessage"] = "تم رفض الطلب وتحديث المحفظة بنجاح";
+                        }
+                        catch (Exception ex)
+                        {
+                            tx.Rollback();
+                            (sender as ASPxGridView).JSProperties["cpMessage"] = "حدث خطأ: " + ex.Message;
+                        }
+                    }
                 }
-
-                GridOrders.DataBind();
             }
         }
+
     }
 }

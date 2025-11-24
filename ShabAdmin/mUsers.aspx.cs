@@ -771,8 +771,7 @@ namespace ShabAdmin
                 checkError = 1;
             }
 
-
-            return UploadDirectory + fileName + " ";
+            return UploadDirectory + fileName + "bbbbbbbb";
         }
 
         protected void GridDeliveryUsers_CancelRowEditing(object sender, ASPxStartRowEditingEventArgs e)

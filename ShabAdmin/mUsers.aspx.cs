@@ -772,7 +772,7 @@ namespace ShabAdmin
             }
 
 
-            return UploadDirectory + fileName;
+            return UploadDirectory + fileName + " ";
         }
 
         protected void GridDeliveryUsers_CancelRowEditing(object sender, ASPxStartRowEditingEventArgs e)

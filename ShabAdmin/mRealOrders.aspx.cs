@@ -644,7 +644,7 @@ namespace ShabAdmin
                                 cmd.ExecuteNonQuery();
                             }
 
-\                            if (refundToBalance > 0)
+                            if (refundToBalance > 0)
                             {
                                 string updateUserBalanceSql = @"
                             UPDATE usersApp

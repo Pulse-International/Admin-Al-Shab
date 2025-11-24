@@ -1322,7 +1322,7 @@
                                         <dx:GridViewDataColumn Caption="المستخدم (رقم الهاتف)" FieldName="username">
                                             <DataItemTemplate>
                                                 <div style="font-family: Cairo; text-align: center;">
-                                                    <div style="color: #888; font-size: 12px;"><%# Eval("username") %></div>
+                                                    <div style="color: #888; font-size: 20px;"><%# Eval("username") %></div>
                                                     <div style="font-weight: bold;"><%# Eval("fullName") %></div>
                                                     <div style="color: #888; font-size: 12px;"><%# Eval("email") %></div>
                                                 </div>

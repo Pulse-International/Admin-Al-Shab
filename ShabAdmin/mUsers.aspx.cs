@@ -953,7 +953,7 @@ namespace ShabAdmin
 
                     case "reject":
                         cmd = new SqlCommand(
-                            "UPDATE usersDelivery SET l_deliveryStatusId=4, rejectNote=@note WHERE id=@id", conn);
+                            "UPDATE usersDelivery SET l_deliveryStatusId=4,isActive=0, rejectNote=@note WHERE id=@id", conn);
 
                         SendSmsBackground("962798579769", "مرفوضة يمعلم");
 

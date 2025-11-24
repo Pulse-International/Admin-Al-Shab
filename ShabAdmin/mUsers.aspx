@@ -642,7 +642,7 @@
                                             <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
                                         </dx:GridViewDataSpinEditColumn>
 
-                                     <%--   <dx:GridViewDataTextColumn Caption="FCMToken" FieldName="FCMToken">
+                                        <%--   <dx:GridViewDataTextColumn Caption="FCMToken" FieldName="FCMToken">
                                             <PropertiesTextEdit>
                                                 <ValidationSettings RequiredField-IsRequired="true" ErrorText="هذا الحقل مطلوب">
                                                     <RequiredField IsRequired="True"></RequiredField>
@@ -1319,11 +1319,12 @@
 
 
 
-                                        <dx:GridViewDataColumn Caption="المستخدم" FieldName="username">
+                                        <dx:GridViewDataColumn Caption="المستخدم (رقم الهاتف)" FieldName="username">
                                             <DataItemTemplate>
                                                 <div style="font-family: Cairo; text-align: center;">
-                                                    <div style="font-weight: bold;"><%# Eval("fullName") %></div>
                                                     <div style="color: #888; font-size: 12px;"><%# Eval("username") %></div>
+                                                    <div style="font-weight: bold;"><%# Eval("fullName") %></div>
+                                                    <div style="color: #888; font-size: 12px;"><%# Eval("email") %></div>
                                                 </div>
                                             </DataItemTemplate>
                                             <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
@@ -1357,7 +1358,7 @@
                                             <EditFormSettings Visible="True" />
                                         </dx:GridViewDataTextColumn>
 
-                                        <dx:GridViewDataTextColumn Caption="البريد الالكتروني" Width="5%" FieldName="email">
+                                        <dx:GridViewDataTextColumn Caption="البريد الالكتروني" Visible="false" Width="5%" FieldName="email">
                                             <PropertiesTextEdit>
                                                 <ValidationSettings
                                                     RequiredField-IsRequired="true"
@@ -1368,6 +1369,7 @@
                                                 </ValidationSettings>
                                             </PropertiesTextEdit>
                                             <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
+                                            <EditFormSettings Visible="True" />
                                         </dx:GridViewDataTextColumn>
 
                                         <dx:GridViewDataComboBoxColumn Caption="البلد" FieldName="countryId">

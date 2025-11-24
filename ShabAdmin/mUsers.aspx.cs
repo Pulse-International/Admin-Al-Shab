@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -574,7 +575,20 @@ namespace ShabAdmin
                     }
                 }
 
-                
+                if (!string.IsNullOrWhiteSpace(newUsername))
+                {
+                    if (!newUsername.All(char.IsDigit))
+                    {
+                        var col = grid.Columns["username"] as DevExpress.Web.GridViewDataColumn;
+                        string errorMsg = "اسم المستخدم يجب أن يكون رقم هاتف (فقط ارقام).";
+                        if (col != null)
+                            e.Errors[col] = errorMsg;
+                        else
+                            e.RowError = errorMsg;
+                    }
+                }
+
+
             }
 
             if (e.Errors.Count > 0 || !string.IsNullOrEmpty(e.RowError))
@@ -949,7 +963,7 @@ namespace ShabAdmin
 
                     case "incomplete":
                         cmd = new SqlCommand(
-                            "UPDATE usersDelivery SET l_deliveryStatusId=@status, incompleteNote=@note WHERE id=@id", conn);
+                            "UPDATE usersDelivery SET l_deliveryStatusId=@status, isUpdated=0, incompleteNote=@note WHERE id=@id", conn);
                         cmd.Parameters.AddWithValue("@status", 2);
                         cmd.Parameters.AddWithValue("@note", note);
 

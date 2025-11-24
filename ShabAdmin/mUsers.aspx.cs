@@ -771,7 +771,6 @@ namespace ShabAdmin
                 checkError = 1;
             }
 
-
             return UploadDirectory + fileName;
         }
 

@@ -969,7 +969,7 @@ namespace ShabAdmin
                         // توليد الرابط المشفر
                         string encryptedUserId = MainHelper.Encrypt_Me(userId.ToString(), true);
                         string baseUrl = $"https://www.alshaeb.net";
-                        string longUrl = $"{baseUrl}/registerDriver/{encryptedUserId}";
+                        string longUrl = $"{baseUrl}/registerDriver?id={encryptedUserId}";
 
                         // صياغة رسالة SMS
                         string smsMessage = $"طلبك غير مكتمل اضغط الرابط لاستكمال الطلب: {longUrl}";

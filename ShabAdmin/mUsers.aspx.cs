@@ -619,6 +619,7 @@ namespace ShabAdmin
             string username = e.NewValues["username"]?.ToString();
             string plainPassword = e.NewValues["password"]?.ToString();
             string firstName = e.NewValues["firstName"]?.ToString();
+            string email = e.NewValues["email"]?.ToString();
             string vehicleVin = e.NewValues["vehicleVin"]?.ToString();
             string vehicleNo = e.NewValues["vehicleNo"]?.ToString();
             string image = l_item_file.Text.ToString();
@@ -654,6 +655,7 @@ namespace ShabAdmin
         new SqlParameter("@username", username),
         new SqlParameter("@firstName", firstName),
         new SqlParameter("@lastName", lastName),
+        new SqlParameter("@email", email),
         new SqlParameter("@l_vehicleType", l_vehicleType),
         new SqlParameter("@isActive", isActive),
         new SqlParameter("@vehicleVin", vehicleVin),
@@ -676,6 +678,7 @@ namespace ShabAdmin
                     storedsalt = @storedsalt,
                     firstName = @firstName,
                     lastName = @lastName,
+                    email = @email,
                     vehicleNo = @vehicleNo,
                     vehicleVin = @vehicleVin,
                     isActive = @isActive,
@@ -696,6 +699,7 @@ namespace ShabAdmin
                 SET username = @username,
                     firstName = @firstName,
                     lastName = @lastName,
+                    email=@email,
                     vehicleNo = @vehicleNo,
                     vehicleVin = @vehicleVin,
                     isActive = @isActive,

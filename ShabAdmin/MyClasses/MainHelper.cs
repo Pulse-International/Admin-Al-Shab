@@ -104,7 +104,7 @@ public class MainHelper
         }
     }
 
-    private static string Decrypt_Me(string cipherString, bool useHashing)
+    public static string Decrypt_Me(string cipherString, bool useHashing)
     {
         try
         {

@@ -116,9 +116,8 @@
                         var img1 = document.getElementById("DocsFile-");
                         var img2 = document.getElementById("DocsFileLarge-");
                     }
-                    if (img1) img1.src = lastUploadedImage;
-                    if (img2) img2.src = lastUploadedImage;
-                    lastUploadedImage = null;
+                    if (img1) img1.src = l_item_file.GetText();
+                    if (img2) img2.src = l_item_file.GetText();
                 }
             }
 

@@ -389,8 +389,7 @@
                                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                                     </dx:GridViewDataComboBoxColumn>
 
-
-                                    <dx:GridViewDataComboBoxColumn Caption="الشركة" FieldName="companyId">
+                                    <dx:GridViewDataComboBoxColumn Caption="الشركة" FieldName="companyId" Width="15%">
                                         <PropertiesComboBox
                                             DataSourceID="dsCompanies"
                                             TextField="companyName"
@@ -409,7 +408,6 @@
                                         </PropertiesComboBox>
                                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                                     </dx:GridViewDataComboBoxColumn>
-
 
                                     <dx:GridViewDataComboBoxColumn Caption="النوع" FieldName="l_offerId">
                                         <PropertiesComboBox
@@ -432,7 +430,7 @@
                                     </dx:GridViewDataComboBoxColumn>
 
 
-                                    <dx:GridViewDataComboBoxColumn Caption="اسم البند" FieldName="itemId">
+                                    <dx:GridViewDataComboBoxColumn Caption="اسم البند" FieldName="itemId" Width="10%">
                                         <PropertiesComboBox
                                             DataSourceID="dsItems"
                                             TextField="itemName"
@@ -444,7 +442,15 @@
                                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                                     </dx:GridViewDataComboBoxColumn>
 
-
+                                    <dx:GridViewDataCheckColumn Caption="فعال" FieldName="isActive">
+                                        <PropertiesCheckEdit DisplayTextChecked="نعم" DisplayTextUnchecked="لا" />
+                                        <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                                    </dx:GridViewDataCheckColumn>
+                                    <dx:GridViewDataDateColumn Caption="التاريخ" FieldName="userDate">
+                                        <EditFormSettings Visible="False" />
+                                        <PropertiesDateEdit DisplayFormatString="dd/MM/yyyy" />
+                                        <CellStyle VerticalAlign="Middle" />
+                                    </dx:GridViewDataDateColumn>
                                     <dx:GridViewDataComboBoxColumn Caption="طريقة العرض" FieldName="l_offerType" Name="gridCategoryColumn">
                                         <PropertiesComboBox
                                             DataSourceID="db_OfferType"
@@ -471,6 +477,7 @@
                                         <EditFormSettings Visible="True" />
                                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                                     </dx:GridViewDataComboBoxColumn>
+
 
                                     <dx:GridViewDataSpinEditColumn Caption="الترتيب" FieldName="position">
                                         <PropertiesSpinEdit DisplayFormatString="g" Increment="1" LargeIncrement="1" MinValue="1" MaxValue="100">
@@ -578,10 +585,12 @@
                                                 p.[companyId], 
                                                 p.[itemId],
                                                 p.[position],
-                                                p.[l_offerType]
+                                                p.[l_offerType],
+                                                p.[isActive],
+                                                p.[userDate]
                                             FROM [mainOffers] p order by p.position asc, p.l_offerType desc"
-                                InsertCommand="insert into mainOffers (countryId,companyId,offerImage,l_offerId,itemId,l_offerType,position,userDate) VALUES (@countryId,@companyId,@offerImage,@l_offerId,@itemId,@l_offerType,@position,getdate())"
-                                UpdateCommand="UPDATE mainOffers set countryId=@countryId,companyId=@companyId,offerImage=@offerImage,l_offerId=@l_offerId,itemId=@itemId,l_offerType=@l_offerType,position=@position where id=@id"
+                                InsertCommand="insert into mainOffers (countryId,companyId,offerImage,l_offerId,itemId,l_offerType,position,isActive,userDate) VALUES (@countryId,@companyId,@offerImage,@l_offerId,@itemId,@l_offerType,@position,@isActive,getdate())"
+                                UpdateCommand="UPDATE mainOffers set countryId=@countryId,companyId=@companyId,offerImage=@offerImage,l_offerId=@l_offerId,itemId=@itemId,l_offerType=@l_offerType,position=@position,isActive=@isActive where id=@id"
                                 DeleteCommand="delete from mainOffers where id=@id">
                                 <InsertParameters>
                                     <asp:Parameter Name="l_offerType" Type="String" />
@@ -590,6 +599,7 @@
                                     <asp:ControlParameter ControlID="l_item_file" Name="offerImage" PropertyName="Text" />
                                     <asp:Parameter Name="countryID" Type="String" />
                                     <asp:Parameter Name="position" Type="String" />
+                                    <asp:Parameter Name="isActive" Type="String" />
                                     <asp:Parameter Name="itemId" Type="String" />
                                 </InsertParameters>
                                 <UpdateParameters>
@@ -599,6 +609,7 @@
                                     <asp:ControlParameter ControlID="l_item_file" Name="offerImage" PropertyName="Text" />
                                     <asp:Parameter Name="countryID" Type="String" />
                                     <asp:Parameter Name="position" Type="String" />
+                                    <asp:Parameter Name="isActive" Type="String" />
                                     <asp:Parameter Name="itemId" Type="String" />
                                     <asp:Parameter Name="id" Type="Int32" />
                                 </UpdateParameters>
@@ -797,7 +808,7 @@
 
                                     <ClientSideEvents EndCallback="OnGridOffersEndCallback" RowClick="function(s, e) {OnRowClick(e);}"
                                         RowDblClick="function(s, e) {setTimeout(function(){GridOffers.StartEditRow(MyIndex);},100);}"
-                                        BatchEditStartEditing="onBatchEditStart"/>
+                                        BatchEditStartEditing="onBatchEditStart" />
 
                                     <SettingsAdaptivity AdaptivityMode="HideDataCells">
                                     </SettingsAdaptivity>
@@ -900,7 +911,7 @@
             Convert.ToDecimal(Eval("offerPrice")) > 0 || Convert.ToDecimal(Eval("offerPercent")) > 0
             ? "<span class='cancel-offer-btn' onclick=\"showCancelOfferPopup(" + Eval("id") + ");\">إلغاء العرض</span>"
             : "<span class='no-offer-label'>لا يوجد</span>"
-        %>
+                                                %>
                                             </DataItemTemplate>
                                             <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
                                         </dx:GridViewDataTextColumn>
@@ -958,7 +969,7 @@
                     
                                                     <br />
                                                     <span style="font-size: 16px; color: #666; font-weight: normal;">سيتم تطبيق العروض على المنتجات (التي نوعها سعر) وجميع خياراتها تلقائياً
-                     </span>
+                                                    </span>
                                                 </div>
 
                                                 <div style="display: flex; justify-content: center; gap: 25px;">

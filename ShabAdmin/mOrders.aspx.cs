@@ -485,14 +485,14 @@ LEFT JOIN
                 return @"
                 <div style='width: 100px; margin: auto; text-align: center; font-family: Cairo;'>
                     <lottie-player 
-                        src='/assets/animations/canceled.json' 
+                        src='/assets/animations/BranchCancel.json' 
                         background='transparent' 
                         speed='1' 
                         style='width: 110px; height: 110px; margin: 0 auto;' 
                         loop 
                         autoplay>
                     </lottie-player>
-                    <div style='margin-top: 5px; font-size: 0.95em; color: #d9534f;'>ملغي من الإدارة</div>
+                    <div style='margin-top: 5px; font-size: 0.95em; color: #d9534f;'>ملغي من الفرع</div>
                 </div>";
             }
             else if (status == "9")

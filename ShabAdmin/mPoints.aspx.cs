@@ -146,5 +146,64 @@ namespace ShabAdmin
         {
             FillCityCombo(source as ASPxComboBox, e.Parameter);
         }
+
+        protected void GridPoints_RowValidating(object sender, DevExpress.Web.Data.ASPxDataValidationEventArgs e)
+        {
+            int newCompanyId = Convert.ToInt32(e.NewValues["companyId"]);
+            bool newIsActive = Convert.ToBoolean(e.NewValues["isActive"]);
+            bool isNewRow = e.IsNewRow;
+            int currentId = isNewRow ? 0 : Convert.ToInt32(e.Keys["id"]);
+
+            // لا تحقق إذا لم يتم تفعيل السجل الجديد
+            if (!newIsActive) return;
+
+            string query = "SELECT COUNT(*) FROM pointsOffers WHERE companyId = @companyId AND isActive = 1";
+            if (!isNewRow)
+                query += " AND id <> @id";
+
+            using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@companyId", newCompanyId);
+                if (!isNewRow)
+                    cmd.Parameters.AddWithValue("@id", currentId);
+
+                conn.Open();
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+                conn.Close();
+
+                if (count > 0)
+                {
+                    // نرسل رسالة للجانب العميل لإظهار البوب أب
+                    GridPoints.JSProperties["cpShowActivePopup"] = true;
+                    e.RowError = "يوجد عرض نقاط لنفس الشركة , الرجاء الغاء تفعيل عرض النقاط لاكمال العملية.";
+                }
+            }
+        }
+
+        protected void GridPoints_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            string[] parts = e.Parameters.Split('|');
+            string command = parts[0];
+
+            if (command == "CheckOrders")
+            {
+                int pointId = Convert.ToInt32(parts[1]);
+                bool exists = false;
+
+                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
+                using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM orders WHERE pointId=@pointId", conn))
+                {
+                    cmd.Parameters.AddWithValue("@pointId", pointId);
+                    conn.Open();
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+                    exists = count > 0;
+                }
+
+                ASPxGridView grid = sender as ASPxGridView;
+                grid.JSProperties["cpOrdersExist"] = exists;
+                grid.JSProperties["cpPointId"] = pointId;
+            }
+        }
     }
 }

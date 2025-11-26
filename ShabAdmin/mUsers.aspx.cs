@@ -41,7 +41,7 @@ namespace ShabAdmin
             if (countryId != 1000 && companyId != 1000)
             {
                 db_DeliveryUsers.SelectCommand = @"
-            SELECT id, username,email,firstName + ' ' + lastName AS fullName,  userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
+            SELECT id, username,email,firstName + ' ' + lastName AS fullName,l_documentType,passportPicture,residencePicture,  userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
                    licensePicture, password, firstName, lastName, l_vehicleType, isActive, vehicleVin,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated vehicleNo, 
                    isOnline, countryId, userDate
             FROM [usersDelivery]
@@ -99,7 +99,7 @@ namespace ShabAdmin
             else if (countryId != 1000)
             {
                 db_DeliveryUsers.SelectCommand = @"
-            SELECT id, username,email,firstName + ' ' + lastName AS fullName,  userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
+            SELECT id, username,email,firstName + ' ' + lastName AS fullName,  userPicture AS image,l_documentType,passportPicture,residencePicture, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
                    licensePicture, password, firstName, lastName, l_vehicleType, isActive,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated, vehicleVin, vehicleNo, 
                    isOnline, countryId,userDate
             FROM [usersDelivery]
@@ -154,7 +154,7 @@ namespace ShabAdmin
             {
                 // No filtering
                 db_DeliveryUsers.SelectCommand = @"
-            SELECT id, username,email,firstName + ' ' + lastName AS fullName,  userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
+            SELECT id, username,email,firstName + ' ' + lastName AS fullName,  userPicture AS image,l_documentType,passportPicture,residencePicture, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
                    licensePicture, password, firstName, lastName, l_vehicleType,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated, isActive, vehicleVin, vehicleNo, 
                    isOnline, countryId, userDate
             FROM [usersDelivery]";
@@ -614,7 +614,6 @@ namespace ShabAdmin
         protected void GridDeliveryUsers_RowUpdating(object sender, DevExpress.Web.Data.ASPxDataUpdatingEventArgs e)
         {
 
-            string path = l_car_file.Text;
             int id = (int)e.Keys["id"];
             string username = e.NewValues["username"]?.ToString();
             string plainPassword = e.NewValues["password"]?.ToString();
@@ -622,31 +621,10 @@ namespace ShabAdmin
             string email = e.NewValues["email"]?.ToString();
             string vehicleVin = e.NewValues["vehicleVin"]?.ToString();
             string vehicleNo = e.NewValues["vehicleNo"]?.ToString();
-            string image = l_item_file.Text.ToString();
-            string carPicture = l_car_file.Text.ToString();
-            string carLicensePicture = l_carLicense_file.Text.ToString();
-            string idFrontPicture = l_idFront_file.Text.ToString();
-            string idBackPicture = l_idBack_file.Text.ToString();
-            string licensePicture = l_license_file.Text.ToString();
             string lastName = e.NewValues["lastName"]?.ToString();
             string l_vehicleType = e.NewValues["l_vehicleType"]?.ToString();
             bool isActive = Convert.ToBoolean(e.NewValues["isActive"]);
 
-            /////////////
-            DeleteOldFileIfChanged(l_item_file_check.Text, l_item_file_old.Text);
-            DeleteOldFileIfChanged(l_idFront_file_check.Text, l_idFront_file_old.Text);
-            DeleteOldFileIfChanged(l_idBack_file_check.Text, l_idBack_file_old.Text);
-            DeleteOldFileIfChanged(l_car_file_check.Text, l_car_file_old.Text);
-            DeleteOldFileIfChanged(l_carLicense_file_check.Text, l_carLicense_file_old.Text);
-            DeleteOldFileIfChanged(l_license_file_check.Text, l_license_file_old.Text);
-
-            // reset checks
-            l_item_file_check.Text = "0";
-            l_idFront_file_check.Text = "0";
-            l_idBack_file_check.Text = "0";
-            l_car_file_check.Text = "0";
-            l_carLicense_file_check.Text = "0";
-            l_license_file_check.Text = "0";
             /////////////
 
             string sql;
@@ -660,12 +638,6 @@ namespace ShabAdmin
         new SqlParameter("@isActive", isActive),
         new SqlParameter("@vehicleVin", vehicleVin),
         new SqlParameter("@vehicleNo", vehicleNo),
-        new SqlParameter("@image", image),
-        new SqlParameter("@carPicture", carPicture),
-        new SqlParameter("@carLicensePicture", carLicensePicture),
-        new SqlParameter("@idFrontPicture", idFrontPicture),
-        new SqlParameter("@idBackPicture", idBackPicture),
-        new SqlParameter("@licensePicture", licensePicture),
         new SqlParameter("@id", id)
     };
 
@@ -681,14 +653,7 @@ namespace ShabAdmin
                     email = @email,
                     vehicleNo = @vehicleNo,
                     vehicleVin = @vehicleVin,
-                    isActive = @isActive,
-                    userPicture = @image,
-                    l_vehicleType = @l_vehicleType,
-                    carLicensePicture = @carLicensePicture,
-                    idFrontPicture = @idFrontPicture,
-                    idBackPicture = @idBackPicture,
-                    licensePicture = @licensePicture,
-                    carPicture = @carPicture
+                    isActive = @isActive
                 WHERE id = @id";
                 parameters.Add(new SqlParameter("@password", hashed.Hash));
                 parameters.Add(new SqlParameter("@storedsalt", Convert.FromBase64String(hashed.Salt)));
@@ -702,14 +667,7 @@ namespace ShabAdmin
                     email=@email,
                     vehicleNo = @vehicleNo,
                     vehicleVin = @vehicleVin,
-                    isActive = @isActive,
-                    userPicture = @image,
-                    l_vehicleType = @l_vehicleType,
-                    carLicensePicture = @carLicensePicture,
-                    idFrontPicture = @idFrontPicture,
-                    idBackPicture = @idBackPicture,
-                    licensePicture = @licensePicture,
-                    carPicture = @carPicture
+                    isActive = @isActive
                     WHERE id = @id";
             }
 
@@ -776,44 +734,6 @@ namespace ShabAdmin
             }
 
             return UploadDirectory + fileName;
-        }
-
-        protected void GridDeliveryUsers_CancelRowEditing(object sender, ASPxStartRowEditingEventArgs e)
-        {
-            if (l_item_file_check.Text == "1")
-            {
-                DeleteUploadedFile(l_item_file.Text);
-                l_item_file_check.Text = "0";
-            }
-            if (l_car_file_check.Text == "1")
-            {
-                DeleteUploadedFile(l_car_file.Text);
-                l_car_file_check.Text = "0";
-            }
-
-            if (l_carLicense_file_check.Text == "1")
-            {
-                DeleteUploadedFile(l_carLicense_file.Text);
-                l_carLicense_file_check.Text = "0";
-            }
-
-            if (l_idFront_file_check.Text == "1")
-            {
-                DeleteUploadedFile(l_idFront_file.Text);
-                l_idFront_file_check.Text = "0";
-            }
-
-            if (l_idBack_file_check.Text == "1")
-            {
-                DeleteUploadedFile(l_idBack_file.Text);
-                l_idBack_file_check.Text = "0";
-            }
-            if (l_license_file_check.Text == "1")
-            {
-                DeleteUploadedFile(l_license_file.Text);
-                l_license_file_check.Text = "0";
-            }
-
         }
 
         protected void GridDeliveryUsers_RowDeleting(object sender, ASPxDataDeletingEventArgs e)
@@ -1077,6 +997,50 @@ namespace ShabAdmin
             }
         }
 
+        protected string GetDocumentHtml(object l_documentType, object idFront, object idBack, object passport, object residence)
+        {
+            int docType = Convert.ToInt32(l_documentType);
+            string html = "";
+
+            if (docType == 1) // الهوية
+            {
+                html = $@"
+        <div>
+            <a href='javascript:void(0);' onclick=""showImagePopup('{idFront}', 'الهوية من الأمام')"">
+                <img src='{(string.IsNullOrEmpty(idFront.ToString()) ? "/assets/uploads/noFile.png" : idFront)}?v={DateTime.Now.Ticks}' style='width:5em; border:1px solid #ccc; border-radius:5px;'/>
+            </a>
+            <div style='margin-top:5px;'>الهوية من الأمام</div>
+        </div>
+        <div>
+            <a href='javascript:void(0);' onclick=""showImagePopup('{idBack}', 'الهوية من الخلف')"">
+                <img src='{(string.IsNullOrEmpty(idBack.ToString()) ? "/assets/uploads/noFile.png" : idBack)}?v={DateTime.Now.Ticks}' style='width:5em; border:1px solid #ccc; border-radius:5px;'/>
+            </a>
+            <div style='margin-top:5px;'>الهوية من الخلف</div>
+        </div>";
+            }
+            else if (docType == 2) // جواز السفر
+            {
+                html = $@"
+        <div>
+            <a href='javascript:void(0);' onclick=""showImagePopup('{passport}', 'جواز السفر')"">
+                <img src='{(string.IsNullOrEmpty(passport.ToString()) ? "/assets/uploads/noFile.png" : passport)}?v={DateTime.Now.Ticks}' style='width:5em; border:1px solid #ccc; border-radius:5px;'/>
+            </a>
+            <div style='margin-top:5px;'>جواز السفر</div>
+        </div>";
+            }
+            else if (docType == 3) // إقامة
+            {
+                html = $@"
+        <div>
+            <a href='javascript:void(0);' onclick=""showImagePopup('{residence}', 'الإقامة')"">
+                <img src='{(string.IsNullOrEmpty(residence.ToString()) ? "/assets/uploads/noFile.png" : residence)}?v={DateTime.Now.Ticks}' style='width:5em; border:1px solid #ccc; border-radius:5px;'/>
+            </a>
+            <div style='margin-top:5px;'>الإقامة</div>
+        </div>";
+            }
+
+            return html;
+        }
 
 
     }

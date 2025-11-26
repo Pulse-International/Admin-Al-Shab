@@ -383,32 +383,11 @@
 
 
                 if (e.command == 'STARTEDIT') {
-                    l_item_file_check.SetText('0');
-                    l_car_file_check.SetText('0');
-                    l_carLicense_file_check.SetText('0');
-                    l_idFront_file_check.SetText('0');
-                    l_idBack_file_check.SetText('0');
-                    l_license_file_check.SetText('0');
+
                 }
                 if (e.command == 'ADDNEWROW') {
                     MyId = 0;
-                    l_item_file.SetText('');
-                    l_item_file_old.SetText('');
 
-                    l_car_file.SetText('');
-                    l_car_file_old.SetText('');
-
-                    l_carLicense_file.SetText('');
-                    l_carLicense_file_old.SetText('');
-
-                    l_idFront_file.SetText('');
-                    l_idFront_file_old.SetText('');
-
-                    l_idBack_file.SetText('');
-                    l_idBack_file_old.SetText('');
-
-                    l_license_file.SetText('');
-                    l_license_file_old.SetText('');
 
                 }
                 if (e.command == 'UPDATEEDIT') {
@@ -426,7 +405,7 @@
                 }, 100);
             }
 
-            function showImagePopup(imageUrl) {
+            function showImagePopup(imageUrl, imageName) {
                 if (!imageUrl || imageUrl.length < 5) {
                     imageUrl = "/assets/uploads/noFile.png";
                 }
@@ -435,6 +414,7 @@
                 var popupImage = document.getElementById("popupImage");
                 if (popupImage) {
                     popupImage.src = imageUrl + "?v=" + new Date().getTime();
+                    popupImageViewer.SetHeaderText(imageName);
                     popupImageViewer.Show();
                 }
             }
@@ -1238,7 +1218,7 @@
                             </script>
                             <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
 
-                                <dx:ASPxGridView ID="GridDeliveryUsers" runat="server" DataSourceID="db_DeliveryUsers" KeyFieldName="id" ClientInstanceName="GridDeliveryUsers" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="0.93em" RightToLeft="True" OnRowInserting="GridDeliveryUsers_RowInserting" OnRowUpdating="GridDeliveryUsers_RowUpdating" OnRowValidating="GridDeliveryUsers_RowValidating" OnCancelRowEditing="GridDeliveryUsers_CancelRowEditing" OnRowDeleting="GridDeliveryUsers_RowDeleting" OnCellEditorInitialize="GridDeliveryUsers_CellEditorInitialize" OnHtmlDataCellPrepared="GridDeliveryUsers_HtmlDataCellPrepared" OnHtmlRowPrepared="GridDeliveryUsers_HtmlRowPrepared" OnCustomCallback="GridDeliveryUsers_CustomCallback">
+                                <dx:ASPxGridView ID="GridDeliveryUsers" runat="server" DataSourceID="db_DeliveryUsers" KeyFieldName="id" ClientInstanceName="GridDeliveryUsers" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="0.93em" RightToLeft="True" OnRowInserting="GridDeliveryUsers_RowInserting" OnRowUpdating="GridDeliveryUsers_RowUpdating" OnRowValidating="GridDeliveryUsers_RowValidating" OnRowDeleting="GridDeliveryUsers_RowDeleting" OnCellEditorInitialize="GridDeliveryUsers_CellEditorInitialize" OnHtmlDataCellPrepared="GridDeliveryUsers_HtmlDataCellPrepared" OnHtmlRowPrepared="GridDeliveryUsers_HtmlRowPrepared" OnCustomCallback="GridDeliveryUsers_CustomCallback">
                                     <Settings ShowFooter="True" ShowFilterRow="True" />
 
                                     <EditFormLayoutProperties ColCount="3">
@@ -1258,7 +1238,7 @@
                                                 </Items>
                                             </dx:GridViewLayoutGroup>
 
-                                            <dx:GridViewLayoutGroup Caption="الصور" ColCount="3">
+                                            <%-- <dx:GridViewLayoutGroup Caption="الصور" ColCount="3">
                                                 <Items>
                                                     <dx:GridViewColumnLayoutItem ColumnName="image" />
                                                     <dx:GridViewColumnLayoutItem ColumnName="idFrontPicture" />
@@ -1267,7 +1247,7 @@
                                                     <dx:GridViewColumnLayoutItem ColumnName="carLicensePicture" />
                                                     <dx:GridViewColumnLayoutItem ColumnName="licensePicture" />
                                                 </Items>
-                                            </dx:GridViewLayoutGroup>
+                                            </dx:GridViewLayoutGroup>--%>
 
                                             <dx:EditModeCommandLayoutItem ColumnSpan="3" HorizontalAlign="Center" />
                                         </Items>
@@ -1681,49 +1661,39 @@
                                             <DataItemTemplate>
                                                 <div style="text-align: center; font-family: Cairo;">
 
-                                                    <!-- Row 1: الصورة الشخصية، الهوية من الأمام، الهوية من الخلف -->
+                                                    <!-- Row 1: الصورة الشخصية + الوثيقة حسب نوعها -->
                                                     <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 10px;">
+                                                        <!-- الصورة الشخصية -->
                                                         <div>
-                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("image") %>')">
+                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("image") %>', 'الصورة الشخصية')">
                                                                 <img src='<%# (!string.IsNullOrEmpty(Eval("image").ToString()) ? Eval("image").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
                                                                     style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
                                                             </a>
                                                             <div style="margin-top: 5px;">الصورة الشخصية</div>
                                                         </div>
-                                                        <div>
-                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("idFrontPicture") %>')">
-                                                                <img src='<%# (!string.IsNullOrEmpty(Eval("idFrontPicture").ToString()) ? Eval("idFrontPicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
-                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
-                                                            </a>
-                                                            <div style="margin-top: 5px;">الهوية من الأمام</div>
-                                                        </div>
-                                                        <div>
-                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("idBackPicture") %>')">
-                                                                <img src='<%# (!string.IsNullOrEmpty(Eval("idBackPicture").ToString()) ? Eval("idBackPicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
-                                                                    style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
-                                                            </a>
-                                                            <div style="margin-top: 5px;">الهوية من الخلف</div>
-                                                        </div>
+
+                                                        <%# GetDocumentHtml(Eval("l_documentType"), Eval("idFrontPicture"), Eval("idBackPicture"), Eval("passportPicture"), Eval("residencePicture")) %>
                                                     </div>
+
 
                                                     <!-- Row 2: صورة السيارة، رخصة السيارة، رخصة القيادة -->
                                                     <div style="display: flex; justify-content: center; gap: 20px;">
                                                         <div>
-                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("carPicture") %>')">
+                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("carPicture") %>', 'صورة السيارة')">
                                                                 <img src='<%# (!string.IsNullOrEmpty(Eval("carPicture").ToString()) ? Eval("carPicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
                                                                     style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
                                                             </a>
                                                             <div style="margin-top: 5px;">صورة السيارة</div>
                                                         </div>
                                                         <div>
-                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("carLicensePicture") %>')">
+                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("carLicensePicture") %>', 'رخصة السيارة')">
                                                                 <img src='<%# (!string.IsNullOrEmpty(Eval("carLicensePicture").ToString()) ? Eval("carLicensePicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
                                                                     style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
                                                             </a>
                                                             <div style="margin-top: 5px;">رخصة السيارة</div>
                                                         </div>
                                                         <div>
-                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("licensePicture") %>')">
+                                                            <a href="javascript:void(0);" onclick="showImagePopup('<%# Eval("licensePicture") %>', 'رخصة القيادة')">
                                                                 <img src='<%# (!string.IsNullOrEmpty(Eval("licensePicture").ToString()) ? Eval("licensePicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
                                                                     style="width: 5em; border: 1px solid #ccc; border-radius: 5px;" />
                                                             </a>
@@ -1746,17 +1716,19 @@
                                             <DataItemTemplate>
                                                 <div style="width: 100%; float: left; text-align: center">
                                                     <img src="/assets/img/update.png" width="32" height="32" title="تعديل" style="cursor: pointer" onclick="editCurrentRow1();" />
-                                                    <img src="/assets/img/delete.png" width="32" height="32" title="حذف" style="cursor: pointer" onclick="onDeleteClick1(<%# Container.VisibleIndex %>, '1');" />
+
+                                                    <img src="/assets/img/delete.png" width="32" height="32" title="حذف" style="cursor: pointer; <%# Convert.ToInt32(Eval("l_DeliveryStatusId")) == 3 ? "display:none;": "" %>"
+                                                        onclick="onDeleteClick1(<%# Container.VisibleIndex %>, '1');" />
                                                 </div>
                                             </DataItemTemplate>
-
                                         </dx:GridViewDataTextColumn>
+
                                     </Columns>
                                     <Toolbars>
                                         <dx:GridViewToolbar ItemAlign="left">
                                             <SettingsAdaptivity Enabled="true" EnableCollapseRootItemsToIcons="true" />
                                             <Items>
-                                                <dx:GridViewToolbarItem Command="New" Text="جديد" />
+                                                <%--<dx:GridViewToolbarItem Command="New" Text="جديد" />--%>
                                                 <dx:GridViewToolbarItem Command="Refresh" BeginGroup="true" AdaptivePriority="1" Text="تحديث الجدول" />
                                                 <dx:GridViewToolbarItem Command="ExportToXlsx" BeginGroup="true" />
                                                 <dx:GridViewToolbarItem Command="ExportToPdf" />
@@ -1817,7 +1789,7 @@
                                 ID="db_DeliveryUsers"
                                 runat="server"
                                 ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                                SelectCommand="SELECT id, username,email, firstName + ' ' + lastName AS fullName, userPicture AS image, carPicture ,carLicensePicture ,idFrontPicture,idBackPicture,licensePicture, password, firstName, lastName, l_vehicleType, isActive, vehicleVin, vehicleNo ,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated,isOnline,countryId,userDate FROM [usersDelivery] order by l_deliveryStatus "
+                                SelectCommand="SELECT id, username,email, firstName + ' ' + lastName AS fullName, userPicture AS image,l_documentType,residencePicture,passportPicture, carPicture ,carLicensePicture ,idFrontPicture,idBackPicture,licensePicture, password, firstName, lastName, l_vehicleType, isActive, vehicleVin, vehicleNo ,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated,isOnline,countryId,userDate FROM [usersDelivery] order by l_deliveryStatus "
                                 InsertCommand="INSERT INTO [usersDelivery] 
                                     (username, password, storedsalt, email, firstName, lastName, isActive, l_vehicleType, userPicture ,carPicture,carLicensePicture,idFrontPicture,idBackPicture,licensePicture,vehicleNo,vehicleVin,isOnline,countryId,l_DeliveryStatusId, userDate)
                                     VALUES 
@@ -1834,12 +1806,6 @@
                                         vehicleVin = @vehicleVin,
                                         vehicleNo = @vehicleNo,
                                         isOnline = @isOnline,
-                                        userPicture = @image,
-                                        carPicture = @carPicture,
-                                        carLicensePicture = @carLicensePicture,
-                                        idFrontPicture = @idFrontPicture,
-                                        idBackPicture = @idBackPicture,
-                                        licensePicture = @licensePicture,
                                         countryId = @countryId,
                                         isActive = @isActive
                                     WHERE id = @id"
@@ -1858,12 +1824,6 @@
                                     <asp:Parameter Name="isActive" Type="Boolean" />
                                     <asp:Parameter Name="l_vehicleType" Type="string" />
                                     <asp:Parameter Name="countryId" Type="string" />
-                                    <asp:ControlParameter ControlID="l_item_file" Name="image" PropertyName="Text" />
-                                    <asp:ControlParameter ControlID="l_car_file" Name="carPicture" PropertyName="Text" />
-                                    <asp:ControlParameter ControlID="l_carLicense_file" Name="carLicensePicture" PropertyName="Text" />
-                                    <asp:ControlParameter ControlID="l_idFront_file" Name="idFrontPicture" PropertyName="Text" />
-                                    <asp:ControlParameter ControlID="l_idBack_file" Name="idBackPicture" PropertyName="Text" />
-                                    <asp:ControlParameter ControlID="l_license_file" Name="licensePicture" PropertyName="Text" />
                                 </InsertParameters>
                                 <UpdateParameters>
                                     <asp:Parameter Name="username" Type="String" />
@@ -1878,12 +1838,6 @@
                                     <asp:Parameter Name="isActive" Type="Boolean" />
                                     <asp:Parameter Name="l_vehicleType" Type="string" />
                                     <asp:Parameter Name="countryId" Type="string" />
-                                    <asp:ControlParameter ControlID="l_item_file" Name="image" PropertyName="Text" />
-                                    <asp:ControlParameter ControlID="l_car_file" Name="carPicture" PropertyName="Text" />
-                                    <asp:ControlParameter ControlID="l_carLicense_file" Name="carLicensePicture" PropertyName="Text" />
-                                    <asp:ControlParameter ControlID="l_idFront_file" Name="idFrontPicture" PropertyName="Text" />
-                                    <asp:ControlParameter ControlID="l_idBack_file" Name="idBackPicture" PropertyName="Text" />
-                                    <asp:ControlParameter ControlID="l_license_file" Name="licensePicture" PropertyName="Text" />
                                     <asp:Parameter Name="id" Type="Int32" />
                                 </UpdateParameters>
                                 <DeleteParameters>
@@ -1908,8 +1862,12 @@
                                 ShowShadow="true"
                                 PopupHorizontalAlign="WindowCenter"
                                 PopupVerticalAlign="WindowCenter"
-                                OnClientShown="function(s,e){s.UpdatePosition();}"
                                 CssClass="image-popup-cairo-clean">
+                                <ClientSideEvents Shown="function (s, e) {
+                                    setTimeout(function () {
+                                        s.UpdatePosition();
+                                    }, 100); 
+                                }" />
 
                                 <HeaderStyle Font-Names="Cairo" Font-Size="16px" ForeColor="#333" BackColor="Transparent" />
 
@@ -2015,67 +1973,6 @@
                             </dx:ASPxPopupControl>
 
                             <dx:ASPxHiddenField ID="hfUploadType" runat="server" ClientInstanceName="hfUploadType" />
-
-                            <dx:ASPxTextBox ID="l_item_file" runat="server" BackColor="Transparent" ClientInstanceName="l_item_file" Font-Size="0pt" ForeColor="Transparent" Text="" Width="0px" Theme="Default">
-                                <Border BorderStyle="None" BorderWidth="0px" />
-                            </dx:ASPxTextBox>
-                            <dx:ASPxTextBox ID="l_item_file_old" runat="server" BackColor="Transparent" ClientInstanceName="l_item_file_old" Font-Size="0pt" ForeColor="Transparent" Text="" Width="0px" Theme="Default">
-                                <Border BorderStyle="None" BorderWidth="0px" />
-                            </dx:ASPxTextBox>
-                            <dx:ASPxTextBox ID="l_item_file_check" runat="server" BackColor="Transparent" ClientInstanceName="l_item_file_check" Font-Size="0pt" ForeColor="Transparent" Text="0" Width="0px" Theme="Default">
-                                <Border BorderStyle="None" BorderWidth="0px" />
-                            </dx:ASPxTextBox>
-
-                            <dx:ASPxTextBox ID="l_car_file" runat="server" BackColor="Transparent" ClientInstanceName="l_car_file" Font-Size="0pt" ForeColor="Transparent" Text="" Width="0px" Theme="Default">
-                                <Border BorderStyle="None" BorderWidth="0px" />
-                            </dx:ASPxTextBox>
-                            <dx:ASPxTextBox ID="l_car_file_old" runat="server" BackColor="Transparent" ClientInstanceName="l_car_file_old" Font-Size="0pt" ForeColor="Transparent" Text="" Width="0px" Theme="Default">
-                                <Border BorderStyle="None" BorderWidth="0px" />
-                            </dx:ASPxTextBox>
-                            <dx:ASPxTextBox ID="l_car_file_check" runat="server" BackColor="Transparent" ClientInstanceName="l_car_file_check" Font-Size="0pt" ForeColor="Transparent" Text="0" Width="0px" Theme="Default">
-                                <Border BorderStyle="None" BorderWidth="0px" />
-                            </dx:ASPxTextBox>
-
-                            <dx:ASPxTextBox ID="l_carLicense_file" runat="server" BackColor="Transparent" ClientInstanceName="l_carLicense_file" Font-Size="0pt" ForeColor="Transparent" Text="" Width="0px" Theme="Default">
-                                <Border BorderStyle="None" BorderWidth="0px" />
-                            </dx:ASPxTextBox>
-                            <dx:ASPxTextBox ID="l_carLicense_file_old" runat="server" BackColor="Transparent" ClientInstanceName="l_carLicense_file_old" Font-Size="0pt" ForeColor="Transparent" Text="" Width="0px" Theme="Default">
-                                <Border BorderStyle="None" BorderWidth="0px" />
-                            </dx:ASPxTextBox>
-                            <dx:ASPxTextBox ID="l_carLicense_file_check" runat="server" BackColor="Transparent" ClientInstanceName="l_carLicense_file_check" Font-Size="0pt" ForeColor="Transparent" Text="0" Width="0px" Theme="Default">
-                                <Border BorderStyle="None" BorderWidth="0px" />
-                            </dx:ASPxTextBox>
-
-                            <dx:ASPxTextBox ID="l_idFront_file" runat="server" BackColor="Transparent" ClientInstanceName="l_idFront_file" Font-Size="0pt" ForeColor="Transparent" Text="" Width="0px" Theme="Default">
-                                <Border BorderStyle="None" BorderWidth="0px" />
-                            </dx:ASPxTextBox>
-                            <dx:ASPxTextBox ID="l_idFront_file_old" runat="server" BackColor="Transparent" ClientInstanceName="l_idFront_file_old" Font-Size="0pt" ForeColor="Transparent" Text="" Width="0px" Theme="Default">
-                                <Border BorderStyle="None" BorderWidth="0px" />
-                            </dx:ASPxTextBox>
-                            <dx:ASPxTextBox ID="l_idFront_file_check" runat="server" BackColor="Transparent" ClientInstanceName="l_idFront_file_check" Font-Size="0pt" ForeColor="Transparent" Text="0" Width="0px" Theme="Default">
-                                <Border BorderStyle="None" BorderWidth="0px" />
-                            </dx:ASPxTextBox>
-
-                            <dx:ASPxTextBox ID="l_idBack_file" runat="server" BackColor="Transparent" ClientInstanceName="l_idBack_file" Font-Size="0pt" ForeColor="Transparent" Text="" Width="0px" Theme="Default">
-                                <Border BorderStyle="None" BorderWidth="0px" />
-                            </dx:ASPxTextBox>
-                            <dx:ASPxTextBox ID="l_idBack_file_old" runat="server" BackColor="Transparent" ClientInstanceName="l_idBack_file_old" Font-Size="0pt" ForeColor="Transparent" Text="" Width="0px" Theme="Default">
-                                <Border BorderStyle="None" BorderWidth="0px" />
-                            </dx:ASPxTextBox>
-                            <dx:ASPxTextBox ID="l_idBack_file_check" runat="server" BackColor="Transparent" ClientInstanceName="l_idBack_file_check" Font-Size="0pt" ForeColor="Transparent" Text="0" Width="0px" Theme="Default">
-                                <Border BorderStyle="None" BorderWidth="0px" />
-                            </dx:ASPxTextBox>
-
-                            <dx:ASPxTextBox ID="l_license_file" runat="server" BackColor="Transparent" ClientInstanceName="l_license_file" Font-Size="0pt" ForeColor="Transparent" Text="" Width="0px" Theme="Default">
-                                <Border BorderStyle="None" BorderWidth="0px" />
-                            </dx:ASPxTextBox>
-                            <dx:ASPxTextBox ID="l_license_file_old" runat="server" BackColor="Transparent" ClientInstanceName="l_license_file_old" Font-Size="0pt" ForeColor="Transparent" Text="" Width="0px" Theme="Default">
-                                <Border BorderStyle="None" BorderWidth="0px" />
-                            </dx:ASPxTextBox>
-                            <dx:ASPxTextBox ID="l_license_file_check" runat="server" BackColor="Transparent" ClientInstanceName="l_license_file_check" Font-Size="0pt" ForeColor="Transparent" Text="0" Width="0px" Theme="Default">
-                                <Border BorderStyle="None" BorderWidth="0px" />
-                            </dx:ASPxTextBox>
-
 
                         </dx:ContentControl>
                     </ContentCollection>

@@ -10,6 +10,7 @@
             var MyId;
             var MyIndex;
             var MyIndexDetail;
+            var lastUploadedImage;
 
             function OnRowClick(s, e) {
                 MyIndex = e.visibleIndex;
@@ -29,6 +30,7 @@
             function onFileUploadComplete(s, e) {
                 var fileData = e.callbackData.split('|');
                 var fileName = fileData[0];
+                lastUploadedImage = fileName;
                 if (document.getElementById("DocsFile-" + MyId) != null) {
                     document.getElementById("DocsFile-" + MyId).src = fileName;
                     document.getElementById("DocsFileLarge-" + MyId).src = fileName;
@@ -76,26 +78,47 @@
                     s.cpShowActivePopup = false;
                     popupActive.Show();
                 }
+                var exists = s.cpOrdersExist;
                 var pointId = s.cpPointId;
 
-                if (s.cpOrdersExist) {
-                    s.cpOrdersExist = false;
+                if (exists === "1") {
 
+                    s.cpOrdersExist = "0";
+
+                    // افتح السطر بواسطة الـ ID
                     s.StartEditRowByKey(pointId);
 
                     setTimeout(function () {
+
                         var fieldsToDisable = ["description", "points", "discountAmount", "countryId", "companyId", "userDate"];
-                        for (var i = 0; i < fieldsToDisable.length; i++) {
-                            var editor = s.GetEditor(fieldsToDisable[i]);
+                        fieldsToDisable.forEach(function (f) {
+                            var editor = s.GetEditor(f);
                             if (editor) editor.SetEnabled(false);
-                        }
+                        });
 
-                        var uploadControl = window["poorImageUpload_" + pointId];
-                        if (uploadControl) {
-                            uploadControl.SetEnabled(false);
-                        }
+                        // disable upload
+                        var upload = window["poorImageUpload_" + pointId];
+                        if (upload) upload.SetEnabled(false);
 
-                    }, 500); 
+                    }, 300);
+                }
+                else if (exists === "2") {
+                    s.cpOrdersExist = "0";
+                    s.StartEditRowByKey(pointId);
+                }
+
+                // إعادة تعيين الصورة
+                if (lastUploadedImage != null) {
+                    if (document.getElementById("DocsFile-" + MyId) != null) {
+                        var img1 = document.getElementById("DocsFile-" + pointId);
+                        var img2 = document.getElementById("DocsFileLarge-" + pointId);
+                    } else {
+                        var img1 = document.getElementById("DocsFile-");
+                        var img2 = document.getElementById("DocsFileLarge-");
+                    }
+                    if (img1) img1.src = lastUploadedImage;
+                    if (img2) img2.src = lastUploadedImage;
+                    lastUploadedImage = null;
                 }
             }
 
@@ -249,7 +272,7 @@
                         <DataItemTemplate>
                             <div style="width: 100%; text-align: center;">
                                 <img src="/assets/img/update.png" width="32" height="32" title="تعديل" style="cursor: pointer"
-                                    onclick='<%# "GridPoints.PerformCallback(\"CheckOrders|" + Eval("id") + "\");" %>' />
+                                    onclick='<%# "GridPoints.PerformCallback(\"CheckOrders|" + Eval("id") + "|" + Container.VisibleIndex + "\");" %>' />
                             </div>
                         </DataItemTemplate>
                     </dx:GridViewDataTextColumn>

@@ -184,12 +184,16 @@ namespace ShabAdmin
         protected void GridPoints_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
         {
             string[] parts = e.Parameters.Split('|');
+
+            if (parts.Length < 3) return; // حماية من undefined
+
             string command = parts[0];
+            int pointId = Convert.ToInt32(parts[1]);
+            int visibleIndex = Convert.ToInt32(parts[2]);
 
             if (command == "CheckOrders")
             {
-                int pointId = Convert.ToInt32(parts[1]);
-                bool exists = false;
+                string exists = "0";
 
                 using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
                 using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM orders WHERE pointId=@pointId", conn))
@@ -197,12 +201,17 @@ namespace ShabAdmin
                     cmd.Parameters.AddWithValue("@pointId", pointId);
                     conn.Open();
                     int count = Convert.ToInt32(cmd.ExecuteScalar());
-                    exists = count > 0;
+                    if (count > 0)
+                    {
+                        exists = "1";
+                    }
+                    else { exists = "2"; }
                 }
 
                 ASPxGridView grid = sender as ASPxGridView;
                 grid.JSProperties["cpOrdersExist"] = exists;
                 grid.JSProperties["cpPointId"] = pointId;
+                grid.JSProperties["cpRowIndex"] = visibleIndex;
             }
         }
     }

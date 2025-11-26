@@ -945,7 +945,7 @@ LEFT JOIN
 
                         if (refundedAmount <= 0)
                         {
-                            decimal refundPoints = Math.Floor(requestedRefund) * 100;
+                            decimal refundPoints = requestedRefund * 100;
                             decimal currentPoints = 0;
 
                             // جلب نقاط المستخدم الحالية

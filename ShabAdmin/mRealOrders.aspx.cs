@@ -558,7 +558,8 @@ namespace ShabAdmin
                         try
                         {
                             string getOrderSql = @"
-                        SELECT id, username, totalAmount, l_paymentMethodId, l_paymentMethodId2, l_paymentMethodId2Amount, refundedAmount
+                        SELECT id, username, totalAmount, l_paymentMethodId, l_paymentMethodId2, 
+                               l_paymentMethodId2Amount, refundedAmount
                         FROM orders
                         WHERE id = @orderId
                     ";
@@ -592,36 +593,26 @@ namespace ShabAdmin
 
                             decimal refundToBalance = 0;
 
-                            if (l_paymentMethodId > 0 && l_paymentMethodId2 == 0)
+                            
+                            bool shouldRefundBalance =
+                                   (l_paymentMethodId == 2) ||                                      
+                                   (l_paymentMethodId == 3 &&                                        
+                                   (l_paymentMethodId2 == 0 || l_paymentMethodId2 == 2));           
+
+                            bool isBalanceWithCash =
+                                   (l_paymentMethodId == 3 && l_paymentMethodId2 == 1);              // رصيد + كاش
+
+                            if (shouldRefundBalance || isBalanceWithCash)
                             {
-                                if (l_paymentMethodId == 2 || l_paymentMethodId == 3)
-                                    refundToBalance = totalAmount;
-                                else
-                                    refundToBalance = 0; 
-                            }
-                            else if (l_paymentMethodId > 0 && l_paymentMethodId2 > 0)
-                            {
-                                if (l_paymentMethodId == 1)
-                                {
-                                    refundToBalance = l_paymentMethodId2Amount;
-                                }
-                                else if ((l_paymentMethodId == 2 || l_paymentMethodId == 3) && l_paymentMethodId2 == 1)
-                                {
-                                    refundToBalance = totalAmount - l_paymentMethodId2Amount;
-                                }
-                                else if ((l_paymentMethodId == 2 || l_paymentMethodId == 3) && (l_paymentMethodId == 2 || l_paymentMethodId == 3))
-                                {
-                                    refundToBalance = totalAmount;
-                                }
-                                else
-                                {
-                                    refundToBalance = 0;
-                                }
+                                refundToBalance = isBalanceWithCash
+                                    ? (totalAmount - l_paymentMethodId2Amount)    // رصيد + كاش -> يرجع فقط الجزء المدفوع بالرصيد
+                                    : totalAmount;                                // دفع ببطاقة أو رصيد فقط -> يرجع كامل المبلغ
                             }
                             else
                             {
                                 refundToBalance = 0;
                             }
+
 
                             string user = MainHelper.M_Check(Request.Cookies["M_Username"]?.Value);
 
@@ -660,9 +651,105 @@ namespace ShabAdmin
                                 }
                             }
 
+                            // 1) استرجاع نقاط العرض
+                            string getOfferPointsSql = @"
+                        SELECT points 
+                        FROM pointsOffers 
+                        WHERE id = (SELECT pointId FROM orders WHERE id = @orderId)
+                    ";
+
+                            int offerPoints = 0;
+                            using (SqlCommand cmd = new SqlCommand(getOfferPointsSql, conn, tx))
+                            {
+                                cmd.Parameters.AddWithValue("@orderId", orderId);
+                                var val = cmd.ExecuteScalar();
+                                if (val != null && val != DBNull.Value)
+                                    offerPoints = Convert.ToInt32(val);
+                            }
+
+                            if (offerPoints > 0)
+                            {
+                                string returnOfferPointsSql = @"
+                            UPDATE usersApp
+                            SET userPoints = userPoints + @offerPoints
+                            WHERE username = @username
+                        ";
+
+                                using (SqlCommand cmd = new SqlCommand(returnOfferPointsSql, conn, tx))
+                                {
+                                    cmd.Parameters.AddWithValue("@offerPoints", offerPoints);
+                                    cmd.Parameters.AddWithValue("@username", username);
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+                            // 2) استرجاع النقاط المستخدمة
+                            string getUsedPointsSql = @"
+                        SELECT pointsUsed 
+                        FROM orders 
+                        WHERE id = @orderId
+                    ";
+
+                            int usedPoints = 0;
+                            using (SqlCommand cmd = new SqlCommand(getUsedPointsSql, conn, tx))
+                            {
+                                cmd.Parameters.AddWithValue("@orderId", orderId);
+                                var val = cmd.ExecuteScalar();
+                                if (val != null && val != DBNull.Value)
+                                    usedPoints = Convert.ToInt32(val);
+                            }
+
+                            if (usedPoints > 0)
+                            {
+                                string returnUsedPointsSql = @"
+                            UPDATE usersApp
+                            SET userPoints = userPoints + @used
+                            WHERE username = @username
+                        ";
+
+                                using (SqlCommand cmd = new SqlCommand(returnUsedPointsSql, conn, tx))
+                                {
+                                    cmd.Parameters.AddWithValue("@used", usedPoints);
+                                    cmd.Parameters.AddWithValue("@username", username);
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+                            // 3) خصم النقاط المكتسبة (amount * 100)
+                            string getAmountSql = @"SELECT totalamount FROM orders WHERE id = @orderId";
+
+                            decimal amount = 0;
+                            using (SqlCommand cmd = new SqlCommand(getAmountSql, conn, tx))
+                            {
+                                cmd.Parameters.AddWithValue("@orderId", orderId);
+                                var val = cmd.ExecuteScalar();
+                                if (val != null && val != DBNull.Value)
+                                    amount = Convert.ToDecimal(val);
+                            }
+
+                            int earnedPoints = Convert.ToInt32(amount * 100);
+
+                            if (earnedPoints > 0)
+                            {
+                                string deductEarnedPointsSql = @"
+                            UPDATE usersApp
+                            SET userPoints = userPoints - @earned
+                            WHERE username = @username
+                        ";
+
+                                using (SqlCommand cmd = new SqlCommand(deductEarnedPointsSql, conn, tx))
+                                {
+                                    cmd.Parameters.AddWithValue("@earned", earnedPoints);
+                                    cmd.Parameters.AddWithValue("@username", username);
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+
+
                             tx.Commit();
                             GridOrders.DataBind();
-                            (sender as ASPxGridView).JSProperties["cpMessage"] = "تم رفض الطلب وتحديث المحفظة بنجاح";
+                            (sender as ASPxGridView).JSProperties["cpMessage"] = "تم رفض الطلب وتحديث البيانات بنجاح";
                         }
                         catch (Exception ex)
                         {

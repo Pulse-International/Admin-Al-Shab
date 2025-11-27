@@ -125,6 +125,9 @@
 
         <div class="w-100 text-center my-4">
             <h2 class="pageTitle d-inline-block" style="font-family: Cairo">النقـــاط والمكافـــآت</h2>
+            <br />
+            <span style="color: #000000;font-weight:bold">شرط وجود تفعيل واحد فقط لعرض النقاط لنفس الشركة (عند إضافة عرض نقاط جديد لنفس الشركة يجب الغاء تفعيل عرض النقاط الحالية للشركة)
+            </span>
         </div>
 
         <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">

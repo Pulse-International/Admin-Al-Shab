@@ -327,7 +327,7 @@
 
                             <dx:ASPxGridView ID="GridMainOffers" runat="server" DataSourceID="db_MainOffers" KeyFieldName="id" ClientInstanceName="GridMainOffers" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" OnCellEditorInitialize="Grid_Association_CellEditorInitialize"
                                 Font-Names="cairo" RightToLeft="True"
-                                OnCancelRowEditing="GridMainOffers_CancelRowEditing" OnRowUpdated="GridMainOffers_RowUpdated" OnRowDeleting="GridMainOffers_RowDeleting" Font-Size="Large" OnRowUpdating="GridMainOffers_RowUpdating">
+                                OnCancelRowEditing="GridMainOffers_CancelRowEditing" OnRowUpdated="GridMainOffers_RowUpdated" OnRowDeleting="GridMainOffers_RowDeleting" Font-Size="1.1em" OnRowUpdating="GridMainOffers_RowUpdating">
                                 <Settings ShowFooter="True" ShowFilterRow="True" />
 
 

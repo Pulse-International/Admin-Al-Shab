@@ -122,7 +122,7 @@
                 // ========== تحديد الحد الأقصى حسب نوع الإرجاع ==========
                 if (refundType == 0 || refundType == 1) {
 
-                    creditMax = sec; // كامل المبلغ
+                    creditMax = sec > 0 ? sec : totalAmount; // كامل المبلغ
                 }
                 else if (refundType == 3) {
 

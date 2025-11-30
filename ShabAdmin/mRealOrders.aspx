@@ -519,7 +519,7 @@
                                                     <%# 
             Convert.ToInt32(Eval("l_orderStatus")) == 1 
             ? "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" style='background-color:red;color:white;font-family:Cairo; width:90px;border:none;padding:5px 10px;border-radius:4px;'>رفض</button>"
-            : ""
+            : "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" style='background-color:red;color:white;font-family:Cairo; width:90px;border:none;padding:5px 10px;border-radius:4px;'>الغاء</button>"
         %>
                                                 </DataItemTemplate>
 

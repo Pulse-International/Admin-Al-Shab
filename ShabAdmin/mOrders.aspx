@@ -88,126 +88,85 @@
                 }, 100);
             }
             // ==================== Open Popup (Both Tabs) ====================
-            function ShowRefundPopup(orderId, totalAmount, refundedAmount, paymentMethod) {
+            function ShowRefundPopup(orderId, totalAmount, refundedAmount, paymentMethod1, paymentMethod2, refundType, secondAmount) {
                 popupRefund.cpId = orderId;
 
                 var t = parseFloat(totalAmount) || 0;
                 var r = parseFloat(refundedAmount) || 0;
-                var available = parseFloat((t - r).toFixed(3));
-                if (available < 0) available = 0;
+                var sec = parseFloat(secondAmount) || 0;
 
-                // ==================== Tab 1: Wallet Refund ====================
-                spinRefundQty.SetMaxValue(available);
-                spinRefundQty.SetValue(available > 0 ? 1 : 0);
-                spinRefundQty.SetEnabled(available > 0);
+                // ==================== Wallet Tab ====================
+                var availableWallet = parseFloat((t - r).toFixed(3));
+                if (availableWallet < 0) availableWallet = 0;
+
+                spinRefundQty.SetMaxValue(availableWallet);
+                spinRefundQty.SetValue(availableWallet > 0 ? 1 : 0);
+                spinRefundQty.SetEnabled(true);
 
                 var txtWallet = document.getElementById("maxRefundText");
                 if (txtWallet) {
-                    if (available > 0) {
-                        // ✅ يوجد مبلغ متاح للإرجاع
-                        txtWallet.innerText = "الحد الأقصى الممكن إرجاعه: " + available.toFixed(3) + " دينار";
-                        txtWallet.style.color = "#d9534f";
-                    } else {
-                        // 🔒 لا يوجد مبلغ متاح — تم الإرجاع مسبقاً
-                        if (r > 0) {
-                            txtWallet.innerText = "تم إرجاع كامل المبلغ للمحفظة مسبقاً (" + r.toFixed(3) + " دينار)";
-                            txtWallet.style.color = "#28a745"; // أخضر
-                        } else {
-                            txtWallet.innerText = "لا يوجد مبلغ متاح للإرجاع";
-                            txtWallet.style.color = "#999"; // رمادي
-                        }
-                    }
+                    txtWallet.innerText = "الحد الأقصى الممكن إرجاعه: " + availableWallet.toFixed(3) + " دينار";
+                    txtWallet.style.color = "#d9534f";
                 }
 
-                // 🔒 تعطيل زر التأكيد في حالة عدم وجود مبلغ متاح
-                var btnWallet = document.getElementById("btnConfirmRefund");
-                if (btnWallet) {
-                    btnWallet.disabled = (available <= 0);
-                    btnWallet.style.opacity = available > 0 ? "1" : "0.5";
-                    btnWallet.style.cursor = available > 0 ? "pointer" : "not-allowed";
-                }
+                // ==================== Credit Card Tab ====================
+                var creditMax = 0;
 
-                var chkWallet = document.getElementById("chkMaxRefund");
-                if (chkWallet) {
-                    chkWallet.checked = false;
-                    chkWallet.disabled = (available <= 0);
-                }
-
-                var RefundCard = 0;
-                var isRefundedBefore = r > 0; // هل يوجد إرجاع سابق؟
-
-                if (isRefundedBefore) {
-                    RefundCard = r;
+                // إظهار تبويب البطاقة إذا فيه أي طريقة دفع = بطاقة
+                if (paymentMethod1 == 2 || paymentMethod2 == 2) {
+                    pageTab.GetTab(1).SetVisible(true);
                 } else {
-                    RefundCard = available;
+                    pageTab.GetTab(1).SetVisible(false);
                 }
 
-                // تثبيت القيمة لتكون 3 خانات
-                RefundCard = parseFloat(RefundCard.toFixed(3));
+                // ========== تحديد الحد الأقصى حسب نوع الإرجاع ==========
+                if (refundType == 0 || refundType == 1) {
 
-                spinRefundCardQty.SetMaxValue(RefundCard);
+                    creditMax = sec; // كامل المبلغ
+                }
+                else if (refundType == 3) {
 
-                // القيمة داخل SpinEdit يجب أن تكون 3 خانات كذلك
-                spinRefundCardQty.SetValue(RefundCard > 0 ? parseFloat(RefundCard.toFixed(3)) : 0);
+                    creditMax = r; // فقط المبلغ المُرجع
+                }
+                else if (refundType == 2) {
+
+                    creditMax = 0; // لا يوجد إرجاع بطاقة
+                }
+
+
+                // ========== شرط الدفع الثاني = بطاقة ==========
+                if (paymentMethod2 == 2 && refundType == 3) {
+
+                    // البطاقة الثانية لها حد خاص
+                    creditMax = Math.min(r, sec);
+                }
+
+
+                creditMax = parseFloat(creditMax.toFixed(3));
+
+                // ========== تعيين القيم ==========
+                spinRefundCardQty.SetMaxValue(creditMax);
+                spinRefundCardQty.SetValue(creditMax > 0 ? creditMax : 0);
 
                 var txtCard = document.getElementById("maxRefundTextCard");
+                if (txtCard) {
+                    txtCard.innerText = "الحد الأقصى لإرجاع البطاقة: " + creditMax.toFixed(3) + " دينار";
+                }
+
                 var chkCard = document.getElementById("chkMaxRefundCard");
+                if (chkCard) chkCard.disabled = (creditMax <= 0);
+
                 var btnCard = document.getElementById("btnConfirmRefundCard");
-
-                if (isRefundedBefore) {
-
-                    spinRefundCardQty.SetEnabled(false);
-
-                    if (chkCard) {
-                        chkCard.checked = true;
-                        chkCard.disabled = true;
-                    }
-
-                    if (btnCard) {
-                        btnCard.disabled = true;
-                        btnCard.style.opacity = "0.5";
-                        btnCard.style.cursor = "not-allowed";
-                    }
-
-                    // ✔ 3 خانات بعد النقطة
-                    if (txtCard) {
-                        txtCard.innerText = "الحد الأقصى الممكن إرجاعه: " + RefundCard.toFixed(3) + " دينار";
-                        txtCard.style.color = "#28a745";
-                    }
-
-                } else {
-
-                    spinRefundCardQty.SetEnabled(true);
-
-                    // ✔ 3 خانات بعد النقطة
-                    if (txtCard) {
-                        txtCard.innerText = "الحد الأقصى الممكن إرجاعه: " + RefundCard.toFixed(3) + " دينار";
-                        txtCard.style.color = "#d9534f";
-                    }
-
-                    if (chkCard) {
-                        chkCard.checked = false;
-                        chkCard.disabled = (RefundCard <= 0);
-                    }
-
-                    if (btnCard) {
-                        btnCard.disabled = (RefundCard <= 0);
-                        btnCard.style.opacity = RefundCard > 0 ? "1" : "0.5";
-                        btnCard.style.cursor = RefundCard > 0 ? "pointer" : "not-allowed";
-                    }
+                if (btnCard) {
+                    btnCard.disabled = (creditMax <= 0);
+                    btnCard.style.opacity = creditMax > 0 ? "1" : "0.5";
                 }
 
-                if (typeof pageTab !== "undefined") pageTab.SetActiveTabIndex(0);
-
-                if (paymentMethod == 1 || paymentMethod == 3) {
-                    pageTab.GetTab(1).SetVisible(false);
-                    pageTab.SetActiveTabIndex(0);
-                } else {
-                    pageTab.GetTab(1).SetVisible(true);
-                }
-
+                pageTab.SetActiveTabIndex(0);
                 popupRefund.Show();
             }
+
+
 
             // ==================== Show Refund Message Popup ====================
             function ShowRefundPopupMessage(title, message, type) {
@@ -539,34 +498,18 @@
                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                     </dx:GridViewDataColumn>
 
-                    <dx:GridViewDataColumn Caption="إرجاع"  Width="80px">
+                    <dx:GridViewDataColumn Caption="إرجاع" Width="80px">
                         <DataItemTemplate>
-                            <%# 
-                                Convert.ToInt32(Eval("l_orderStatus")) >= 7 
-                                ? "الارجاع غير مسموح" 
-                                :
-                                (
-                                    Convert.ToInt32(Eval("l_refundType")) == 2 
-                                    ? "<span style='color: green; font-weight: bold;'>تم الإرجاع</span>"
-                                    :
-                                    (
-                                        ( (Convert.ToInt32(Eval("l_paymentMethodId")) == 1 || Convert.ToInt32(Eval("l_paymentMethodId")) == 3)
-                                          && Convert.ToDecimal(Eval("refundedAmount")) == Convert.ToDecimal(Eval("totalAmount")) )
-                                        ? "تم الإرجاع بالكامل"
-                                        : string.Format(@"
-                                            <a href='javascript:void(0);' 
-                                               onclick='ShowRefundPopup({0}, {1}, {2}, {3})' 
-                                               title='طلب إرجاع'>
-                                                <img src='/assets/img/refund.png' alt='إرجاع' style='width: 24px; height: 24px;' />
-                                            </a>",
-                                            Eval("id"),
-                                            Eval("totalAmount"),
-                                            Eval("refundedAmount"),
-                                            Eval("l_paymentMethodId")
-                                          )
-                                    )
-                                )
-                            %>
+                            <%# GetRefundStatus(
+    Eval("l_orderStatus") != DBNull.Value ? Convert.ToInt32(Eval("l_orderStatus")) : 0,
+    Eval("totalAmount") != DBNull.Value ? Convert.ToDecimal(Eval("totalAmount")) : 0m,
+    Eval("refundedAmount") != DBNull.Value ? Convert.ToDecimal(Eval("refundedAmount")) : 0m,
+    Eval("l_paymentMethodId") != DBNull.Value ? Convert.ToInt32(Eval("l_paymentMethodId")) : 0,
+    Eval("id") != DBNull.Value ? Convert.ToInt32(Eval("id")) : 0,
+    Eval("l_paymentMethodId2") != DBNull.Value ? Convert.ToInt32(Eval("l_paymentMethodId2")) : 0,
+    Eval("l_RefundType") != DBNull.Value ? Convert.ToInt32(Eval("l_RefundType")) : 0,
+    Eval("l_paymentMethodId2Amount") != DBNull.Value ? Convert.ToDecimal(Eval("l_paymentMethodId2Amount")) : 0m
+) %>
                         </DataItemTemplate>
 
                         <EditFormSettings Visible="False" />
@@ -649,6 +592,8 @@
                     po.[points],
                     po.[discountAmount],
                     o.[l_paymentMethodId],
+                    o.[l_paymentMethodId2],
+                    o.[l_paymentMethodId2Amount],
                     o.[l_RefundType],
                     pm.[description] AS paymentMethod, 
                     br.[name] AS branchName, 

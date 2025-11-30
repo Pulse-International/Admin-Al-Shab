@@ -53,6 +53,8 @@ o.pointId,
  po.[points],
  po.[discountAmount],
                         o.[l_paymentMethodId],
+ o.[l_paymentMethodId2],
+                    o.[l_paymentMethodId2Amount],
                         br.[name] AS branchName, 
                         o.[l_RefundType],
                         pm.[description] AS paymentMethod, 
@@ -114,6 +116,8 @@ o.pointId,
  po.[points],
  po.[discountAmount],
                         o.[l_paymentMethodId],
+ o.[l_paymentMethodId2],
+                    o.[l_paymentMethodId2Amount],
                         br.[name] AS branchName, 
                         o.[l_RefundType],
                         pm.[description] AS paymentMethod, 
@@ -174,6 +178,8 @@ o.pointId,
  po.[points],
  po.[discountAmount],
                         o.[l_paymentMethodId],
+ o.[l_paymentMethodId2],
+                    o.[l_paymentMethodId2Amount],
                         o.[l_RefundType],
                         pm.[description] AS paymentMethod, 
                         br.[name] AS branchName, 
@@ -723,10 +729,10 @@ LEFT JOIN
                     try
                     {
                         string getOrderSql = @"
-        SELECT o.id, o.username, o.totalAmount, o.refundedAmount, 
-               o.realTotalAmount, o.realTax,o.taxAmount, o.l_orderStatus
-        FROM Orders o
-        WHERE o.id = @orderId";
+SELECT o.id, o.username, o.totalAmount, o.refundedAmount, 
+       o.realTotalAmount, o.realTax,o.taxAmount, o.l_orderStatus
+FROM Orders o
+WHERE o.id = @orderId";
 
                         string username = "";
                         decimal totalAmount = 0m, refundedAmount = 0m, realTotalAmount = 0m, realTax = 0m, Tax = 0m;
@@ -762,31 +768,109 @@ LEFT JOIN
                             return;
                         }
 
-                        //  الجزء الجديد هنا
-                        decimal refundPoints = Math.Floor(requestedRefund) * 100;
-                        decimal currentPoints = 0;
+                        // ==============================
+                        //   استرجاع نقاط العرض
+                        // ==============================
+                        string getOfferPointsSql = @"
+                    SELECT points 
+                    FROM pointsOffers 
+                    WHERE id = (SELECT pointId FROM orders WHERE id = @orderId)
+                ";
 
-                        // نجيب نقاط المستخدم الحالية
-                        string getPointsSql = "SELECT userPoints FROM usersApp WHERE username = @username";
-                        using (var cmd = new SqlCommand(getPointsSql, conn, tx))
+                        int offerPoints = 0;
+                        using (SqlCommand cmd = new SqlCommand(getOfferPointsSql, conn, tx))
                         {
-                            cmd.Parameters.Add("@username", SqlDbType.NVarChar, 100).Value = username;
-                            var result = cmd.ExecuteScalar();
-                            if (result != null && result != DBNull.Value)
-                                currentPoints = Convert.ToDecimal(result);
+                            cmd.Parameters.AddWithValue("@orderId", orderId);
+                            var val = cmd.ExecuteScalar();
+                            if (val != null && val != DBNull.Value)
+                                offerPoints = Convert.ToInt32(val);
                         }
 
-                        decimal newPoints = currentPoints - refundPoints;
-                        if (newPoints < 0) newPoints = 0;
-
-                        // نحدث النقاط الجديدة
-                        string updatePointsSql = "UPDATE usersApp SET userPoints = @points WHERE username = @username";
-                        using (var cmd = new SqlCommand(updatePointsSql, conn, tx))
+                        if (offerPoints > 0)
                         {
-                            cmd.Parameters.Add("@points", SqlDbType.Decimal).Value = newPoints;
-                            cmd.Parameters.Add("@username", SqlDbType.NVarChar, 100).Value = username;
-                            cmd.ExecuteNonQuery();
+                            string returnOfferPointsSql = @"
+                        UPDATE usersApp
+                        SET userPoints = userPoints + @offerPoints
+                        WHERE username = @username
+                    ";
+
+                            using (SqlCommand cmd = new SqlCommand(returnOfferPointsSql, conn, tx))
+                            {
+                                cmd.Parameters.AddWithValue("@offerPoints", offerPoints);
+                                cmd.Parameters.AddWithValue("@username", username);
+                                cmd.ExecuteNonQuery();
+                            }
                         }
+
+                        // ==============================
+                        //   استرجاع النقاط المستخدمة
+                        // ==============================
+                        string getUsedPointsSql = @"
+                    SELECT pointsUsed 
+                    FROM orders 
+                    WHERE id = @orderId
+                ";
+
+                        int usedPoints = 0;
+                        using (SqlCommand cmd = new SqlCommand(getUsedPointsSql, conn, tx))
+                        {
+                            cmd.Parameters.AddWithValue("@orderId", orderId);
+                            var val = cmd.ExecuteScalar();
+                            if (val != null && val != DBNull.Value)
+                                usedPoints = Convert.ToInt32(val);
+                        }
+
+                        if (usedPoints > 0)
+                        {
+                            string returnUsedPointsSql = @"
+                        UPDATE usersApp
+                        SET userPoints = userPoints + @used
+                        WHERE username = @username
+                    ";
+
+                            using (SqlCommand cmd = new SqlCommand(returnUsedPointsSql, conn, tx))
+                            {
+                                cmd.Parameters.AddWithValue("@used", usedPoints);
+                                cmd.Parameters.AddWithValue("@username", username);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+
+                        // ==============================
+                        //   خصم النقاط المكتسبة (amount * 100)
+                        // ==============================
+                        string getAmountSql = @"SELECT totalAmount FROM orders WHERE id = @orderId";
+
+                        decimal amount = 0;
+                        using (SqlCommand cmd = new SqlCommand(getAmountSql, conn, tx))
+                        {
+                            cmd.Parameters.AddWithValue("@orderId", orderId);
+                            var val = cmd.ExecuteScalar();
+                            if (val != null && val != DBNull.Value)
+                                amount = Convert.ToDecimal(val);
+                        }
+
+                        int earnedPoints = Convert.ToInt32(amount * 100);
+
+                        if (earnedPoints > 0)
+                        {
+                            string deductEarnedPointsSql = @"
+                        UPDATE usersApp
+                        SET userPoints = userPoints - @earned
+                        WHERE username = @username
+                    ";
+
+                            using (SqlCommand cmd = new SqlCommand(deductEarnedPointsSql, conn, tx))
+                            {
+                                cmd.Parameters.AddWithValue("@earned", earnedPoints);
+                                cmd.Parameters.AddWithValue("@username", username);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+
+                        // ==============================
+                        //   بقية العملية كما هي
+                        // ==============================
 
                         decimal refundValue = requestedRefund;
                         decimal newRefundedAmount = refundedAmount + refundValue;
@@ -797,19 +881,17 @@ LEFT JOIN
                         string newStatus = (newRefundedAmount >= totalAmount && totalAmount > 0m) ? "5" : "6";
 
                         if (Tax == 0)
-                        {
                             newRealTax = 0;
-                        }
 
                         string updateOrderSql = @"
-                UPDATE Orders
-                SET refundedAmount   = @refundedAmount,
-                    realTotalAmount  = @realTotalAmount,
-                    realTax          = @realTax,
-                    l_orderStatus    = @status,
-                    l_refundType     = 3,
-                    refundedUser     = @username
-                WHERE id = @orderId";
+        UPDATE Orders
+        SET refundedAmount   = @refundedAmount,
+            realTotalAmount  = @realTotalAmount,
+            realTax          = @realTax,
+            l_orderStatus    = @status,
+            l_refundType     = 3,
+            refundedUser     = @username
+        WHERE id = @orderId";
 
                         string user = MainHelper.M_Check(Request.Cookies["M_Username"]?.Value);
 
@@ -825,9 +907,9 @@ LEFT JOIN
                         }
 
                         string updateUserSql = @"
-                UPDATE usersApp
-                SET balance = balance + @refundValue
-                WHERE username = @username";
+        UPDATE usersApp
+        SET balance = balance + @refundValue
+        WHERE username = @username";
 
                         using (var cmd = new SqlCommand(updateUserSql, conn, tx))
                         {
@@ -873,12 +955,12 @@ LEFT JOIN
                     try
                     {
                         string getOrderSql = @"
-                SELECT o.username, o.totalAmount, o.refundedAmount, 
-                       o.realTotalAmount, o.realTax, pa.transactionRef AS paymentTR,o.VerifiedTransactionRef, o.l_refundType
-                FROM Orders o
-                LEFT JOIN 
-                    [payments] pa ON o.id = pa.orderId
-                WHERE o.id = @orderId";
+                    SELECT o.username, o.totalAmount, o.refundedAmount, 
+                           o.realTotalAmount, o.realTax, pa.transactionRef AS paymentTR,o.VerifiedTransactionRef, o.l_refundType
+                    FROM Orders o
+                    LEFT JOIN 
+                        [payments] pa ON o.id = pa.orderId
+                    WHERE o.id = @orderId";
 
                         string username = "", transactionRef = "";
                         decimal totalAmount = 0m, refundedAmount = 0m;
@@ -916,9 +998,9 @@ LEFT JOIN
                         {
                             // نقص المبلغ من رصيد المستخدم
                             string decreaseUserSql = @"
-                    UPDATE usersApp
-                    SET balance = balance - @refundValue
-                    WHERE username = @username";
+                        UPDATE usersApp
+                        SET balance = balance - @refundValue
+                        WHERE username = @username";
 
                             using (var cmd = new SqlCommand(decreaseUserSql, conn, tx))
                             {
@@ -943,34 +1025,109 @@ LEFT JOIN
                             return;
                         }
 
-                        if (refundedAmount <= 0)
+                        // ==============================
+                        //   استرجاع نقاط العرض
+                        // ==============================
+                        string getOfferPointsSql = @"
+                    SELECT points 
+                    FROM pointsOffers 
+                    WHERE id = (SELECT pointId FROM orders WHERE id = @orderId)
+                ";
+
+                        int offerPoints = 0;
+                        using (SqlCommand cmd = new SqlCommand(getOfferPointsSql, conn, tx))
                         {
-                            decimal refundPoints = requestedRefund * 100;
-                            decimal currentPoints = 0;
+                            cmd.Parameters.AddWithValue("@orderId", orderId);
+                            var val = cmd.ExecuteScalar();
+                            if (val != null && val != DBNull.Value)
+                                offerPoints = Convert.ToInt32(val);
+                        }
 
-                            // جلب نقاط المستخدم الحالية
-                            string getPointsSql = "SELECT userPoints FROM usersApp WHERE username = @username";
-                            using (var cmdPoints = new SqlCommand(getPointsSql, conn, tx))
+                        if (offerPoints > 0)
+                        {
+                            string returnOfferPointsSql = @"
+                        UPDATE usersApp
+                        SET userPoints = userPoints + @offerPoints
+                        WHERE username = @username
+                    ";
+
+                            using (SqlCommand cmd = new SqlCommand(returnOfferPointsSql, conn, tx))
                             {
-                                cmdPoints.Parameters.Add("@username", SqlDbType.NVarChar, 100).Value = username;
-                                var resultPoints = cmdPoints.ExecuteScalar();
-                                if (resultPoints != null && resultPoints != DBNull.Value)
-                                    currentPoints = Convert.ToDecimal(resultPoints);
-                            }
-
-                            decimal newPoints = currentPoints - refundPoints;
-                            if (newPoints < 0) newPoints = 0;
-
-                            // تحديث النقاط
-                            string updatePointsSql = "UPDATE usersApp SET userPoints = @points WHERE username = @username";
-                            using (var cmdUpdatePoints = new SqlCommand(updatePointsSql, conn, tx))
-                            {
-                                cmdUpdatePoints.Parameters.Add("@points", SqlDbType.Decimal).Value = newPoints;
-                                cmdUpdatePoints.Parameters.Add("@username", SqlDbType.NVarChar, 100).Value = username;
-                                cmdUpdatePoints.ExecuteNonQuery();
+                                cmd.Parameters.AddWithValue("@offerPoints", offerPoints);
+                                cmd.Parameters.AddWithValue("@username", username);
+                                cmd.ExecuteNonQuery();
                             }
                         }
-                        // تحديث بيانات الطلب
+
+                        // ==============================
+                        //   استرجاع النقاط المستخدمة
+                        // ==============================
+                        string getUsedPointsSql = @"
+                    SELECT pointsUsed 
+                    FROM orders 
+                    WHERE id = @orderId
+                ";
+
+                        int usedPoints = 0;
+                        using (SqlCommand cmd = new SqlCommand(getUsedPointsSql, conn, tx))
+                        {
+                            cmd.Parameters.AddWithValue("@orderId", orderId);
+                            var val = cmd.ExecuteScalar();
+                            if (val != null && val != DBNull.Value)
+                                usedPoints = Convert.ToInt32(val);
+                        }
+
+                        if (usedPoints > 0)
+                        {
+                            string returnUsedPointsSql = @"
+                        UPDATE usersApp
+                        SET userPoints = userPoints + @used
+                        WHERE username = @username
+                    ";
+
+                            using (SqlCommand cmd = new SqlCommand(returnUsedPointsSql, conn, tx))
+                            {
+                                cmd.Parameters.AddWithValue("@used", usedPoints);
+                                cmd.Parameters.AddWithValue("@username", username);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+
+                        // ==============================
+                        //   خصم النقاط المكتسبة (amount * 100)
+                        // ==============================
+                        string getAmountSql = @"SELECT totalAmount FROM orders WHERE id = @orderId";
+
+                        decimal amount = 0;
+                        using (SqlCommand cmd = new SqlCommand(getAmountSql, conn, tx))
+                        {
+                            cmd.Parameters.AddWithValue("@orderId", orderId);
+                            var val = cmd.ExecuteScalar();
+                            if (val != null && val != DBNull.Value)
+                                amount = Convert.ToDecimal(val);
+                        }
+
+                        int earnedPoints = Convert.ToInt32(amount * 100);
+
+                        if (earnedPoints > 0)
+                        {
+                            string deductEarnedPointsSql = @"
+                        UPDATE usersApp
+                        SET userPoints = userPoints - @earned
+                        WHERE username = @username
+                    ";
+
+                            using (SqlCommand cmd = new SqlCommand(deductEarnedPointsSql, conn, tx))
+                            {
+                                cmd.Parameters.AddWithValue("@earned", earnedPoints);
+                                cmd.Parameters.AddWithValue("@username", username);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+
+                        // ==============================
+                        //   تحديث بيانات الطلب
+                        // ==============================
                         decimal newRefundedAmount = requestedRefund;
                         decimal newRealTotalAmount = totalAmount - newRefundedAmount;
                         if (newRealTotalAmount < 0m) newRealTotalAmount = 0m;
@@ -979,13 +1136,13 @@ LEFT JOIN
                         string newStatus = (newRefundedAmount >= totalAmount) ? "5" : "6";
 
                         string updateOrderSql = @"
-                UPDATE Orders
-                SET refundedAmount = @refundedAmount,
-                    realTotalAmount = @realTotalAmount,
-                    realTax = @realTax,
-                    l_orderStatus = @status,
-                    l_refundType  = 2
-                WHERE id = @orderId";
+                    UPDATE Orders
+                    SET refundedAmount = @refundedAmount,
+                        realTotalAmount = @realTotalAmount,
+                        realTax = @realTax,
+                        l_orderStatus = @status,
+                        l_refundType  = 2
+                    WHERE id = @orderId";
 
                         using (var cmd = new SqlCommand(updateOrderSql, conn, tx))
                         {
@@ -1028,8 +1185,6 @@ LEFT JOIN
 
             return html;
         }
-
-
         protected string GetPriceDisplayText(object priceObj, object offerObj)
         {
             string price = priceObj?.ToString();
@@ -1066,6 +1221,44 @@ LEFT JOIN
 
             return $"{total:F3}";
         }
+        public string GetRefundStatus(
+            int status,
+            decimal total,
+            decimal refunded,
+            int paymentId,
+            int id,
+            int paymentMethodId2,
+            int refundType,
+            decimal l_paymentMethodId2Amount
+        )
+        {
+            // ==================== تحقق من الشروط لإخفاء الزر ====================
+            bool hideButton = false;
+
+            if ((refundType == 2 && (status == 5 || status == 6)) || status >= 7 || status < 4)
+                hideButton = true;
+
+            if (hideButton)
+            {
+                // حالة تم الإرجاع بالكامل
+                if ((status == 5 || status == 6) && (refundType == 2))
+                    return "<span style='color:green;font-weight:bold;'>تم الإرجاع بالكامل</span>";
+
+                return "الارجاع غير مسموح";
+            }
+
+            // ==================== الزر يظهر دائماً في باقي الحالات ====================
+            return string.Format(@"
+    <a href='javascript:void(0);' 
+       onclick='ShowRefundPopup({0}, {1}, {2}, {3}, {4}, {5}, {6})' 
+       title='طلب إرجاع'>
+        <img src='/assets/img/refund.png' style='width:40px;height:40px;' />
+    </a>",
+     id, total, refunded, paymentId, paymentMethodId2, refundType, l_paymentMethodId2Amount // المعطى السابع
+ );
+
+        }
+
 
     }
 }

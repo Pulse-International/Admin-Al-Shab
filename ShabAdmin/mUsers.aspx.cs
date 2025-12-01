@@ -43,7 +43,7 @@ namespace ShabAdmin
                 db_DeliveryUsers.SelectCommand = @"
             SELECT id, username,email,firstName + ' ' + lastName AS fullName,l_documentType,passportPicture,residencePicture,  userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
                    licensePicture, password, firstName, lastName, l_vehicleType, isActive, vehicleVin,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated vehicleNo, 
-                   isOnline, countryId, userDate
+                   isOnline, countryId, isUpdated, userDate
             FROM [usersDelivery]
             WHERE countryId = @countryId";
 
@@ -101,7 +101,7 @@ namespace ShabAdmin
                 db_DeliveryUsers.SelectCommand = @"
             SELECT id, username,email,firstName + ' ' + lastName AS fullName,  userPicture AS image,l_documentType,passportPicture,residencePicture, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
                    licensePicture, password, firstName, lastName, l_vehicleType, isActive,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated, vehicleVin, vehicleNo, 
-                   isOnline, countryId,userDate
+                   isOnline, countryId, isUpdated, userDate
             FROM [usersDelivery]
             WHERE countryId = @countryId";
 

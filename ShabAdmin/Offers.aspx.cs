@@ -60,7 +60,7 @@ namespace ShabAdmin
             {
                 db_MainOffers.SelectCommand = @"
         SELECT p.[id], p.[countryId], p.[offerImage],p.[companyId], p.[l_offerId], 
-               p.[itemId], p.[position], p.[l_offerType]
+               p.[itemId], p.[position], p.[l_offerType], p.[isActive], p.[userDate]
         FROM [mainOffers] p
         WHERE p.countryId = @countryId AND p.companyId = @companyId
         order by p.position asc, p.l_offerType desc";
@@ -84,7 +84,7 @@ namespace ShabAdmin
             {
                 db_MainOffers.SelectCommand = @"
         SELECT p.[id], p.[countryId], p.[offerImage],p.[companyId], p.[l_offerId], 
-               p.[itemId], p.[position], p.[l_offerType]
+               p.[itemId], p.[position], p.[l_offerType], p.[isActive], p.[userDate]
         FROM [mainOffers] p
         WHERE p.countryId = @countryId
         order by p.position asc, p.l_offerType desc";

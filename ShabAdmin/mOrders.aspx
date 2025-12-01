@@ -119,10 +119,9 @@
                     pageTab.GetTab(1).SetVisible(false);
                 }
 
-                // ========== تحديد الحد الأقصى حسب نوع الإرجاع ==========
                 if (refundType == 0 || refundType == 1) {
 
-                    creditMax = sec > 0 ? sec : totalAmount; // كامل المبلغ
+                    creditMax = sec > 0 ? sec : totalAmount; // كامل المبلغs
                 }
                 else if (refundType == 3) {
 

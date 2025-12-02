@@ -422,16 +422,7 @@
                                                 <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                                             </dx:GridViewDataComboBoxColumn>
 
-                                            <dx:GridViewDataColumn Caption="موقع الزبون" FieldName="addressId">
-                                                <DataItemTemplate>
-                                                    <a href="javascript:void(0);"
-                                                        onclick="callbackAddress1.PerformCallback('<%# Eval("addressId") %>'); popupAddress1.Show();"
-                                                        style="text-decoration: underline; color: #007bff; font-family: Cairo;">عرض الموفع
-                                                    </a>
-                                                </DataItemTemplate>
-                                                <EditFormSettings Visible="False" />
-                                                <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
-                                            </dx:GridViewDataColumn>
+
 
                                             <dx:GridViewDataComboBoxColumn Caption="الشركة" FieldName="companyId">
                                                 <PropertiesComboBox
@@ -495,6 +486,16 @@
                                                 <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                                             </dx:GridViewDataColumn>
 
+                                            <dx:GridViewDataColumn Caption="موقع الزبون" FieldName="addressId">
+                                                <DataItemTemplate>
+                                                    <a href="javascript:void(0);"
+                                                        onclick="callbackAddress1.PerformCallback('<%# Eval("addressId") %>'); popupAddress1.Show();"
+                                                        style="text-decoration: underline; color: #007bff; font-family: Cairo;">عرض الموفع
+                                                    </a>
+                                                </DataItemTemplate>
+                                                <EditFormSettings Visible="False" />
+                                                <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                                            </dx:GridViewDataColumn>
 
                                             <dx:GridViewDataColumn Caption="تتبع السائق" FieldName="addressId">
                                                 <DataItemTemplate>

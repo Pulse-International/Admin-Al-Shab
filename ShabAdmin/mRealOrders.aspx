@@ -422,6 +422,17 @@
                                                 <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                                             </dx:GridViewDataComboBoxColumn>
 
+                                            <dx:GridViewDataColumn Caption="موقع الزبون" FieldName="addressId">
+                                                <DataItemTemplate>
+                                                    <a href="javascript:void(0);"
+                                                        onclick="callbackAddress1.PerformCallback('<%# Eval("addressId") %>'); popupAddress1.Show();"
+                                                        style="text-decoration: underline; color: #007bff; font-family: Cairo;">عرض الموفع
+                                                    </a>
+                                                </DataItemTemplate>
+                                                <EditFormSettings Visible="False" />
+                                                <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                                            </dx:GridViewDataColumn>
+
                                             <dx:GridViewDataComboBoxColumn Caption="الشركة" FieldName="companyId">
                                                 <PropertiesComboBox
                                                     ClientInstanceName="comboCountry"
@@ -485,7 +496,7 @@
                                             </dx:GridViewDataColumn>
 
 
-                                            <dx:GridViewDataColumn Caption="الموقع" FieldName="addressId">
+                                            <dx:GridViewDataColumn Caption="تتبع السائق" FieldName="addressId">
                                                 <DataItemTemplate>
                                                     <a href="javascript:void(0);"
                                                         onclick="callbackAddress.PerformCallback('<%# Eval("id") %>'); popupAddress.Show();"
@@ -520,7 +531,7 @@
             Convert.ToInt32(Eval("l_orderStatus")) == 1 
             ? "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" style='background-color:red;color:white;font-family:Cairo; width:90px;border:none;padding:5px 10px;border-radius:4px;'>رفض</button>"
             : "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" style='background-color:red;color:white;font-family:Cairo; width:90px;border:none;padding:5px 10px;border-radius:4px;'>الغاء</button>"
-        %>
+                                                    %>
                                                 </DataItemTemplate>
 
                                                 <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
@@ -590,6 +601,7 @@
                                                 o.[id], 
                                                 o.[l_orderStatus],
                                                 o.[companyId], 
+                                                o.[addressId], 
                                                 c.[countryID] AS countryId, 
                                                 o.[username], 
                                                 o.[usersDeliveryId],
@@ -662,6 +674,34 @@
                                     </ContentCollection>
                                 </dx:ASPxPopupControl>
 
+                                <dx:ASPxPopupControl ID="popupAddress1" runat="server" ClientInstanceName="popupAddress1"
+                                    Width="750px" Font-Names="Cairo" HeaderText="تفاصيل العنوان" ShowCloseButton="true"
+                                    PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" Modal="true">
+                                    <ClientSideEvents Shown="function(s, e) { s.UpdatePosition(); }" />
+                                    <ContentCollection>
+                                        <dx:PopupControlContentControl>
+                                            <dx:ASPxCallbackPanel ID="callbackAddress1" runat="server" ClientInstanceName="callbackAddress1"
+                                                OnCallback="callbackAddress1_Callback">
+                                                <ClientSideEvents EndCallback="function(s, e) { 
+        var json = s.cpMapData; // أو s.GetJSProperty('cpMapData') حسب النسخة
+        if (json) {
+            window.currentMapData = JSON.parse(json);
+            if (window.initCurrentMap && window.currentMapData) { 
+                window.initCurrentMap(); 
+            }
+        } else {
+            console.error('No map data from JSProperties!');
+        }
+    }" />
+                                                <PanelCollection>
+                                                    <dx:PanelContent>
+                                                        <asp:Label ID="lblAddressInfo1" runat="server" Font-Names="Cairo" Text="جارٍ تحميل التفاصيل..." />
+                                                    </dx:PanelContent>
+                                                </PanelCollection>
+                                            </dx:ASPxCallbackPanel>
+                                        </dx:PopupControlContentControl>
+                                    </ContentCollection>
+                                </dx:ASPxPopupControl>
 
                                 <dx:ASPxPopupControl ID="popupAddress" runat="server" ClientInstanceName="popupAddress"
                                     Width="950px" Font-Names="Cairo" HeaderText="تتبع السائق" ShowCloseButton="true"

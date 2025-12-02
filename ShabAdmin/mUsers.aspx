@@ -1394,7 +1394,7 @@
                                             <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
 
-                                        <dx:GridViewDataTextColumn Caption="رقم السيارة" FieldName="vehicleNo">
+                                        <dx:GridViewDataTextColumn Caption="رقم المركبة" FieldName="vehicleNo">
                                             <PropertiesTextEdit>
                                                 <ValidationSettings
                                                     RequiredField-IsRequired="true"

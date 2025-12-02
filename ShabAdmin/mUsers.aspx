@@ -1393,7 +1393,7 @@
                                             <EditFormSettings Visible="False" />
                                         </dx:GridViewDataColumn>
 
-                                        <dx:GridViewDataTextColumn Caption="رقم الوثيقة" FieldName="documentNo">
+                                        <dx:GridViewDataTextColumn Caption="رقم الوثيقة" Width="3%" FieldName="documentNo">
                                             <DataItemTemplate>
                                                 <%# 
                                                     Eval("l_documentType") != null 
@@ -1412,7 +1412,7 @@
                                             <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
 
-                                        <dx:GridViewDataComboBoxColumn Caption="الاتصال" FieldName="isOnline" EditFormSettings-ColumnSpan="2">
+                                        <dx:GridViewDataComboBoxColumn Caption="الاتصال" Width="3%" FieldName="isOnline" EditFormSettings-ColumnSpan="2">
                                             <PropertiesComboBox ValueType="System.Boolean">
                                                 <Items>
                                                     <dx:ListEditItem Text="متصل" Value="true" />
@@ -1473,7 +1473,7 @@
                                             <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
 
-                                        <dx:GridViewDataComboBoxColumn Caption="فعال" FieldName="isActive">
+                                        <dx:GridViewDataComboBoxColumn Caption="فعال" Width="3%" FieldName="isActive">
                                             <PropertiesComboBox ValueType="System.Int32">
                                                 <Items>
                                                     <dx:ListEditItem Text="فعال" Value="1" />
@@ -1773,7 +1773,7 @@
                                             </DataItemTemplate>
                                         </dx:GridViewDataColumn>
 
-                                        <dx:GridViewDataTextColumn FieldName="userDate" Caption="المنصة والتاريخ">
+                                        <dx:GridViewDataTextColumn FieldName="userDate" Width="3%" Caption="المنصة والتاريخ">
                                             <DataItemTemplate>
                                                 <div style="text-align: center; font-family: Cairo;">
                                                     <div style="font-weight: bold;"><%# Eval("userplatform") %></div>
@@ -1784,6 +1784,16 @@
                                             </DataItemTemplate>
                                             <EditFormSettings Visible="False" />
                                             <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="التقييم" FieldName="rate">
+                                            <DataItemTemplate>
+                                                <%# Convert.ToDouble(Eval("rate")) > 0 
+                                                ? string.Format("{0}/5", Eval("rate")) 
+                                                : "لا يوجد تقييم" %>
+                                            </DataItemTemplate>
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
 
 
@@ -1872,7 +1882,7 @@
                                            u.licensePicture, u.password, u.firstName, u.lastName, u.l_vehicleType, u.isActive, 
                                            u.vehicleVin, u.vehicleNo, u.l_DeliveryStatusId, u.incompleteNote, u.rejectNote, 
                                            u.isUpdated, u.isOnline, u.countryId, u.documentNo, u.l_gender, g.description AS gender, 
-                                           u.userplatform,u.vehicleModel, u.userDate
+                                           u.userplatform,u.vehicleModel,u.rate, u.userDate
                                     FROM [usersDelivery] u
                                     LEFT JOIN L_Gender g ON u.l_gender = g.id
                                     ORDER BY u.l_DeliveryStatusId, u.id"

@@ -660,7 +660,7 @@
                                         </dx:GridViewDataComboBoxColumn>
 
                                         <dx:GridViewDataDateColumn FieldName="userDate" Caption="التاريخ">
-                                            <PropertiesDateEdit DisplayFormatString="yyyy/MM/dd hh:mm tt" />
+                                            <PropertiesDateEdit DisplayFormatString="yyyy/MM/dd" />
                                             <EditFormSettings Visible="False" />
                                             <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
                                         </dx:GridViewDataDateColumn>
@@ -958,7 +958,7 @@
                                         </dx:GridViewDataComboBoxColumn>
 
                                         <dx:GridViewDataDateColumn FieldName="userDate" Caption="التاريخ">
-                                            <PropertiesDateEdit DisplayFormatString="yyyy/MM/dd hh:mm tt" />
+                                            <PropertiesDateEdit DisplayFormatString="yyyy/MM/dd" />
                                             <EditFormSettings Visible="False" />
                                             <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
                                         </dx:GridViewDataDateColumn>
@@ -1225,16 +1225,9 @@
                                         <Items>
                                             <dx:GridViewLayoutGroup Caption="البيانات الأساسية" ColCount="2" ColSpan="3">
                                                 <Items>
-                                                    <dx:GridViewColumnLayoutItem ColumnName="countryId" />
-                                                    <dx:GridViewColumnLayoutItem ColumnName="username" />
-                                                    <dx:GridViewColumnLayoutItem ColumnName="email" />
-                                                    <dx:GridViewColumnLayoutItem ColumnName="firstName" />
-                                                    <dx:GridViewColumnLayoutItem ColumnName="lastName" />
+
                                                     <dx:GridViewColumnLayoutItem ColumnName="password" />
-                                                    <dx:GridViewColumnLayoutItem ColumnName="isActive" />
-                                                    <dx:GridViewColumnLayoutItem ColumnName="l_vehicleType" />
-                                                    <dx:GridViewColumnLayoutItem ColumnName="vehicleNo" />
-                                                    <dx:GridViewColumnLayoutItem ColumnName="vehicleVin" />
+
                                                 </Items>
                                             </dx:GridViewLayoutGroup>
 
@@ -1292,7 +1285,7 @@
                                     <SettingsLoadingPanel Text="Please Wait &amp;hellip;" Mode="ShowAsPopup" />
                                     <SettingsText SearchPanelEditorNullText="ابحث في الجدول..." EmptyDataRow="لا يوجد" />
                                     <Columns>
-                                        <dx:GridViewDataColumn Caption="الرقم" FieldName="id">
+                                        <dx:GridViewDataColumn Caption="الرقم" Width="3%" FieldName="id">
                                             <EditFormSettings Visible="False" />
                                             <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
                                         </dx:GridViewDataColumn>
@@ -1305,10 +1298,12 @@
                                                     <div style="color: #888; font-size: 20px;"><%# Eval("username") %></div>
                                                     <div style="font-weight: bold;"><%# Eval("fullName") %></div>
                                                     <div style="color: #888; font-size: 12px;"><%# Eval("email") %></div>
+                                                    <div style="color: #888; font-size: 12px;"><%# Eval("gender") %></div>
                                                 </div>
                                             </DataItemTemplate>
                                             <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
                                         </dx:GridViewDataColumn>
+
 
                                         <dx:GridViewDataTextColumn Caption="الاسم الاول" Visible="false" Width="5%" FieldName="firstName">
                                             <PropertiesTextEdit>
@@ -1352,7 +1347,7 @@
                                             <EditFormSettings Visible="True" />
                                         </dx:GridViewDataTextColumn>
 
-                                        <dx:GridViewDataComboBoxColumn Caption="البلد" FieldName="countryId">
+                                        <dx:GridViewDataComboBoxColumn Caption="البلد" Width="3%" FieldName="countryId">
                                             <PropertiesComboBox ClientInstanceName="cmbCountry"
                                                 DataSourceID="db_countryName"
                                                 TextField="countryName"
@@ -1380,7 +1375,91 @@
                                             <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
 
-                                        <dx:GridViewDataTextColumn Caption="رقم الشصي" FieldName="vehicleVin">
+                                        <dx:GridViewDataColumn Caption="بيانات المركبة" FieldName="vehicleNo">
+                                            <DataItemTemplate>
+                                                <div style="text-align: center; font-family: Cairo; line-height: 22px;">
+                                                    <div style="margin-bottom: 5px; display: flex; justify-content: center; align-items: center;">
+                                                        <%# GetLottieMarkup(Eval("l_vehicleType")) %>
+                                                    </div>
+
+                                                    <div><strong>رقم المركبة:</strong> <%# Eval("vehicleNo") %></div>
+                                                    <div><strong>موديل المركبة:</strong> <%# Eval("vehicleModel") %></div>
+                                                    <div><strong>رقم الشصي:</strong> <%# Eval("vehicleVin") %></div>
+
+                                                </div>
+                                            </DataItemTemplate>
+
+                                            <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                                            <EditFormSettings Visible="False" />
+                                        </dx:GridViewDataColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="رقم الوثيقة" Width="3%" FieldName="documentNo">
+                                            <DataItemTemplate>
+                                                <%# 
+                                                    Eval("l_documentType") != null 
+                                                        ? (
+                                                            (Convert.ToInt32(Eval("l_documentType")) == 1 
+                                                                ? "رقم الهوية: " + Eval("documentNo")
+                                                            : Convert.ToInt32(Eval("l_documentType")) == 2 
+                                                                ? "رقم الجواز: " + Eval("documentNo")
+                                                            : Convert.ToInt32(Eval("l_documentType")) == 3 
+                                                                ? "رقم الإقامة: " + Eval("documentNo")
+                                                            : "")
+                                                        )
+                                                        : ""
+                                                    %>
+                                            </DataItemTemplate>
+                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataComboBoxColumn Caption="الاتصال" Width="3%" FieldName="isOnline" EditFormSettings-ColumnSpan="2">
+                                            <PropertiesComboBox ValueType="System.Boolean">
+                                                <Items>
+                                                    <dx:ListEditItem Text="متصل" Value="true" />
+                                                    <dx:ListEditItem Text="غير متصل" Value="false" />
+                                                </Items>
+
+                                            </PropertiesComboBox>
+                                            <DataItemTemplate>
+                                                <%# Convert.ToBoolean(Eval("isOnline")) 
+         ? "<span style='color: green; font-weight: bold;'>متصل</span>" 
+         : "<span style='color: red; font-weight: bold;'>غير متصل</span>" 
+     %>
+                                            </DataItemTemplate>
+                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
+                                        </dx:GridViewDataComboBoxColumn>
+
+
+
+                                        <dx:GridViewDataTextColumn Caption="رقم الشصي" Visible="false" FieldName="vehicleVin">
+                                            <PropertiesTextEdit>
+                                                <ValidationSettings
+                                                    RequiredField-IsRequired="true"
+                                                    ErrorText="رقم الشصي مطلوب"
+                                                    Display="Dynamic"
+                                                    SetFocusOnError="true">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesTextEdit>
+                                            <EditFormSettings ColumnSpan="3" Visible="True" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="موديل المركبة" Visible="false" FieldName="vehicleModel">
+                                            <PropertiesTextEdit>
+                                                <ValidationSettings
+                                                    RequiredField-IsRequired="true"
+                                                    ErrorText="موديل المركبة مطلوب"
+                                                    Display="Dynamic"
+                                                    SetFocusOnError="true">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesTextEdit>
+                                            <EditFormSettings ColumnSpan="3" Visible="True" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="رقم المركبة" Visible="false" FieldName="vehicleNo">
                                             <PropertiesTextEdit>
                                                 <ValidationSettings
                                                     RequiredField-IsRequired="true"
@@ -1390,25 +1469,11 @@
                                                     <RequiredField IsRequired="True"></RequiredField>
                                                 </ValidationSettings>
                                             </PropertiesTextEdit>
-                                            <EditFormSettings ColumnSpan="3" />
+                                            <EditFormSettings ColumnSpan="3" Visible="True" />
                                             <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
 
-                                        <dx:GridViewDataTextColumn Caption="رقم المركبة" FieldName="vehicleNo">
-                                            <PropertiesTextEdit>
-                                                <ValidationSettings
-                                                    RequiredField-IsRequired="true"
-                                                    ErrorText="الاسم الأخير مطلوب"
-                                                    Display="Dynamic"
-                                                    SetFocusOnError="true">
-                                                    <RequiredField IsRequired="True"></RequiredField>
-                                                </ValidationSettings>
-                                            </PropertiesTextEdit>
-                                            <EditFormSettings ColumnSpan="3" />
-                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
-                                        </dx:GridViewDataTextColumn>
-
-                                        <dx:GridViewDataComboBoxColumn Caption="فعال" FieldName="isActive">
+                                        <dx:GridViewDataComboBoxColumn Caption="فعال" Width="3%" FieldName="isActive">
                                             <PropertiesComboBox ValueType="System.Int32">
                                                 <Items>
                                                     <dx:ListEditItem Text="فعال" Value="1" />
@@ -1426,7 +1491,7 @@
                                             <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataComboBoxColumn>
 
-                                        <dx:GridViewDataComboBoxColumn Caption="نوع المركبة" FieldName="l_vehicleType">
+                                        <dx:GridViewDataComboBoxColumn Caption="نوع المركبة" Visible="false" FieldName="l_vehicleType">
                                             <PropertiesComboBox ValueType="System.Int32">
                                                 <Items>
                                                     <dx:ListEditItem Text="سيارة" Value="1" />
@@ -1440,12 +1505,15 @@
                                                     <RequiredField IsRequired="True"></RequiredField>
                                                 </ValidationSettings>
                                             </PropertiesComboBox>
-                                            <EditFormSettings ColumnSpan="2" />
+                                            <EditFormSettings ColumnSpan="2" Visible="True" />
                                             <CellStyle VerticalAlign="Middle" Font-Size="Medium" HorizontalAlign="Center" />
                                             <DataItemTemplate>
                                                 <%# GetLottieMarkup(Eval("l_vehicleType")) %>
                                             </DataItemTemplate>
                                         </dx:GridViewDataComboBoxColumn>
+
+
+
 
 
 
@@ -1705,11 +1773,29 @@
                                             </DataItemTemplate>
                                         </dx:GridViewDataColumn>
 
-                                        <dx:GridViewDataDateColumn FieldName="userDate" Caption="التاريخ">
-                                            <PropertiesDateEdit DisplayFormatString="yyyy/MM/dd hh:mm tt" />
+                                        <dx:GridViewDataTextColumn FieldName="userDate" Width="3%" Caption="المنصة والتاريخ">
+                                            <DataItemTemplate>
+                                                <div style="text-align: center; font-family: Cairo;">
+                                                    <div style="font-weight: bold;"><%# Eval("userplatform") %></div>
+                                                    <div style="font-size: 12px; color: #555;">
+                                                        <%# Convert.ToDateTime(Eval("userDate")).ToString("yyyy/MM/dd") %>
+                                                    </div>
+                                                </div>
+                                            </DataItemTemplate>
                                             <EditFormSettings Visible="False" />
                                             <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
-                                        </dx:GridViewDataDateColumn>
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn Caption="التقييم" FieldName="rate">
+                                            <DataItemTemplate>
+                                                <%# Convert.ToDouble(Eval("rate")) > 0 
+                                                ? string.Format("{0}/5", Eval("rate")) 
+                                                : "لا يوجد تقييم" %>
+                                            </DataItemTemplate>
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                                        </dx:GridViewDataTextColumn>
+
 
                                         <dx:GridViewDataTextColumn Caption="" ShowInCustomizationForm="True" VisibleIndex="999">
                                             <EditFormSettings Visible="False" />
@@ -1789,55 +1875,25 @@
                                 ID="db_DeliveryUsers"
                                 runat="server"
                                 ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                                SelectCommand="SELECT id, username,email, firstName + ' ' + lastName AS fullName, userPicture AS image,l_documentType,residencePicture,passportPicture, carPicture ,carLicensePicture ,idFrontPicture,idBackPicture,licensePicture, password, firstName, lastName, l_vehicleType, isActive, vehicleVin, vehicleNo ,l_DeliveryStatusId,incompleteNote,rejectNote,isUpdated,isOnline,countryId,userDate FROM [usersDelivery] order by l_deliveryStatus "
-                                InsertCommand="INSERT INTO [usersDelivery] 
-                                    (username, password, storedsalt, email, firstName, lastName, isActive, l_vehicleType, userPicture ,carPicture,carLicensePicture,idFrontPicture,idBackPicture,licensePicture,vehicleNo,vehicleVin,isOnline,countryId,l_DeliveryStatusId, userDate)
-                                    VALUES 
-                                    (@username, @password, @storedsalt,@email, @firstName, @lastName, @isActive,@l_vehicleType, @image,@carPicture,@carLicensePicture,@idFrontPicture,@idBackPicture,@licensePicture, @vehicleNo, @vehicleVin, @isOnline,@countryId,3, getDate())"
+                                SelectCommand="
+                                    SELECT u.id, u.username, u.email, u.firstName + ' ' + u.lastName AS fullName, 
+                                           u.userPicture AS image, u.l_documentType, u.residencePicture, u.passportPicture, 
+                                           u.carPicture, u.carLicensePicture, u.idFrontPicture, u.idBackPicture, 
+                                           u.licensePicture, u.password, u.firstName, u.lastName, u.l_vehicleType, u.isActive, 
+                                           u.vehicleVin, u.vehicleNo, u.l_DeliveryStatusId, u.incompleteNote, u.rejectNote, 
+                                           u.isUpdated, u.isOnline, u.countryId, u.documentNo, u.l_gender, g.description AS gender, 
+                                           u.userplatform,u.vehicleModel,u.rate, u.userDate
+                                    FROM [usersDelivery] u
+                                    LEFT JOIN L_Gender g ON u.l_gender = g.id
+                                    ORDER BY u.l_DeliveryStatusId, u.id"
                                 UpdateCommand="UPDATE [usersDelivery]
-                                    SET
-                                        username = @username,
-                                        password = @password,
-                                        storedsalt = @storedsalt,
-                                        firstName = @firstName,
-                                        email = @email,
-                                        lastName = @lastName,
-                                        l_vehicleType = @l_vehicleType,
-                                        vehicleVin = @vehicleVin,
-                                        vehicleNo = @vehicleNo,
-                                        isOnline = @isOnline,
-                                        countryId = @countryId,
-                                        isActive = @isActive
+                                    SET password = @password,
+                                        storedsalt = @storedsalt
                                     WHERE id = @id"
                                 DeleteCommand="DELETE FROM usersDelivery where id =@id">
-
-                                <InsertParameters>
-                                    <asp:Parameter Name="username" Type="String" />
-                                    <asp:Parameter Name="password" Type="String" />
-                                    <asp:Parameter Name="storedsalt" />
-                                    <asp:Parameter Name="email" Type="String" />
-                                    <asp:Parameter Name="firstName" Type="String" />
-                                    <asp:Parameter Name="lastName" Type="String" />
-                                    <asp:Parameter Name="vehicleVin" Type="String" />
-                                    <asp:Parameter Name="isOnline" Type="String" />
-                                    <asp:Parameter Name="vehicleNo" Type="String" />
-                                    <asp:Parameter Name="isActive" Type="Boolean" />
-                                    <asp:Parameter Name="l_vehicleType" Type="string" />
-                                    <asp:Parameter Name="countryId" Type="string" />
-                                </InsertParameters>
                                 <UpdateParameters>
-                                    <asp:Parameter Name="username" Type="String" />
                                     <asp:Parameter Name="password" Type="String" />
                                     <asp:Parameter Name="storedsalt" Type="Object" />
-                                    <asp:Parameter Name="email" Type="String" />
-                                    <asp:Parameter Name="firstName" Type="String" />
-                                    <asp:Parameter Name="lastName" Type="String" />
-                                    <asp:Parameter Name="vehicleVin" Type="String" />
-                                    <asp:Parameter Name="isOnline" Type="String" />
-                                    <asp:Parameter Name="vehicleNo" Type="String" />
-                                    <asp:Parameter Name="isActive" Type="Boolean" />
-                                    <asp:Parameter Name="l_vehicleType" Type="string" />
-                                    <asp:Parameter Name="countryId" Type="string" />
                                     <asp:Parameter Name="id" Type="Int32" />
                                 </UpdateParameters>
                                 <DeleteParameters>
@@ -1850,6 +1906,12 @@
                                 runat="server"
                                 ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
                                 SelectCommand="SELECT id, description FROM [l_DeliveryStatus]" />
+
+                            <asp:SqlDataSource
+                                ID="db_L_Gender"
+                                runat="server"
+                                ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
+                                SelectCommand="SELECT id, description FROM [L_Gender]" />
 
                             <dx:ASPxPopupControl ID="popupImageViewer" runat="server"
                                 ClientInstanceName="popupImageViewer"

@@ -1691,38 +1691,30 @@
 
                                         </dx:GridViewDataColumn>
 
-                                        <dx:GridViewDataTextColumn Caption="حالة التسجيل" Width="130px">
+                                        <dx:GridViewDataTextColumn FieldName="userDate" Width="3%" Caption="المنصة والتاريخ">
                                             <DataItemTemplate>
-
-                                                <dx:ASPxLabel ID="lblStatus" runat="server" Font-Names="Cairo"></dx:ASPxLabel>
-
-
-                                                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 5px;">
-                                                    <dx:ASPxButton ID="btnApprove" runat="server" Text="موافقة" Width="100%" Theme="Material" AutoPostBack="false" BackColor="Green" Font-Names="Cairo" />
-                                                    <dx:ASPxButton ID="btnReject" runat="server" Text="رفض" Width="100%" Theme="Material" AutoPostBack="false" BackColor="Red" Font-Names="Cairo" />
-
-                                                    <dx:ASPxButton ID="btnIncomplete" runat="server" Text="غير مكتمل" Width="100%" Theme="Material" AutoPostBack="false" Font-Names="Cairo" />
-
-                                                    <div class="water-button-wrapper">
-                                                        <dx:ASPxButton ID="btnIncompleteBulb" runat="server" Text="غير مكتمل&#10;تم التحديث"
-                                                            Width="100%" Theme="Material" AutoPostBack="false"
-                                                            Font-Names="Cairo" ClientVisible="False" />
+                                                <div style="text-align: center; font-family: Cairo;">
+                                                    <div style="font-weight: bold;"><%# Eval("userplatform") %></div>
+                                                    <div style="font-size: 12px; color: #555;">
+                                                        <%# Convert.ToDateTime(Eval("userDate")).ToString("yyyy/MM/dd") %>
                                                     </div>
+                                                </div>
                                             </DataItemTemplate>
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
                                         </dx:GridViewDataTextColumn>
 
-                                        <dx:GridViewDataTextColumn Caption="ملاحظة التسجيل">
+                                        <dx:GridViewDataTextColumn Caption="التقييم" FieldName="rate">
                                             <DataItemTemplate>
-                                                <%# 
-                                                    Convert.ToInt32(Eval("l_DeliveryStatusId")) == 4
-                                                    ? Eval("rejectNote")
-                                                    : Convert.ToInt32(Eval("l_DeliveryStatusId")) == 2
-                                                        ? Eval("incompleteNote")
-                                                        : "لا يوجد"
-                                                %>
+                                                <%# Convert.ToDouble(Eval("rate")) > 0 
+        ? string.Format("{0}/5", Eval("rate")) 
+        : "لا يوجد تقييم" %>
                                             </DataItemTemplate>
-                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
+
+
 
                                         <dx:GridViewDataColumn Caption="الصور" ShowInCustomizationForm="True">
                                             <EditFormSettings Visible="False" />
@@ -1773,29 +1765,39 @@
                                             </DataItemTemplate>
                                         </dx:GridViewDataColumn>
 
-                                        <dx:GridViewDataTextColumn FieldName="userDate" Width="3%" Caption="المنصة والتاريخ">
+
+                                        <dx:GridViewDataTextColumn Caption="حالة التسجيل" Width="130px">
                                             <DataItemTemplate>
-                                                <div style="text-align: center; font-family: Cairo;">
-                                                    <div style="font-weight: bold;"><%# Eval("userplatform") %></div>
-                                                    <div style="font-size: 12px; color: #555;">
-                                                        <%# Convert.ToDateTime(Eval("userDate")).ToString("yyyy/MM/dd") %>
+
+                                                <dx:ASPxLabel ID="lblStatus" runat="server" Font-Names="Cairo"></dx:ASPxLabel>
+
+
+                                                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 5px;">
+                                                    <dx:ASPxButton ID="btnApprove" runat="server" Text="موافقة" Width="100%" Theme="Material" AutoPostBack="false" BackColor="Green" Font-Names="Cairo" />
+                                                    <dx:ASPxButton ID="btnReject" runat="server" Text="رفض" Width="100%" Theme="Material" AutoPostBack="false" BackColor="Red" Font-Names="Cairo" />
+
+                                                    <dx:ASPxButton ID="btnIncomplete" runat="server" Text="غير مكتمل" Width="100%" Theme="Material" AutoPostBack="false" Font-Names="Cairo" />
+
+                                                    <div class="water-button-wrapper">
+                                                        <dx:ASPxButton ID="btnIncompleteBulb" runat="server" Text="غير مكتمل&#10;تم التحديث"
+                                                            Width="100%" Theme="Material" AutoPostBack="false"
+                                                            Font-Names="Cairo" ClientVisible="False" />
                                                     </div>
-                                                </div>
                                             </DataItemTemplate>
-                                            <EditFormSettings Visible="False" />
-                                            <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
                                         </dx:GridViewDataTextColumn>
 
-                                        <dx:GridViewDataTextColumn Caption="التقييم" FieldName="rate">
+                                        <dx:GridViewDataTextColumn Caption="ملاحظة التسجيل">
                                             <DataItemTemplate>
-                                                <%# Convert.ToDouble(Eval("rate")) > 0 
-                                                ? string.Format("{0}/5", Eval("rate")) 
-                                                : "لا يوجد تقييم" %>
+                                                <%# 
+             Convert.ToInt32(Eval("l_DeliveryStatusId")) == 4
+             ? Eval("rejectNote")
+             : Convert.ToInt32(Eval("l_DeliveryStatusId")) == 2
+                 ? Eval("incompleteNote")
+                 : "لا يوجد"
+                                                %>
                                             </DataItemTemplate>
-                                            <EditFormSettings Visible="False" />
-                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
-
 
                                         <dx:GridViewDataTextColumn Caption="" ShowInCustomizationForm="True" VisibleIndex="999">
                                             <EditFormSettings Visible="False" />
@@ -1885,7 +1887,7 @@
                                            u.userplatform,u.vehicleModel,u.rate, u.userDate
                                     FROM [usersDelivery] u
                                     LEFT JOIN L_Gender g ON u.l_gender = g.id
-                                    ORDER BY u.l_DeliveryStatusId, u.id"
+                                    ORDER BY u.isOnline desc, u.id"
                                 UpdateCommand="UPDATE [usersDelivery]
                                     SET password = @password,
                                         storedsalt = @storedsalt

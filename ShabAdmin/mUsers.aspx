@@ -1177,6 +1177,9 @@
                                     lblPopupError.SetVisible(false);
                                     lblPopupError.SetText("");
 
+                                    // إخفاء التلميح بشكل افتراضي
+                                    lblNoteHint.SetVisible(false);
+
                                     if (action === "approve") {
                                         lblPopupMessage.SetText("هل أنت متأكد من الموافقة على هذا المستخدم؟");
                                         txtPopupNote.SetVisible(false);
@@ -1186,22 +1189,26 @@
                                         lblPopupMessage.SetText("الرجاء كتابة سبب الرفض:");
                                         txtPopupNote.SetVisible(true);
                                         txtPopupNote.SetText(existingNote || "");
+                                        lblNoteHint.SetVisible(true); // إظهار التلميح
                                     }
                                     else if (action === "incomplete") {
                                         lblPopupMessage.SetText("الرجاء كتابة الملاحظة المطلوبة:");
                                         txtPopupNote.SetVisible(true);
                                         txtPopupNote.SetText(existingNote || "");
+                                        lblNoteHint.SetVisible(true); // إظهار التلميح
                                     }
 
                                     popupConfirm.Show();
                                 }
+
 
                                 function ConfirmPopupAction() {
                                     var action = hfPopupAction.Get("value");
                                     var userId = hfPopupUserId.Get("value");
                                     var note = txtPopupNote.GetText().trim();
 
-                                    // شرط الملاحظة للحالات reject & incomplete
+                                    note = note.replace(/(\r\n|\n|\r)/g, "$");
+
                                     if (action === "reject" || action === "incomplete") {
                                         var hasLetter = /[A-Za-z\u0600-\u06FF]/.test(note);
                                         if (!hasLetter) {
@@ -1407,7 +1414,7 @@
                                                             : "")
                                                         )
                                                         : ""
-                                                    %>
+                                                %>
                                             </DataItemTemplate>
                                             <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
@@ -1424,7 +1431,7 @@
                                                 <%# Convert.ToBoolean(Eval("isOnline")) 
          ? "<span style='color: green; font-weight: bold;'>متصل</span>" 
          : "<span style='color: red; font-weight: bold;'>غير متصل</span>" 
-     %>
+                                                %>
                                             </DataItemTemplate>
                                             <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataComboBoxColumn>
@@ -1789,15 +1796,16 @@
                                         <dx:GridViewDataTextColumn Caption="ملاحظة التسجيل">
                                             <DataItemTemplate>
                                                 <%# 
-             Convert.ToInt32(Eval("l_DeliveryStatusId")) == 4
-             ? Eval("rejectNote")
-             : Convert.ToInt32(Eval("l_DeliveryStatusId")) == 2
-                 ? Eval("incompleteNote")
-                 : "لا يوجد"
-                                                %>
+            Convert.ToInt32(Eval("l_DeliveryStatusId")) == 4
+            ? Eval("rejectNote").ToString().Replace("$", "<br />")
+            : Convert.ToInt32(Eval("l_DeliveryStatusId")) == 2
+                ? Eval("incompleteNote").ToString().Replace("$", "<br />")
+                : "لا يوجد"
+        %>
                                             </DataItemTemplate>
                                             <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>
+
 
                                         <dx:GridViewDataTextColumn Caption="" ShowInCustomizationForm="True" VisibleIndex="999">
                                             <EditFormSettings Visible="False" />
@@ -1964,6 +1972,15 @@
                                             Font-Names="Cairo"
                                             ClientInstanceName="lblPopupMessage"
                                             Width="100%">
+                                        </dx:ASPxLabel>
+
+                                        <dx:ASPxLabel ID="lblNoteHint" runat="server"
+                                            Text="مهم : الرجاء كتابة كل ملاحظة في سطر جديد"
+                                            Font-Names="Cairo"
+                                            ForeColor="Gray"
+                                            ClientInstanceName="lblNoteHint"
+                                            Width="100%"
+                                            ClientVisible="False">
                                         </dx:ASPxLabel>
 
                                         <dx:ASPxLabel ID="lblPopupError" runat="server"

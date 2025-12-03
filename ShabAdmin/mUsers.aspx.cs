@@ -384,9 +384,9 @@ namespace ShabAdmin
                     int countryId = countryObj != null ? Convert.ToInt32(countryObj) : 0;
                     if (countryId > 0)
                     {
-                        db_companyName.SelectCommand = "SELECT id, companyName FROM companies WHERE countryId = @countryId";
-                        db_companyName.SelectParameters.Clear();
-                        db_companyName.SelectParameters.Add("countryId", countryId.ToString());
+                        db_companyName.SelectCommand = "SELECT id, companyName FROM companies WHERE countryId = " + countryId.ToString();
+                        //db_companyName.SelectParameters.Clear();
+                        //db_companyName.SelectParameters.Add("countryId", countryId.ToString());
                         combo.DataBind();
                     }
                     else
@@ -463,7 +463,6 @@ namespace ShabAdmin
             }
         }
 
-
         protected void callbackApprove_Callback(object sender, DevExpress.Web.CallbackEventArgs e)
         {
             if (int.TryParse(e.Parameter, out int id))
@@ -520,8 +519,6 @@ namespace ShabAdmin
 
             }
         }
-
-
 
         protected void GridDeliveryUsers_RowValidating(object sender, DevExpress.Web.Data.ASPxDataValidationEventArgs e)
         {
@@ -606,22 +603,7 @@ namespace ShabAdmin
             e.Cancel = true;
             GridDeliveryUsers.CancelEdit();
             GridDeliveryUsers.DataBind();
-        }
-
-        void DeleteOldFileIfChanged(string fileCheck, string fileOld)
-        {
-            if (fileCheck == "1")
-            {
-                int pos = fileOld.LastIndexOf("/");
-                if (pos > -1)
-                {
-                    string fileToDelete = fileOld.Substring(pos + 1);
-                    string[] fileList = Directory.GetFiles(Server.MapPath("~/assets/uploads/delivery-users"), fileToDelete);
-                    foreach (string file in fileList)
-                        System.IO.File.Delete(file);
-                }
-            }
-        }
+        }        
 
         string fileName = string.Empty;
         int checkError = 0;

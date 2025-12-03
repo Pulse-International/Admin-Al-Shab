@@ -795,7 +795,7 @@ namespace ShabAdmin
                     getUserCmd.Parameters.AddWithValue("@id", userId);
                     object result = getUserCmd.ExecuteScalar();
                     if (result != null)
-                        userNumber = NormalizePhoneNumber(result.ToString());
+                        userNumber = result.ToString();
                 }
 
                 SqlCommand cmd = null;
@@ -810,7 +810,7 @@ namespace ShabAdmin
                         string encryptedUserId = MainHelper.Encrypt_Me(userId.ToString(), true);
                         string baseUrl = "https://www.alshaeb.net";
                         string longUrl = $"{baseUrl}/ldeliveryCompleted?id={encryptedUserId}";
-                        string smsMessage = $"تمت الموافقة عليك! اضغط الرابط لإكمال العملية: {longUrl}";
+                        string smsMessage = $"مبروك! تمت الموافقة اضغط الرابط لإكمال العملية: {longUrl}";
 
                         // إرسال SMS مع اختصار الرابط
                         Task.Run(async () =>
@@ -877,26 +877,6 @@ namespace ShabAdmin
             GridDeliveryUsers.DataBind();
         }
 
-        // ======== دالة تنظيف رقم الهاتف ========
-        private string NormalizePhoneNumber(string number)
-        {
-            if (string.IsNullOrEmpty(number))
-                return number;
-
-            // إزالة + في البداية
-            if (number.StartsWith("+"))
-                number = number.Substring(1);
-
-            // إزالة كل الأصفار الزائدة في البداية (0 أو 00)
-            while (number.StartsWith("0"))
-                number = number.Substring(1);
-
-            // بعد أول 3 أرقام، إزالة أي صفر زائد
-            if (number.Length > 3 && number[3] == '0')
-                number = number.Substring(0, 3) + number.Substring(4);
-
-            return number;
-        }
 
         protected void GridDeliveryUsers_HtmlRowPrepared(object sender, ASPxGridViewTableRowEventArgs e)
         {

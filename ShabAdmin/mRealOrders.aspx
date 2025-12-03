@@ -256,6 +256,12 @@
                 popupReject.Hide();
             }
 
+            setInterval(function () {
+                if (typeof GridOrders !== "undefined") {
+                    GridOrders.Refresh();
+                }
+            }, 30000);
+
         </script>
 
         <dx:ASPxCallback ID="callbackLocation" runat="server" ClientInstanceName="callbackLocation"
@@ -339,265 +345,274 @@
                     <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="X-Large"></TabStyle>
                     <ContentCollection>
                         <dx:ContentControl>
+                            <span style="color: #000000;font-family:Cairo ;font-size:1.2em; font-weight: bold">سيتم تحديث الطلبات كل 30 ثانية
+                            </span>
                             <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
-                                <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
-
-                                    <dx:ASPxGridView ID="GridOrders" runat="server" DataSourceID="db_Orders" KeyFieldName="id" ClientInstanceName="GridOrders" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="1em" OnCustomCallback="GridOrders_CustomCallback" RightToLeft="True">
-                                        <Settings ShowFooter="True" ShowFilterRow="True" />
-
-                                        <StylesPager>
-                                            <PageNumber Font-Size="16px" Font-Names="Cairo" />
-                                            <CurrentPageNumber Font-Size="17px" Font-Bold="true" Font-Names="Cairo" />
-                                            <Summary Font-Size="16px" Font-Names="Cairo" />
-                                            <PageSizeItem Font-Size="16px" Font-Names="Cairo" />
-                                        </StylesPager>
-
-                                        <SettingsPager PageSize="20"></SettingsPager>
-
-                                        <ClientSideEvents RowClick="function(s, e) {OnRowClick(e);}" />
-                                        <SettingsAdaptivity AdaptivityMode="HideDataCells">
-                                        </SettingsAdaptivity>
-                                        <Settings ShowFilterRow="True" ShowFilterRowMenu="False" ShowHeaderFilterButton="False" AutoFilterCondition="Contains" />
-
-                                        <SettingsCommandButton>
-                                            <NewButton Text="جديد">
-                                            </NewButton>
-                                            <UpdateButton Text=" حفظ ">
-                                                <Image Url="~/assets/img/save.png" SpriteProperties-Left="50">
-                                                    <SpriteProperties Left="50px"></SpriteProperties>
-                                                </Image>
-                                            </UpdateButton>
-                                            <CancelButton Text=" الغاء ">
-                                                <Image Url="~/assets/img/cancel.png">
-                                                </Image>
-                                            </CancelButton>
-                                        </SettingsCommandButton>
-
-                                        <SettingsPopup>
-                                            <FilterControl AutoUpdatePosition="False"></FilterControl>
-                                        </SettingsPopup>
-
-                                        <SettingsSearchPanel CustomEditorID="tbToolbarSearch1" />
-
-                                        <SettingsExport EnableClientSideExportAPI="true" ExcelExportMode="WYSIWYG" PaperKind="A4" RightToLeft="True" />
-                                        <SettingsLoadingPanel Text="Please Wait &amp;hellip;" Mode="ShowAsPopup" />
-                                        <SettingsText SearchPanelEditorNullText="ابحث في الجدول..." EmptyDataRow="لا يوجد" />
-                                        <Columns>
-                                            <dx:GridViewDataColumn Caption="الرقم" FieldName="id">
-                                                <EditFormSettings Visible="False" />
-                                                <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
-                                                </CellStyle>
-                                            </dx:GridViewDataColumn>
-
-                                            <dx:GridViewDataComboBoxColumn Caption="حالة الطلب" FieldName="l_orderStatus">
-                                                <PropertiesComboBox
-                                                    DataSourceID="db_orderStatus"
-                                                    ValueField="id"
-                                                    TextField="description"
-                                                    ValueType="System.Int32">
-                                                    <ValidationSettings RequiredField-IsRequired="True" ErrorText="يجب تحديد حالة الطلب" />
-                                                </PropertiesComboBox>
-                                                <DataItemTemplate>
-                                                    <%# GetOrderStatusLottie(Eval("l_orderStatus").ToString()) %>
-                                                </DataItemTemplate>
-                                                <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
-                                            </dx:GridViewDataComboBoxColumn>
-
-                                            <dx:GridViewDataComboBoxColumn Caption="البلد" FieldName="countryId">
-                                                <PropertiesComboBox
-                                                    DataSourceID="dsCountries"
-                                                    TextField="countryName"
-                                                    ValueField="id"
-                                                    DropDownStyle="DropDownList"
-                                                    EnableCallbackMode="false">
-                                                    <ValidationSettings
-                                                        RequiredField-IsRequired="true"
-                                                        SetFocusOnError="True"
-                                                        ErrorText="الرجاء اختيار البلد"
-                                                        Display="Dynamic">
-                                                        <RequiredField IsRequired="True" />
-                                                    </ValidationSettings>
-                                                </PropertiesComboBox>
-                                                <EditFormSettings Visible="True" />
-                                                <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
-                                            </dx:GridViewDataComboBoxColumn>
 
 
+                                <dx:ASPxGridView ID="GridOrders" runat="server" DataSourceID="db_Orders" KeyFieldName="id" ClientInstanceName="GridOrders" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="1em" OnCustomCallback="GridOrders_CustomCallback" RightToLeft="True">
+                                    <Settings ShowFooter="True" ShowFilterRow="True" />
 
-                                            <dx:GridViewDataComboBoxColumn Caption="الشركة" FieldName="companyId">
-                                                <PropertiesComboBox
-                                                    ClientInstanceName="comboCountry"
-                                                    DataSourceID="dsCompanies"
-                                                    TextField="companyName"
-                                                    ValueField="id"
-                                                    DropDownStyle="DropDownList"
-                                                    EnableCallbackMode="false">
-                                                    <ValidationSettings
-                                                        RequiredField-IsRequired="true"
-                                                        SetFocusOnError="True"
-                                                        ErrorText="الرجاء اختيار البلد"
-                                                        Display="Dynamic">
-                                                        <RequiredField IsRequired="True" />
-                                                    </ValidationSettings>
-                                                </PropertiesComboBox>
-                                                <EditFormSettings Visible="True" />
-                                                <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
-                                            </dx:GridViewDataComboBoxColumn>
+                                    <StylesPager>
+                                        <PageNumber Font-Size="16px" Font-Names="Cairo" />
+                                        <CurrentPageNumber Font-Size="17px" Font-Bold="true" Font-Names="Cairo" />
+                                        <Summary Font-Size="16px" Font-Names="Cairo" />
+                                        <PageSizeItem Font-Size="16px" Font-Names="Cairo" />
+                                    </StylesPager>
 
-                                            <dx:GridViewDataColumn Caption="مستخدم التطبيق" FieldName="username">
-                                                <DataItemTemplate>
-                                                    <div style="text-align: center; font-family: 'Cairo'; direction: rtl;">
-                                                        <div style="font-weight: bold;">
-                                                            <%# Eval("firstName") + " " + Eval("lastName") %>
-                                                        </div>
-                                                        <div style="color: gray; font-size: smaller;">
-                                                            <%# Eval("username") %>
-                                                        </div>
+                                    <SettingsPager PageSize="20"></SettingsPager>
+
+                                    <ClientSideEvents RowClick="function(s, e) {OnRowClick(e);}" />
+                                    <SettingsAdaptivity AdaptivityMode="HideDataCells">
+                                    </SettingsAdaptivity>
+                                    <Settings ShowFilterRow="True" ShowFilterRowMenu="False" ShowHeaderFilterButton="False" AutoFilterCondition="Contains" />
+
+                                    <SettingsCommandButton>
+                                        <NewButton Text="جديد">
+                                        </NewButton>
+                                        <UpdateButton Text=" حفظ ">
+                                            <Image Url="~/assets/img/save.png" SpriteProperties-Left="50">
+                                                <SpriteProperties Left="50px"></SpriteProperties>
+                                            </Image>
+                                        </UpdateButton>
+                                        <CancelButton Text=" الغاء ">
+                                            <Image Url="~/assets/img/cancel.png">
+                                            </Image>
+                                        </CancelButton>
+                                    </SettingsCommandButton>
+
+                                    <SettingsPopup>
+                                        <FilterControl AutoUpdatePosition="False"></FilterControl>
+                                    </SettingsPopup>
+
+                                    <SettingsSearchPanel CustomEditorID="tbToolbarSearch1" />
+
+                                    <SettingsExport EnableClientSideExportAPI="true" ExcelExportMode="WYSIWYG" PaperKind="A4" RightToLeft="True" />
+                                    <SettingsLoadingPanel Text="Please Wait &amp;hellip;" Mode="ShowAsPopup" />
+                                    <SettingsText SearchPanelEditorNullText="ابحث في الجدول..." EmptyDataRow="لا يوجد" />
+                                    <Columns>
+                                        <dx:GridViewDataColumn Caption="الرقم" FieldName="id">
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
+                                            </CellStyle>
+                                        </dx:GridViewDataColumn>
+
+                                        <dx:GridViewDataComboBoxColumn Caption="حالة الطلب" FieldName="l_orderStatus">
+                                            <PropertiesComboBox
+                                                DataSourceID="db_orderStatus"
+                                                ValueField="id"
+                                                TextField="description"
+                                                ValueType="System.Int32">
+                                                <ValidationSettings RequiredField-IsRequired="True" ErrorText="يجب تحديد حالة الطلب" />
+                                            </PropertiesComboBox>
+                                            <DataItemTemplate>
+                                                <%# GetOrderStatusLottie(Eval("l_orderStatus").ToString()) %>
+                                            </DataItemTemplate>
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                                        </dx:GridViewDataComboBoxColumn>
+
+                                        <dx:GridViewDataComboBoxColumn Caption="البلد" FieldName="countryId">
+                                            <PropertiesComboBox
+                                                DataSourceID="dsCountries"
+                                                TextField="countryName"
+                                                ValueField="id"
+                                                DropDownStyle="DropDownList"
+                                                EnableCallbackMode="false">
+                                                <ValidationSettings
+                                                    RequiredField-IsRequired="true"
+                                                    SetFocusOnError="True"
+                                                    ErrorText="الرجاء اختيار البلد"
+                                                    Display="Dynamic">
+                                                    <RequiredField IsRequired="True" />
+                                                </ValidationSettings>
+                                            </PropertiesComboBox>
+                                            <EditFormSettings Visible="True" />
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                                        </dx:GridViewDataComboBoxColumn>
+
+
+
+                                        <dx:GridViewDataComboBoxColumn Caption="الشركة" FieldName="companyId">
+                                            <PropertiesComboBox
+                                                ClientInstanceName="comboCountry"
+                                                DataSourceID="dsCompanies"
+                                                TextField="companyName"
+                                                ValueField="id"
+                                                DropDownStyle="DropDownList"
+                                                EnableCallbackMode="false">
+                                                <ValidationSettings
+                                                    RequiredField-IsRequired="true"
+                                                    SetFocusOnError="True"
+                                                    ErrorText="الرجاء اختيار البلد"
+                                                    Display="Dynamic">
+                                                    <RequiredField IsRequired="True" />
+                                                </ValidationSettings>
+                                            </PropertiesComboBox>
+                                            <EditFormSettings Visible="True" />
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                                        </dx:GridViewDataComboBoxColumn>
+
+                                        <dx:GridViewDataColumn Caption="مستخدم التطبيق" FieldName="username">
+                                            <DataItemTemplate>
+                                                <div style="text-align: center; font-family: 'Cairo'; direction: rtl;">
+                                                    <div style="font-weight: bold;">
+                                                        <%# Eval("firstName") + " " + Eval("lastName") %>
                                                     </div>
-                                                </DataItemTemplate>
-                                                <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
-                                            </dx:GridViewDataColumn>
-
-                                            <dx:GridViewDataColumn Caption="مستخدم التوصيل" FieldName="usersDeliveryId">
-                                                <DataItemTemplate>
-                                                    <div style="text-align: center; font-family: 'Cairo'; direction: rtl;">
-                                                        <div style="font-weight: bold;">
-                                                            <%# Eval("deliveryFirstName") + " " + Eval("deliveryLastName") %>
-                                                        </div>
-                                                        <div style="color: gray; font-size: smaller;">
-                                                            <%# Eval("deliveryUserName") %>
-                                                        </div>
+                                                    <div style="color: gray; font-size: smaller;">
+                                                        <%# Eval("username") %>
                                                     </div>
-                                                </DataItemTemplate>
-                                                <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
-                                            </dx:GridViewDataColumn>
+                                                </div>
+                                            </DataItemTemplate>
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                                        </dx:GridViewDataColumn>
 
-                                            <dx:GridViewDataColumn Caption="الفرع" FieldName="branchId">
-                                                <DataItemTemplate>
-                                                    <div style="text-align: center; font-family: 'Cairo'; direction: rtl;">
-                                                        <div style="font-weight: bold;">
-                                                            <%# Eval("branchName") %>
-                                                        </div>
-                                                        <div style="color: gray; font-size: smaller;">
-                                                            <%# Eval("branchPhone") %>
-                                                        </div>
+                                        <dx:GridViewDataColumn Caption="مستخدم التوصيل" FieldName="usersDeliveryId">
+                                            <DataItemTemplate>
+                                                <div style="text-align: center; font-family: 'Cairo'; direction: rtl;">
+                                                    <div style="font-weight: bold;">
+                                                        <%# Eval("deliveryFirstName") + " " + Eval("deliveryLastName") %>
                                                     </div>
-                                                </DataItemTemplate>
-                                                <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
-                                            </dx:GridViewDataColumn>
+                                                    <div style="color: gray; font-size: smaller;">
+                                                        <%# Eval("deliveryUserName") %>
+                                                    </div>
+                                                </div>
+                                            </DataItemTemplate>
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                                        </dx:GridViewDataColumn>
 
-                                            <dx:GridViewDataColumn Caption="موقع الزبون" FieldName="addressId">
-                                                <DataItemTemplate>
-                                                    <a href="javascript:void(0);"
-                                                        onclick="callbackAddress1.PerformCallback('<%# Eval("addressId") %>'); popupAddress1.Show();"
-                                                        style="text-decoration: underline; color: #007bff; font-family: Cairo;">عرض الموفع
-                                                    </a>
-                                                </DataItemTemplate>
-                                                <EditFormSettings Visible="False" />
-                                                <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
-                                            </dx:GridViewDataColumn>
+                                        <dx:GridViewDataColumn Caption="الفرع" FieldName="branchId">
+                                            <DataItemTemplate>
+                                                <div style="text-align: center; font-family: 'Cairo'; direction: rtl;">
+                                                    <div style="font-weight: bold;">
+                                                        <%# Eval("branchName") %>
+                                                    </div>
+                                                    <div style="color: gray; font-size: smaller;">
+                                                        <%# Eval("branchPhone") %>
+                                                    </div>
+                                                </div>
+                                            </DataItemTemplate>
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                                        </dx:GridViewDataColumn>
 
-                                            <dx:GridViewDataColumn Caption="تتبع السائق" FieldName="addressId">
-                                                <DataItemTemplate>
-                                                    <a href="javascript:void(0);"
-                                                        onclick="callbackAddress.PerformCallback('<%# Eval("id") %>'); popupAddress.Show();"
-                                                        style="text-decoration: underline; color: #007bff; font-family: Cairo;">عرض الموقع
-                                                    </a>
-                                                </DataItemTemplate>
-                                                <EditFormSettings Visible="False" />
-                                                <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
-                                            </dx:GridViewDataColumn>
+                                        <dx:GridViewDataColumn Caption="موقع الزبون" FieldName="addressId">
+                                            <DataItemTemplate>
+                                                <a href="javascript:void(0);"
+                                                    onclick="callbackAddress1.PerformCallback('<%# Eval("addressId") %>'); popupAddress1.Show();"
+                                                    style="text-decoration: underline; color: #007bff; font-family: Cairo;">موقع الزبون
+                                                </a>
+                                            </DataItemTemplate>
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                                        </dx:GridViewDataColumn>
+
+                                        <dx:GridViewDataColumn Caption="تتبع السائق" FieldName="addressId">
+                                            <DataItemTemplate>
+                                                <%# 
+                                                        Eval("l_orderStatus") != null && Convert.ToInt32(Eval("l_orderStatus")) == 1 
+                                                        ? "لا يوجد سائق" 
+                                                        :
+                                                        string.Format(
+                                                            "<a href=\"javascript:void(0);\" onclick=\"callbackAddress.PerformCallback('{0}'); popupAddress.Show();\" " +
+                                                            "style=\"text-decoration: underline; color: #007bff; font-family: Cairo;\">تتبع السائق</a>",
+                                                            Eval("id")
+                                                        )
+                                                    %>
+                                            </DataItemTemplate>
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                                        </dx:GridViewDataColumn>
 
 
-                                            <dx:GridViewDataDateColumn FieldName="userDate" Caption="التاريخ">
-                                                <PropertiesDateEdit DisplayFormatString="yyyy/MM/dd hh:mm tt" />
-                                                <EditFormSettings Visible="False" />
-                                                <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
-                                            </dx:GridViewDataDateColumn>
 
-                                            <dx:GridViewDataColumn Caption="المنتجات">
-                                                <DataItemTemplate>
-                                                    <a href="javascript:void(0);" onclick="ShowOrderProducts(<%# Eval("id") %>)"
-                                                        title="عرض المنتجات">
-                                                        <img src="/assets/img/details.png" alt="عرض المنتجات" style="width: 24px; height: 24px;" />
-                                                    </a>
-                                                </DataItemTemplate>
-                                                <EditFormSettings Visible="False" />
-                                                <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
-                                            </dx:GridViewDataColumn>
+                                        <dx:GridViewDataDateColumn FieldName="userDate" Caption="التاريخ">
+                                            <PropertiesDateEdit DisplayFormatString="yyyy/MM/dd hh:mm tt" />
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                                        </dx:GridViewDataDateColumn>
 
-                                            <dx:GridViewDataColumn Caption="رفض">
-                                                <DataItemTemplate>
-                                                    <%# 
+                                        <dx:GridViewDataColumn Caption="المنتجات">
+                                            <DataItemTemplate>
+                                                <a href="javascript:void(0);" onclick="ShowOrderProducts(<%# Eval("id") %>)"
+                                                    title="عرض المنتجات">
+                                                    <img src="/assets/img/details.png" alt="عرض المنتجات" style="width: 24px; height: 24px;" />
+                                                </a>
+                                            </DataItemTemplate>
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                                        </dx:GridViewDataColumn>
+
+                                        <dx:GridViewDataColumn Caption="رفض">
+                                            <DataItemTemplate>
+                                                <%# 
             Convert.ToInt32(Eval("l_orderStatus")) == 1 
             ? "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" style='background-color:red;color:white;font-family:Cairo; width:90px;border:none;padding:5px 10px;border-radius:4px;'>رفض</button>"
-            : "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" style='background-color:red;color:white;font-family:Cairo; width:90px;border:none;padding:5px 10px;border-radius:4px;'>الغاء</button>"
-                                                    %>
-                                                </DataItemTemplate>
+            : "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" style='background-color:orange;color:white;font-family:Cairo; width:90px;border:none;padding:5px 10px;border-radius:4px;'>الغاء</button>"
+                                                %>
+                                            </DataItemTemplate>
 
-                                                <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
-                                            </dx:GridViewDataColumn>
+                                            <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                                        </dx:GridViewDataColumn>
 
 
 
-                                        </Columns>
-                                        <Toolbars>
-                                            <dx:GridViewToolbar ItemAlign="left">
-                                                <SettingsAdaptivity Enabled="true" EnableCollapseRootItemsToIcons="true" />
-                                                <Items>
-                                                    <dx:GridViewToolbarItem Command="Refresh" BeginGroup="true" AdaptivePriority="1" Text="تحديث الجدول" />
-                                                    <dx:GridViewToolbarItem Command="ExportToXlsx" BeginGroup="true" />
-                                                    <dx:GridViewToolbarItem Command="ExportToPdf" />
+                                    </Columns>
+                                    <Toolbars>
+                                        <dx:GridViewToolbar ItemAlign="left">
+                                            <SettingsAdaptivity Enabled="true" EnableCollapseRootItemsToIcons="true" />
+                                            <Items>
+                                                <dx:GridViewToolbarItem Command="Refresh" BeginGroup="true" AdaptivePriority="1" Text="تحديث الجدول" />
+                                                <dx:GridViewToolbarItem Command="ExportToXlsx" BeginGroup="true" />
+                                                <dx:GridViewToolbarItem Command="ExportToPdf" />
 
-                                                    <dx:GridViewToolbarItem Alignment="Right" Name="toolbarItemSearch" BeginGroup="true" AdaptivePriority="2">
-                                                        <Template>
-                                                            <dx:ASPxButtonEdit ID="tbToolbarSearch1" runat="server" NullText="البحث..." Width="140" Font-Names="cairo" />
-                                                        </Template>
-                                                    </dx:GridViewToolbarItem>
+                                                <dx:GridViewToolbarItem Alignment="Right" Name="toolbarItemSearch" BeginGroup="true" AdaptivePriority="2">
+                                                    <Template>
+                                                        <dx:ASPxButtonEdit ID="tbToolbarSearch1" runat="server" NullText="البحث..." Width="140" Font-Names="cairo" />
+                                                    </Template>
+                                                </dx:GridViewToolbarItem>
 
-                                                </Items>
-                                            </dx:GridViewToolbar>
-                                        </Toolbars>
-                                        <TotalSummary>
-                                            <dx:ASPxSummaryItem FieldName="id" SummaryType="Count" DisplayFormat="العدد = {0}" />
-                                        </TotalSummary>
-                                        <Styles>
-                                            <AlternatingRow BackColor="#F0F0F0">
-                                            </AlternatingRow>
-                                            <Footer Font-Names="cairo">
-                                            </Footer>
-                                        </Styles>
-                                        <Paddings Padding="2em" />
+                                            </Items>
+                                        </dx:GridViewToolbar>
+                                    </Toolbars>
+                                    <TotalSummary>
+                                        <dx:ASPxSummaryItem FieldName="id" SummaryType="Count" DisplayFormat="العدد = {0}" />
+                                    </TotalSummary>
+                                    <Styles>
+                                        <AlternatingRow BackColor="#F0F0F0">
+                                        </AlternatingRow>
+                                        <Footer Font-Names="cairo">
+                                        </Footer>
+                                    </Styles>
+                                    <Paddings Padding="2em" />
 
-                                    </dx:ASPxGridView>
+                                </dx:ASPxGridView>
 
-                                    <asp:SqlDataSource
-                                        ID="db_orderStatus"
-                                        runat="server"
-                                        ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                                        SelectCommand="SELECT id, description FROM L_OrderStatus" />
+                                <asp:SqlDataSource
+                                    ID="db_orderStatus"
+                                    runat="server"
+                                    ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
+                                    SelectCommand="SELECT id, description FROM L_OrderStatus" />
 
-                                    <asp:SqlDataSource
-                                        ID="dsCountries"
-                                        runat="server"
-                                        ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                                        SelectCommand="SELECT id, countryName FROM countries"></asp:SqlDataSource>
-                                    <asp:SqlDataSource
-                                        ID="dsCompanies"
-                                        runat="server"
-                                        ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                                        SelectCommand="SELECT id, companyName FROM companies"></asp:SqlDataSource>
-                                    <asp:SqlDataSource
-                                        ID="dsBranches"
-                                        runat="server"
-                                        ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                                        SelectCommand="SELECT id, name FROM branches"></asp:SqlDataSource>
+                                <asp:SqlDataSource
+                                    ID="dsCountries"
+                                    runat="server"
+                                    ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
+                                    SelectCommand="SELECT id, countryName FROM countries"></asp:SqlDataSource>
+                                <asp:SqlDataSource
+                                    ID="dsCompanies"
+                                    runat="server"
+                                    ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
+                                    SelectCommand="SELECT id, companyName FROM companies"></asp:SqlDataSource>
+                                <asp:SqlDataSource
+                                    ID="dsBranches"
+                                    runat="server"
+                                    ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
+                                    SelectCommand="SELECT id, name FROM branches"></asp:SqlDataSource>
 
-                                    <asp:SqlDataSource
-                                        ID="db_Orders"
-                                        runat="server"
-                                        ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                                        SelectCommand="
+                                <asp:SqlDataSource
+                                    ID="db_Orders"
+                                    runat="server"
+                                    ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
+                                    SelectCommand="
                                             SELECT 
                                                 o.[id], 
                                                 o.[l_orderStatus],
@@ -622,68 +637,68 @@
                                             JOIN [branches] b ON o.[branchId] = b.[id]
                                             LEFT JOIN [usersDelivery] ud ON o.[usersDeliveryId] = ud.[id]
                                             WHERE ((o.[l_orderStatus] = 1) or (o.[l_orderStatus] = 2) or (o.[l_orderStatus] = 3))  order by o.id desc" />
-                                </div>
+                            </div>
 
-                                <dx:ASPxPopupControl ID="popupReject" runat="server"
-                                    Width="430px"
-                                    PopupHorizontalAlign="WindowCenter"
-                                    PopupVerticalAlign="WindowCenter"
-                                    CloseAction="CloseButton"
-                                    HeaderText="رفض الطلب"
-                                    ClientInstanceName="popupReject"
-                                    Modal="True"
-                                    AllowDragging="True"
-                                    HeaderStyle-Font-Names="Cairo"
-                                    HeaderStyle-Font-Size="18px"
-                                    BackColor="#ffffff"
-                                    Border-BorderStyle="Solid"
-                                    Border-BorderWidth="2px"
-                                    Border-BorderColor="#b7b7b7"
-                                    PopupAnimationType="Fade">
+                            <dx:ASPxPopupControl ID="popupReject" runat="server"
+                                Width="430px"
+                                PopupHorizontalAlign="WindowCenter"
+                                PopupVerticalAlign="WindowCenter"
+                                CloseAction="CloseButton"
+                                HeaderText="رفض الطلب"
+                                ClientInstanceName="popupReject"
+                                Modal="True"
+                                AllowDragging="True"
+                                HeaderStyle-Font-Names="Cairo"
+                                HeaderStyle-Font-Size="18px"
+                                BackColor="#ffffff"
+                                Border-BorderStyle="Solid"
+                                Border-BorderWidth="2px"
+                                Border-BorderColor="#b7b7b7"
+                                PopupAnimationType="Fade">
 
-                                    <ContentCollection>
-                                        <dx:PopupControlContentControl>
-                                            <div style="font-family: Cairo; font-size: 15px; margin-bottom: 8px; color: #444;">
-                                                الرجاء كتابة سبب الرفض:
+                                <ContentCollection>
+                                    <dx:PopupControlContentControl>
+                                        <div style="font-family: Cairo; font-size: 15px; margin-bottom: 8px; color: #444;">
+                                            الرجاء كتابة سبب الرفض:
            
-                                            </div>
+                                        </div>
 
-                                            <textarea id="txtRejectNote" style="width: 100%; height: 140px; font-family: Cairo; font-size: 14px; padding: 8px; border: 1px solid #ccc; border-radius: 5px; resize: none;"></textarea>
+                                        <textarea id="txtRejectNote" style="width: 100%; height: 140px; font-family: Cairo; font-size: 14px; padding: 8px; border: 1px solid #ccc; border-radius: 5px; resize: none;"></textarea>
 
-                                            <div id="rejectNoteError" style="color: red; font-family: Cairo; font-size: 14px; margin-top: 5px; display: none;">
-                                                الرجاء كتابة سبب الرفض
-                                            </div>
+                                        <div id="rejectNoteError" style="color: red; font-family: Cairo; font-size: 14px; margin-top: 5px; display: none;">
+                                            الرجاء كتابة سبب الرفض
+                                        </div>
 
-                                            <input type="hidden" id="lblRejectOrderId" />
+                                        <input type="hidden" id="lblRejectOrderId" />
 
-                                            <div style="display: flex; justify-content: space-between; gap: 5px; margin-top: 12px;">
-                                                <button type="button" onclick="ConfirmReject()" style="flex: 1; padding: 12px; background: #b00000; color: white; border: none; border-radius: 8px; font-family: Cairo; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: 0.2s;"
-                                                    onmouseover="this.style.background='#d30000'"
-                                                    onmouseout="this.style.background='#b00000'">
-                                                    تأكيد الرفض
+                                        <div style="display: flex; justify-content: space-between; gap: 5px; margin-top: 12px;">
+                                            <button type="button" onclick="ConfirmReject()" style="flex: 1; padding: 12px; background: #b00000; color: white; border: none; border-radius: 8px; font-family: Cairo; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: 0.2s;"
+                                                onmouseover="this.style.background='#d30000'"
+                                                onmouseout="this.style.background='#b00000'">
+                                                تأكيد الرفض
                
-                                                </button>
+                                            </button>
 
-                                                <button type="button" onclick="popupReject.Hide()" style="flex: 1; padding: 12px; margin-right: 8px; background: #777; color: white; border: none; border-radius: 8px; font-family: Cairo; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: 0.2s;"
-                                                    onmouseover="this.style.background='#555'"
-                                                    onmouseout="this.style.background='#777'">
-                                                    إلغاء
+                                            <button type="button" onclick="popupReject.Hide()" style="flex: 1; padding: 12px; margin-right: 8px; background: #777; color: white; border: none; border-radius: 8px; font-family: Cairo; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: 0.2s;"
+                                                onmouseover="this.style.background='#555'"
+                                                onmouseout="this.style.background='#777'">
+                                                إلغاء
                
-                                                </button>
-                                            </div>
-                                        </dx:PopupControlContentControl>
-                                    </ContentCollection>
-                                </dx:ASPxPopupControl>
+                                            </button>
+                                        </div>
+                                    </dx:PopupControlContentControl>
+                                </ContentCollection>
+                            </dx:ASPxPopupControl>
 
-                                <dx:ASPxPopupControl ID="popupAddress1" runat="server" ClientInstanceName="popupAddress1"
-                                    Width="750px" Font-Names="Cairo" HeaderText="تفاصيل العنوان" ShowCloseButton="true"
-                                    PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" Modal="true">
-                                    <ClientSideEvents Shown="function(s, e) { s.UpdatePosition(); }" />
-                                    <ContentCollection>
-                                        <dx:PopupControlContentControl>
-                                            <dx:ASPxCallbackPanel ID="callbackAddress1" runat="server" ClientInstanceName="callbackAddress1"
-                                                OnCallback="callbackAddress1_Callback">
-                                                <ClientSideEvents EndCallback="function(s, e) { 
+                            <dx:ASPxPopupControl ID="popupAddress1" runat="server" ClientInstanceName="popupAddress1"
+                                Width="750px" Font-Names="Cairo" HeaderText="تفاصيل العنوان" ShowCloseButton="true"
+                                PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" Modal="true">
+                                <ClientSideEvents Shown="function(s, e) { s.UpdatePosition(); }" />
+                                <ContentCollection>
+                                    <dx:PopupControlContentControl>
+                                        <dx:ASPxCallbackPanel ID="callbackAddress1" runat="server" ClientInstanceName="callbackAddress1"
+                                            OnCallback="callbackAddress1_Callback">
+                                            <ClientSideEvents EndCallback="function(s, e) { 
         var json = s.cpMapData; // أو s.GetJSProperty('cpMapData') حسب النسخة
         if (json) {
             window.currentMapData = JSON.parse(json);
@@ -694,31 +709,31 @@
             console.error('No map data from JSProperties!');
         }
     }" />
-                                                <PanelCollection>
-                                                    <dx:PanelContent>
-                                                        <asp:Label ID="lblAddressInfo1" runat="server" Font-Names="Cairo" Text="جارٍ تحميل التفاصيل..." />
-                                                    </dx:PanelContent>
-                                                </PanelCollection>
-                                            </dx:ASPxCallbackPanel>
-                                        </dx:PopupControlContentControl>
-                                    </ContentCollection>
-                                </dx:ASPxPopupControl>
+                                            <PanelCollection>
+                                                <dx:PanelContent>
+                                                    <asp:Label ID="lblAddressInfo1" runat="server" Font-Names="Cairo" Text="جارٍ تحميل التفاصيل..." />
+                                                </dx:PanelContent>
+                                            </PanelCollection>
+                                        </dx:ASPxCallbackPanel>
+                                    </dx:PopupControlContentControl>
+                                </ContentCollection>
+                            </dx:ASPxPopupControl>
 
-                                <dx:ASPxPopupControl ID="popupAddress" runat="server" ClientInstanceName="popupAddress"
-                                    Width="950px" Font-Names="Cairo" HeaderText="تتبع السائق" ShowCloseButton="true"
-                                    PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" Modal="true">
-                                    <ClientSideEvents Shown="function(s, e) { s.UpdatePosition(); }"
-                                        CloseUp="function(s, e) {
+                            <dx:ASPxPopupControl ID="popupAddress" runat="server" ClientInstanceName="popupAddress"
+                                Width="950px" Font-Names="Cairo" HeaderText="تتبع السائق" ShowCloseButton="true"
+                                PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" Modal="true">
+                                <ClientSideEvents Shown="function(s, e) { s.UpdatePosition(); }"
+                                    CloseUp="function(s, e) {
                                                 if (window.currentMapDivId && mapIntervals[window.currentMapDivId]) {
                                                     clearInterval(mapIntervals[window.currentMapDivId]);
                                                     delete mapIntervals[window.currentMapDivId];
                                                 }
                                             }" />
-                                    <ContentCollection>
-                                        <dx:PopupControlContentControl>
-                                            <dx:ASPxCallbackPanel ID="callbackAddress" runat="server" ClientInstanceName="callbackAddress"
-                                                OnCallback="callbackAddress_Callback">
-                                                <ClientSideEvents EndCallback="function(s, e) {
+                                <ContentCollection>
+                                    <dx:PopupControlContentControl>
+                                        <dx:ASPxCallbackPanel ID="callbackAddress" runat="server" ClientInstanceName="callbackAddress"
+                                            OnCallback="callbackAddress_Callback">
+                                            <ClientSideEvents EndCallback="function(s, e) {
                                                         var json = s.cpMapData;
                                                         if (json) {
                                                             var data = JSON.parse(json);
@@ -731,16 +746,15 @@
                                                         }
                                                     }" />
 
-                                                <PanelCollection>
-                                                    <dx:PanelContent>
-                                                        <asp:Label ID="lblAddressInfo" runat="server" Font-Names="Cairo" Text="جارٍ تحميل التفاصيل..." />
-                                                    </dx:PanelContent>
-                                                </PanelCollection>
-                                            </dx:ASPxCallbackPanel>
-                                        </dx:PopupControlContentControl>
-                                    </ContentCollection>
-                                </dx:ASPxPopupControl>
-                            </div>
+                                            <PanelCollection>
+                                                <dx:PanelContent>
+                                                    <asp:Label ID="lblAddressInfo" runat="server" Font-Names="Cairo" Text="جارٍ تحميل التفاصيل..." />
+                                                </dx:PanelContent>
+                                            </PanelCollection>
+                                        </dx:ASPxCallbackPanel>
+                                    </dx:PopupControlContentControl>
+                                </ContentCollection>
+                            </dx:ASPxPopupControl>
                         </dx:ContentControl>
                     </ContentCollection>
                 </dx:TabPage>

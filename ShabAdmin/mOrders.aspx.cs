@@ -935,8 +935,9 @@ WHERE o.id = @orderId";
         {
             if (string.IsNullOrWhiteSpace(e.Parameter)) return;
 
+            // نتوقع format: "refund:orderId:requestedRefund:secondAmount"
             string[] parts = e.Parameter.Split(':');
-            if (parts.Length != 3 || parts[0] != "refund") return;
+            if (parts.Length < 3 || parts[0] != "refund") return;
 
             int orderId;
             if (!int.TryParse(parts[1], out orderId)) return;
@@ -944,6 +945,10 @@ WHERE o.id = @orderId";
             decimal requestedRefund;
             if (!decimal.TryParse(parts[2], NumberStyles.Any, CultureInfo.InvariantCulture, out requestedRefund))
                 return;
+
+            decimal secondAmount = 0m;
+            if (parts.Length >= 4)
+                decimal.TryParse(parts[3], NumberStyles.Any, CultureInfo.InvariantCulture, out secondAmount);
 
             if (requestedRefund <= 0) return;
 
@@ -956,15 +961,16 @@ WHERE o.id = @orderId";
                     {
                         string getOrderSql = @"
                     SELECT o.username, o.totalAmount, o.refundedAmount, 
-                           o.realTotalAmount, o.realTax, pa.transactionRef AS paymentTR,o.VerifiedTransactionRef, o.l_refundType
+                           o.realTotalAmount, o.realTax, pa.transactionRef AS paymentTR,
+                           o.VerifiedTransactionRef, o.l_refundType,
+                           o.paymentMethodId, o.paymentMethodId2
                     FROM Orders o
-                    LEFT JOIN 
-                        [payments] pa ON o.id = pa.orderId
+                    LEFT JOIN [payments] pa ON o.id = pa.orderId
                     WHERE o.id = @orderId";
 
                         string username = "", transactionRef = "";
                         decimal totalAmount = 0m, refundedAmount = 0m;
-                        int refundType = 0;
+                        int refundType = 0, paymentMethod1 = 0, paymentMethod2 = 0;
 
                         using (var cmd = new SqlCommand(getOrderSql, conn, tx))
                         {
@@ -983,6 +989,8 @@ WHERE o.id = @orderId";
                                 refundedAmount = r["refundedAmount"] == DBNull.Value ? 0m : Convert.ToDecimal(r["refundedAmount"]);
                                 transactionRef = r["paymentTR"]?.ToString() ?? "";
                                 refundType = r["l_refundType"] == DBNull.Value ? 0 : Convert.ToInt32(r["l_refundType"]);
+                                paymentMethod1 = r["paymentMethodId"] == DBNull.Value ? 0 : Convert.ToInt32(r["paymentMethodId"]);
+                                paymentMethod2 = r["paymentMethodId2"] == DBNull.Value ? 0 : Convert.ToInt32(r["paymentMethodId2"]);
                             }
                         }
 
@@ -993,26 +1001,42 @@ WHERE o.id = @orderId";
                             return;
                         }
 
-                        // إذا كان الطلب سبق وتم إرجاعه للمحفظة
-                        if (refundType == 3)
-                        {
-                            // نقص المبلغ من رصيد المستخدم
-                            string decreaseUserSql = @"
-                        UPDATE usersApp
-                        SET balance = balance - @refundValue
-                        WHERE username = @username";
+                        // تحديد المبلغ للإرجاع حسب طريقة الدفع
+                        decimal refundToProcess = 0m;
 
-                            using (var cmd = new SqlCommand(decreaseUserSql, conn, tx))
+                        if (paymentMethod2 == 2) // البطاقة هي الطريقة الثانية
+                        {
+                            refundToProcess = secondAmount;
+                            if (refundToProcess > 0)
                             {
-                                cmd.Parameters.Add("@refundValue", SqlDbType.Decimal).Value = requestedRefund;
-                                cmd.Parameters.Add("@username", SqlDbType.NVarChar, 100).Value = username;
-                                cmd.ExecuteNonQuery();
+                                // نقص الرصيد من المستخدم
+                                string decreaseUserSql = @"
+                            UPDATE usersApp
+                            SET balance = balance - @refundValue
+                            WHERE username = @username";
+
+                                using (var cmd = new SqlCommand(decreaseUserSql, conn, tx))
+                                {
+                                    cmd.Parameters.Add("@refundValue", SqlDbType.Decimal).Value = refundToProcess;
+                                    cmd.Parameters.Add("@username", SqlDbType.NVarChar, 100).Value = username;
+                                    cmd.ExecuteNonQuery();
+                                }
                             }
+                        }
+                        else if (paymentMethod1 == 2) // البطاقة هي الطريقة الأولى
+                        {
+                            refundToProcess = totalAmount;
+                        }
+                        else
+                        {
+                            tx.Rollback();
+                            (sender as ASPxCallbackPanel).JSProperties["cpMessage"] = "لا توجد بطاقة صالحة للإرجاع";
+                            return;
                         }
 
                         // استدعاء API بوابة Telr
                         var result = MainHelper.TelrPaymentRefund(
-                            amount: requestedRefund,
+                            amount: refundToProcess,
                             transactionRef: transactionRef,
                             description: "Refund to card - Order #" + orderId,
                             test: "0"

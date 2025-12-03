@@ -112,53 +112,91 @@
                 // ==================== Credit Card Tab ====================
                 var creditMax = 0;
 
-                // إظهار تبويب البطاقة إذا فيه أي طريقة دفع = بطاقة
-                if (paymentMethod1 == 2 || paymentMethod2 == 2) {
-                    pageTab.GetTab(1).SetVisible(true);
-                } else {
-                    pageTab.GetTab(1).SetVisible(false);
-                }
+                // التبويب يكون مرئي دائمًا
+                pageTab.GetTab(1).SetEnabled(false);
 
-                if (refundType == 0 || refundType == 1) {
-
-                    creditMax = sec > 0 ? sec : totalAmount; // كامل المبلغs
-                }
-                else if (refundType == 3) {
-
-                    creditMax = r; // فقط المبلغ المُرجع
-                }
-                else if (refundType == 2) {
-
-                    creditMax = 0; // لا يوجد إرجاع بطاقة
-                }
-
-
-                // ========== شرط الدفع الثاني = بطاقة ==========
-                if (paymentMethod2 == 2 && refundType == 3) {
-
-                    // البطاقة الثانية لها حد خاص
-                    creditMax = Math.min(r, sec);
-                }
-
-
-                creditMax = parseFloat(creditMax.toFixed(3));
-
-                // ========== تعيين القيم ==========
-                spinRefundCardQty.SetMaxValue(creditMax);
-                spinRefundCardQty.SetValue(creditMax > 0 ? creditMax : 0);
-
-                var txtCard = document.getElementById("maxRefundTextCard");
-                if (txtCard) {
-                    txtCard.innerText = "الحد الأقصى لإرجاع البطاقة: " + creditMax.toFixed(3) + " دينار";
-                }
-
-                var chkCard = document.getElementById("chkMaxRefundCard");
-                if (chkCard) chkCard.disabled = (creditMax <= 0);
-
+                // بشكل افتراضي نخلي كل عناصر التبويب معطلة
+                spinRefundCardQty.SetEnabled(false);
+                spinRefundCardQty.SetValue(0);
                 var btnCard = document.getElementById("btnConfirmRefundCard");
                 if (btnCard) {
-                    btnCard.disabled = (creditMax <= 0);
-                    btnCard.style.opacity = creditMax > 0 ? "1" : "0.5";
+                    btnCard.disabled = true;
+                    btnCard.style.opacity = "0.5";
+                }
+
+                // نفحص الشروط لتفعيل التبويب
+                var enableCreditTab = false;
+
+                // الحالة 1: الدفع الأول بطاقة والـ refundType = 3 والمبلغ المرجع >= المبلغ الكلي
+                if (paymentMethod1 == 2 && refundType == 3 && r >= t) {
+                    enableCreditTab = true;
+                }
+
+                // الحالة 2: الدفع الأول طريقة 3، الدفع الثاني بطاقة، والمبلغ المرجع >= secondAmount
+                if (paymentMethod1 == 3 && paymentMethod2 == 2 && r >= sec) {
+                    enableCreditTab = true;
+                }
+
+                if (enableCreditTab) {
+                    pageTab.GetTab(1).SetEnabled(true);
+
+                    // تحديد الحد الأقصى للإرجاع حسب شروطك السابقة
+                    if (refundType == 0 || refundType == 1 || refundType == 3) {
+                        creditMax = sec > 0 ? sec : totalAmount;
+                    } else if (refundType == 2) {
+                        creditMax = 0;
+                    }
+
+                    // شرط الدفع الثاني
+                    if (paymentMethod2 == 2 && refundType == 3) {
+                        creditMax = Math.min(r, sec);
+                    }
+
+                    creditMax = parseFloat(creditMax.toFixed(3));
+
+                    // تمكين عناصر التبويب
+                    spinRefundCardQty.SetMaxValue(creditMax);
+                    spinRefundCardQty.SetValue(creditMax > 0 ? creditMax : 0);
+                    spinRefundCardQty.SetEnabled(true);
+                    spinRefundCardQty.SetReadOnly(true);
+
+                    var txtCard = document.getElementById("maxRefundTextCard");
+                    if (txtCard) {
+                        txtCard.innerText = "الحد الأقصى لإرجاع البطاقة: " + creditMax.toFixed(3) + " دينار";
+                    }
+
+                    var chkCard = document.getElementById("chkMaxRefundCard");
+                    if (chkCard) {
+                        chkCard.onclick = function (e) { e.preventDefault(); };
+                        chkCard.style.cursor = "default";
+                    }
+
+                    if (btnCard) {
+                        btnCard.disabled = (creditMax <= 0);
+                        btnCard.style.opacity = creditMax > 0 ? "1" : "0.5";
+                    }
+                }
+                // حساب المبالغ
+                var amountMethod1 = t - sec; // المبلغ الأول
+                var amountMethod2 = sec;     // المبلغ الثاني
+
+                // اسماء الطرق حسب النوع
+                var method1Name = (paymentMethod1 == 1 ? "نقداً" : paymentMethod1 == 2 ? "بطاقة" : "رصيد");
+                var method2Name = (paymentMethod2 == 1 ? "نقداً" : paymentMethod2 == 2 ? "بطاقة" : "رصيد");
+
+                // تحديث النصوص
+                var lbl1 = document.getElementById("lblPaymentMethod1");
+                var lbl2 = document.getElementById("lblPaymentMethod2");
+
+                if (lbl1) lbl1.innerText = "طريقة الدفع  (" + method1Name + "): " + amountMethod1.toFixed(3) + " دينار";
+
+                if (lbl2) {
+                    if (amountMethod2 > 0) {
+                        lbl2.style.display = "inline";
+                        lbl2.innerText = "طريقة الدفع  (" + method2Name + "): " + amountMethod2.toFixed(3) + " دينار";
+                    } else {
+                        lbl2.style.display = "none";
+                    }
                 }
 
                 pageTab.SetActiveTabIndex(0);
@@ -327,6 +365,8 @@
                             TextField="description"
                             ValueType="System.Int32">
                             <ValidationSettings RequiredField-IsRequired="True" ErrorText="يجب تحديد حالة الطلب" />
+                            <ItemStyle Font-Size="12px" Font-Names="Cairo" />
+
                         </PropertiesComboBox>
                         <DataItemTemplate>
                             <%# GetOrderStatusLottie(Eval("l_orderStatus").ToString(),Eval("id").ToString()) %>
@@ -351,6 +391,8 @@
                             ValueField="id"
                             DropDownStyle="DropDownList"
                             EnableCallbackMode="false">
+                            <ItemStyle Font-Size="12px" Font-Names="Cairo" />
+
                         </PropertiesComboBox>
 
                         <DataItemTemplate>
@@ -469,10 +511,16 @@
                     </dx:GridViewDataColumn>
 
                     <dx:GridViewDataDateColumn FieldName="userDate" Caption="التاريخ">
-                        <PropertiesDateEdit DisplayFormatString="yyyy/MM/dd hh:mm tt" />
-                        <EditFormSettings Visible="False" />
-                        <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                        <PropertiesDateEdit DisplayFormatString="yyyy/MM/dd hh:mm tt">
+                            <Style Font-Size="11px" Font-Names="Cairo" />
+                            <CalendarProperties>
+                                <Style Font-Size="12px" Font-Names="Cairo" />
+                            </CalendarProperties>
+                        </PropertiesDateEdit>
+
+                        <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" Font-Size="12px" />
                     </dx:GridViewDataDateColumn>
+
 
                     <dx:GridViewDataColumn Caption="المنتجات">
                         <DataItemTemplate>
@@ -541,6 +589,7 @@
                     <dx:ASPxSummaryItem FieldName="id" SummaryType="Count" DisplayFormat="العدد = {0}" />
                 </TotalSummary>
                 <Styles>
+                    <FilterRow Font-Size="16px" Font-Names="Cairo" />
                     <AlternatingRow BackColor="#F0F0F0">
                     </AlternatingRow>
                     <Footer Font-Names="cairo" Font-Size="16px">
@@ -686,6 +735,11 @@
 
                                                         <div id="maxRefundText"
                                                             style="margin-top: 10px; color: #d9534f; font-family: Cairo; font-size: 14px; font-weight: bold;">
+                                                        </div>
+                                                        <div id="paymentAmounts" style="margin-top: 5px; font-family: Cairo; font-size: 14px; font-weight: bold;">
+                                                            <span id="lblPaymentMethod1"></span>
+                                                            <br />
+                                                            <span id="lblPaymentMethod2" style="display: none;"></span>
                                                         </div>
 
                                                         <div style="margin-top: 15px; font-family: Cairo; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;">

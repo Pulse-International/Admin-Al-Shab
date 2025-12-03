@@ -361,64 +361,6 @@ namespace ShabAdmin
             GridMachineUsers.DataBind();
         }
 
-
-        protected void callbackApprove_Callback(object sender, DevExpress.Web.CallbackEventArgs e)
-        {
-            if (int.TryParse(e.Parameter, out int id))
-            {
-                string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
-                using (SqlConnection conn = new SqlConnection(connStr))
-                {
-                    conn.Open();
-
-                    SqlCommand cmd1 = new SqlCommand(@"
-                UPDATE productsRates
-                SET rateApproved = 1
-                WHERE id = @id", conn);
-                    cmd1.Parameters.AddWithValue("@id", id);
-                    cmd1.ExecuteNonQuery();
-
-                    SqlCommand getProductIdCmd = new SqlCommand("SELECT productId FROM productsRates WHERE id = @id", conn);
-                    getProductIdCmd.Parameters.AddWithValue("@id", id);
-                    int productId = Convert.ToInt32(getProductIdCmd.ExecuteScalar());
-
-                    SqlCommand callProcedure = new SqlCommand("UpdateProductRates", conn);
-                    callProcedure.CommandType = System.Data.CommandType.StoredProcedure;
-                    callProcedure.Parameters.AddWithValue("@ProductId", productId);
-                    callProcedure.ExecuteNonQuery();
-                }
-
-            }
-        }
-        protected void ApproveOrderRate_Callback(object sender, DevExpress.Web.CallbackEventArgs e)
-        {
-            if (int.TryParse(e.Parameter, out int id))
-            {
-                string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
-                using (SqlConnection conn = new SqlConnection(connStr))
-                {
-                    conn.Open();
-
-                    SqlCommand cmd1 = new SqlCommand(@"
-                UPDATE orders
-                SET rateApproved = 1
-                WHERE id = @id", conn);
-                    cmd1.Parameters.AddWithValue("@id", id);
-                    cmd1.ExecuteNonQuery();
-
-                    SqlCommand getCompanyIdCmd = new SqlCommand("SELECT companyId FROM orders WHERE id = @id", conn);
-                    getCompanyIdCmd.Parameters.AddWithValue("@id", id);
-                    int companyId = Convert.ToInt32(getCompanyIdCmd.ExecuteScalar());
-
-                    SqlCommand callProcedure = new SqlCommand("UpdateCompanyRates", conn);
-                    callProcedure.CommandType = System.Data.CommandType.StoredProcedure;
-                    callProcedure.Parameters.AddWithValue("@CompanyId", companyId);
-                    callProcedure.ExecuteNonQuery();
-                }
-
-            }
-        }
-
         protected void GridMachineUsers_CellEditorInitialize(object sender, ASPxGridViewEditorEventArgs e)
         {
             if ((e.Column.FieldName == "password") && (!GridMachineUsers.IsNewRowEditing))
@@ -520,6 +462,65 @@ namespace ShabAdmin
                 };
             }
         }
+
+
+        protected void callbackApprove_Callback(object sender, DevExpress.Web.CallbackEventArgs e)
+        {
+            if (int.TryParse(e.Parameter, out int id))
+            {
+                string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd1 = new SqlCommand(@"
+                UPDATE productsRates
+                SET rateApproved = 1
+                WHERE id = @id", conn);
+                    cmd1.Parameters.AddWithValue("@id", id);
+                    cmd1.ExecuteNonQuery();
+
+                    SqlCommand getProductIdCmd = new SqlCommand("SELECT productId FROM productsRates WHERE id = @id", conn);
+                    getProductIdCmd.Parameters.AddWithValue("@id", id);
+                    int productId = Convert.ToInt32(getProductIdCmd.ExecuteScalar());
+
+                    SqlCommand callProcedure = new SqlCommand("UpdateProductRates", conn);
+                    callProcedure.CommandType = System.Data.CommandType.StoredProcedure;
+                    callProcedure.Parameters.AddWithValue("@ProductId", productId);
+                    callProcedure.ExecuteNonQuery();
+                }
+
+            }
+        }
+        protected void ApproveOrderRate_Callback(object sender, DevExpress.Web.CallbackEventArgs e)
+        {
+            if (int.TryParse(e.Parameter, out int id))
+            {
+                string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd1 = new SqlCommand(@"
+                UPDATE orders
+                SET rateApproved = 1
+                WHERE id = @id", conn);
+                    cmd1.Parameters.AddWithValue("@id", id);
+                    cmd1.ExecuteNonQuery();
+
+                    SqlCommand getCompanyIdCmd = new SqlCommand("SELECT companyId FROM orders WHERE id = @id", conn);
+                    getCompanyIdCmd.Parameters.AddWithValue("@id", id);
+                    int companyId = Convert.ToInt32(getCompanyIdCmd.ExecuteScalar());
+
+                    SqlCommand callProcedure = new SqlCommand("UpdateCompanyRates", conn);
+                    callProcedure.CommandType = System.Data.CommandType.StoredProcedure;
+                    callProcedure.Parameters.AddWithValue("@CompanyId", companyId);
+                    callProcedure.ExecuteNonQuery();
+                }
+
+            }
+        }
+
 
 
         protected void GridDeliveryUsers_RowValidating(object sender, DevExpress.Web.Data.ASPxDataValidationEventArgs e)

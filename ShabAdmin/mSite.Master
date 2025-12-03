@@ -53,6 +53,37 @@
                 }
             }
         </script>
+        <style>
+            /* تصغير حجم الخط */
+            #sidenav-main .nav-link-text {
+                font-size: 13px !important;
+            }
+
+            #sidenav-main .navbar-brand span {
+                font-size: 14px !important;
+            }
+
+            /* تقليل العرض */
+            #sidenav-main {
+                width: 220px !important;
+            }
+
+                #sidenav-main .navbar-collapse {
+                    width: 220px !important;
+                }
+
+                /* تحسين المسافات */
+                #sidenav-main .nav-link .text-center {
+                    margin-left: 4px !important;
+                }
+
+            @media (min-width: 1200px) {
+                .sidenav.fixed-end + .main-content {
+                    margin-right: 14.125rem;
+                }
+            }
+        </style>
+
         <asp:SqlDataSource
             ID="dsCountries"
             runat="server"
@@ -103,7 +134,7 @@
                             <div class="text-white text-center ms-2 d-flex align-items-center justify-content-center">
                                 <i class="material-icons-round opacity-10">table_view</i>
                             </div>
-                            <span class="nav-link-text me-1">كامل الطلبيات</span>
+                            <span class="nav-link-text me-1">كامل الطلبات</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -111,7 +142,7 @@
                             <div class="text-white text-center ms-2 d-flex align-items-center justify-content-center">
                                 <i class="material-icons-round opacity-10">table_view</i>
                             </div>
-                            <span class="nav-link-text me-1">الطلبيات الحالية</span>
+                            <span class="nav-link-text me-1">الطلبات الحالية</span>
                         </a>
                     </li>
                     <li class="nav-item">

@@ -1306,6 +1306,7 @@
                                                     <div style="font-weight: bold;"><%# Eval("fullName") %></div>
                                                     <div style="color: #888; font-size: 12px;"><%# Eval("email") %></div>
                                                     <div style="color: #888; font-size: 12px;"><%# Eval("gender") %></div>
+                                                    <div style="color: #888; font-size: 12px;"><%# Eval("userplatform") %></div>
                                                 </div>
                                             </DataItemTemplate>
                                             <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
@@ -1698,18 +1699,11 @@
 
                                         </dx:GridViewDataColumn>
 
-                                        <dx:GridViewDataTextColumn FieldName="userDate" Width="3%" Caption="المنصة والتاريخ">
-                                            <DataItemTemplate>
-                                                <div style="text-align: center; font-family: Cairo;">
-                                                    <div style="font-weight: bold;"><%# Eval("userplatform") %></div>
-                                                    <div style="font-size: 12px; color: #555;">
-                                                        <%# Convert.ToDateTime(Eval("userDate")).ToString("yyyy/MM/dd") %>
-                                                    </div>
-                                                </div>
-                                            </DataItemTemplate>
+                                        <dx:GridViewDataDateColumn FieldName="userDate" Caption="التاريخ">
+                                            <PropertiesDateEdit DisplayFormatString="yyyy/MM/dd" />
                                             <EditFormSettings Visible="False" />
                                             <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
-                                        </dx:GridViewDataTextColumn>
+                                        </dx:GridViewDataDateColumn>
 
                                         <dx:GridViewDataTextColumn Caption="التقييم" FieldName="rate">
                                             <DataItemTemplate>

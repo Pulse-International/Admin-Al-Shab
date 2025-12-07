@@ -856,5 +856,29 @@ namespace ShabAdmin
             }
         }
 
+        protected void callbackApprove_Callback(object sender, DevExpress.Web.CallbackEventArgsBase e)
+        {
+            {
+                if (string.IsNullOrWhiteSpace(e.Parameter)) return;
+
+                int orderId;
+                if (!int.TryParse(e.Parameter, out orderId)) return;
+
+                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
+                {
+                    conn.Open();
+
+                    string sql = "UPDATE orders SET l_orderStatus = 2 WHERE id = @id";
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@id", orderId);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                GridOrders.DataBind();
+            }
+
+        }
     }
 }

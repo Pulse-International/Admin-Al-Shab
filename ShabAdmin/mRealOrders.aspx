@@ -255,7 +255,20 @@
                 // إغلاق البوب أب
                 popupReject.Hide();
             }
+            var approveOrderId = 0;
 
+            function ShowApprovePopup(orderId) {
+                approveOrderId = orderId;
+                popupApprove1.Show();
+            }
+
+            function ConfirmApproveNow() {
+                popupApprove1.Hide();
+                callbackApprove.PerformCallback(approveOrderId);
+                setTimeout(function () {
+                GridOrders.Refresh();
+                }, 300);
+            }
             setInterval(function () {
                 if (typeof GridOrders !== "undefined") {
                     GridOrders.Refresh();
@@ -547,17 +560,29 @@
                                             <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
                                         </dx:GridViewDataColumn>
 
-                                        <dx:GridViewDataColumn Caption="رفض">
+                                        <dx:GridViewDataColumn Caption="التحكم">
                                             <DataItemTemplate>
                                                 <%# 
-            Convert.ToInt32(Eval("l_orderStatus")) == 1 
-            ? "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" style='background-color:red;color:white;font-family:Cairo; width:90px;border:none;padding:5px 10px;border-radius:4px;'>رفض</button>"
-            : "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" style='background-color:orange;color:white;font-family:Cairo; width:90px;border:none;padding:5px 10px;border-radius:4px;'>الغاء</button>"
-                                                %>
+        Convert.ToInt32(Eval("l_orderStatus")) == 1 
+        ? 
+        "<div style='display:flex; gap:5px; justify-content:center;'>" +
+
+            "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" " +
+            "style='background-color:red;color:white;font-family:Cairo; width:70px;border:none;padding:5px;border-radius:4px;'>رفض</button>" +
+
+            "<button type='button' class=\"dx-button\" onclick=\"ShowApprovePopup(" + Eval("id") + "); return false;\" " +
+            "style='background-color:green;color:white;font-family:Cairo; width:70px;border:none;padding:5px;border-radius:4px;'>موافقة</button>" +
+
+        "</div>"
+        :
+        "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" " +
+        "style='background-color:orange;color:white;font-family:Cairo; width:90px;border:none;padding:5px 10px;border-radius:4px;'>الغاء</button>"
+        %>
                                             </DataItemTemplate>
 
                                             <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
                                         </dx:GridViewDataColumn>
+
 
 
 
@@ -591,6 +616,60 @@
                                     <Paddings Padding="2em" />
 
                                 </dx:ASPxGridView>
+
+                                <dx:ASPxPopupControl ID="popupApprove1" runat="server"
+                                    ClientInstanceName="popupApprove1"
+                                    Width="350"
+                                    Height="100"
+                                    HeaderText="تأكيد الموافقة"
+                                    Modal="true"
+                                    CloseAction="CloseButton"
+                                    PopupHorizontalAlign="WindowCenter"
+                                    PopupVerticalAlign="WindowCenter"
+                                    Font-Names="Cairo"
+                                    Font-Size="14px">
+
+                                    <ContentCollection>
+                                        <dx:PopupControlContentControl>
+
+                                            <div style="text-align: center; font-family: Cairo; font-size: 16px; margin-bottom: 20px;">
+                                                هل أنت متأكد من الموافقة على الطلب؟
+           
+                                            </div>
+
+                                            <div style="text-align: center; font-family: Cairo;">
+
+                                                <dx:ASPxButton ID="btnConfirmApprove" runat="server"
+                                                    Text="موافقة"
+                                                    AutoPostBack="false"
+                                                    Font-Names="Cairo"
+                                                    Font-Bold="true"
+                                                    CssClass="dx-button"
+                                                    Style="background-color: green; color: white; width: 100px; margin-left: 10px;"
+                                                    ClientSideEvents-Click="function(){ ConfirmApproveNow(); }" />
+
+                                                <dx:ASPxButton ID="btnCancelApprove" runat="server"
+                                                    Text="إلغاء"
+                                                    AutoPostBack="false"
+                                                    Font-Names="Cairo"
+                                                    Font-Bold="true"
+                                                    CssClass="dx-button"
+                                                    Style="background-color: gray; color: white; width: 100px;"
+                                                    ClientSideEvents-Click="function(){ popupApprove1.Hide(); }" />
+
+                                            </div>
+
+                                        </dx:PopupControlContentControl>
+                                    </ContentCollection>
+                                </dx:ASPxPopupControl>
+
+
+
+                                <dx:ASPxCallbackPanel ID="callbackApprove" runat="server"
+                                    ClientInstanceName="callbackApprove"
+                                    OnCallback="callbackApprove_Callback">
+                                </dx:ASPxCallbackPanel>
+
 
                                 <asp:SqlDataSource
                                     ID="db_orderStatus"

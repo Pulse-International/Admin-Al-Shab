@@ -593,11 +593,11 @@ namespace ShabAdmin
 
                             decimal refundToBalance = 0;
 
-                            
+
                             bool shouldRefundBalance =
-                                   (l_paymentMethodId == 2) ||                                      
-                                   (l_paymentMethodId == 3 &&                                        
-                                   (l_paymentMethodId2 == 0 || l_paymentMethodId2 == 2));           
+                                   (l_paymentMethodId == 2) ||
+                                   (l_paymentMethodId == 3 &&
+                                   (l_paymentMethodId2 == 0 || l_paymentMethodId2 == 2));
 
                             bool isBalanceWithCash =
                                    (l_paymentMethodId == 3 && l_paymentMethodId2 == 1);              // رصيد + كاش
@@ -758,6 +758,98 @@ namespace ShabAdmin
                         }
                     }
                 }
+            }
+        }
+
+        protected void callbackAddress1_Callback(object sender, DevExpress.Web.CallbackEventArgsBase e)
+        {
+            int addressId;
+            if (int.TryParse(e.Parameter, out addressId))
+            {
+                string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(@"
+                        SELECT 
+                            a.username,
+                            t.description AS addressType,
+                            a.countrycode,
+                            a.city,
+                            a.area,
+                            a.addressnickname,
+                            a.apartmentno,
+                            a.floorno,
+                            a.[buildingno],
+                            a.[latitude],
+                            a.[longitude],
+                            a.street,
+                            a.addressnotes,
+                            a.isStored
+                        FROM Addresses a
+                        LEFT JOIN l_addressType t ON a.l_addressTypeId = t.id
+                        WHERE a.id = @id", conn);
+
+                    cmd.Parameters.AddWithValue("@id", addressId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        string latitude = reader["latitude"].ToString();
+                        string longitude = reader["longitude"].ToString();
+                        string isStored = Convert.ToBoolean(reader["isStored"]) ? "عنوان محفوظ" : "عنوان مؤقت";
+                        string mapDivId = $"map_{addressId}";
+
+                        // ضع بيانات الخريطة هنا كـ JSON String
+                        var mapData = new
+                        {
+                            lat = latitude,
+                            lng = longitude,
+                            mapId = mapDivId,
+                            title = reader["addressnickname"],
+                            area = reader["area"],
+                            city = reader["city"]
+                        };
+                        string json = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(mapData);
+
+                        // أرسلها عبر JSProperties
+                        callbackAddress1.JSProperties["cpMapData"] = json;
+
+                        lblAddressInfo1.Text = $@"
+                        <div style='font-family: Cairo; direction: rtl; font-size: 1.1em; line-height: 2; padding: 20px; background-color: #f9f9f9; border-radius: 10px; border: 1px solid #ddd; max-width: 100%;'>
+                            <h3 style='margin-top: 0;font-family: Cairo; margin-bottom:1em; color: #333;'>📍 تفاصيل العنوان</h3>
+                            <div style='display: flex; flex-direction: row; flex-wrap: nowrap; gap: 20px; max-width: 100%;'>
+                                <div style='width: 50%;'>
+                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>📱 الهاتف:</b> {reader["username"]}</div>
+                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>🏠 نوع العنوان:</b> {reader["addressType"]}</div>
+                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>🌍 الدولة:</b> {reader["countrycode"]}</div>
+                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>🏙️ المدينة:</b> {reader["city"]}</div>
+                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>📍 المنطقة:</b> {reader["area"]}</div>
+                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>🏷️ الاسم المستعار:</b> {reader["addressnickname"]}</div>
+                                    <hr style='margin: 15px 0; border-top: 1px dashed #ccc;' />
+                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>🛣️ الشارع:</b> {reader["street"]}</div>
+                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>🏢 رقم المبنى:</b> {reader["buildingno"]}</div>
+                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>🪜 الطابق:</b> {reader["floorno"]}</div>
+                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>🚪 رقم الشقة:</b> {reader["apartmentno"]}</div>
+                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>📝 ملاحظات:</b> {reader["addressnotes"]}</div>
+                                    <div style='margin-top: 20px; color: #888; font-style: Cairo;'>{isStored}</div>
+                                </div>
+                                <div style='width: 50%;'>
+                                    <div id='{mapDivId}' style='width: 100%; height: 400px; border: 1px solid #ccc; border-radius: 8px;'></div>
+                                </div>
+                            </div>
+                        </div>";
+
+                    }
+                    else
+                    {
+                        lblAddressInfo1.Text = "لم يتم العثور على العنوان.";
+                    }
+                }
+            }
+            else
+            {
+                lblAddressInfo1.Text = "رقم العنوان غير صالح.";
             }
         }
 

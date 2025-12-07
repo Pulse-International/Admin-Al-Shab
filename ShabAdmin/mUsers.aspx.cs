@@ -41,13 +41,20 @@ namespace ShabAdmin
             if (countryId != 1000 && companyId != 1000)
             {
                 db_DeliveryUsers.SelectCommand = @"
-            SELECT id, username,email,firstName + ' ' + lastName AS fullName,l_documentType,passportPicture,residencePicture,  userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
-                   licensePicture, password, firstName, lastName, l_vehicleType, isActive, vehicleVin,l_DeliveryStatusId,incompleteNote,rejectNote, vehicleNo, 
-                   isOnline, countryId, isUpdated, userDate
-            FROM [usersDelivery]
-            WHERE countryId = @countryId";
+                SELECT u.id, u.username, u.email, u.firstName + ' ' + u.lastName AS fullName, 
+                       u.l_documentType, u.passportPicture, u.residencePicture, u.userPicture AS image, 
+                       u.carPicture, u.carLicensePicture, u.idFrontPicture, u.idBackPicture, 
+                       u.licensePicture, u.password, u.firstName, u.lastName, u.l_vehicleType, u.isActive, 
+                       u.vehicleVin, u.l_DeliveryStatusId, u.incompleteNote, u.rejectNote, u.vehicleNo, 
+                       u.isOnline, u.countryId, u.isUpdated, u.documentNo, u.l_gender, g.description AS gender,
+                       u.userplatform,u.vehicleModel,u.rate, u.userDate
+                FROM [usersDelivery] u
+                LEFT JOIN L_Gender g ON u.l_gender = g.id
+                WHERE u.countryId = @countryId
+                ORDER BY u.isOnline desc, u.id";
 
                 db_DeliveryUsers.SelectParameters.Add("countryId", countryId.ToString());
+
 
                 db_MachineUsers.SelectCommand = @"
             SELECT id, username, password, firstName, lastName, isActive, countryId, companyId, branchId,userDate
@@ -99,13 +106,20 @@ namespace ShabAdmin
             else if (countryId != 1000)
             {
                 db_DeliveryUsers.SelectCommand = @"
-            SELECT id, username,email,firstName + ' ' + lastName AS fullName,l_documentType,passportPicture,residencePicture,  userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
-                   licensePicture, password, firstName, lastName, l_vehicleType, isActive, vehicleVin,l_DeliveryStatusId,incompleteNote,rejectNote, vehicleNo, 
-                   isOnline, countryId, isUpdated, userDate
-            FROM [usersDelivery]
-            WHERE countryId = @countryId";
+                SELECT u.id, u.username, u.email, u.firstName + ' ' + u.lastName AS fullName, 
+                       u.l_documentType, u.passportPicture, u.residencePicture, u.userPicture AS image, 
+                       u.carPicture, u.carLicensePicture, u.idFrontPicture, u.idBackPicture, 
+                       u.licensePicture, u.password, u.firstName, u.lastName, u.l_vehicleType, u.isActive, 
+                       u.vehicleVin, u.l_DeliveryStatusId, u.incompleteNote, u.rejectNote, u.vehicleNo, 
+                       u.isOnline, u.countryId, u.isUpdated, u.documentNo, u.l_gender, g.description AS gender,
+                       u.userplatform,u.vehicleModel,u.rate, u.userDate
+                FROM [usersDelivery] u
+                LEFT JOIN L_Gender g ON u.l_gender = g.id
+                WHERE u.countryId = @countryId
+                ORDER BY u.isOnline desc, u.id";
 
                 db_DeliveryUsers.SelectParameters.Add("countryId", countryId.ToString());
+
 
                 db_MachineUsers.SelectCommand = @"
             SELECT id, username, password, firstName, lastName, isActive, countryId, companyId, branchId, userDate
@@ -152,12 +166,17 @@ namespace ShabAdmin
             }
             else
             {
-                // No filtering
                 db_DeliveryUsers.SelectCommand = @"
-            SELECT id, username,email,firstName + ' ' + lastName AS fullName,l_documentType,passportPicture,residencePicture,  userPicture AS image, carPicture, carLicensePicture, idFrontPicture, idBackPicture, 
-                   licensePicture, password, firstName, lastName, l_vehicleType, isActive, vehicleVin,l_DeliveryStatusId,incompleteNote,rejectNote, vehicleNo, 
-                   isOnline, countryId, isUpdated, userDate
-            FROM [usersDelivery]";
+                SELECT u.id, u.username, u.email, u.firstName + ' ' + u.lastName AS fullName, 
+                       u.l_documentType, u.passportPicture, u.residencePicture, u.userPicture AS image, 
+                       u.carPicture, u.carLicensePicture, u.idFrontPicture, u.idBackPicture, 
+                       u.licensePicture, u.password, u.firstName, u.lastName, u.l_vehicleType, u.isActive, 
+                       u.vehicleVin, u.l_DeliveryStatusId, u.incompleteNote, u.rejectNote, u.vehicleNo, 
+                       u.isOnline, u.countryId, u.isUpdated, u.documentNo, u.l_gender, g.description AS gender,
+                       u.userplatform,u.vehicleModel,u.rate, u.userDate
+                FROM [usersDelivery] u
+                LEFT JOIN L_Gender g ON u.l_gender = g.id
+                ORDER BY u.isOnline desc, u.id";
 
                 db_MachineUsers.SelectCommand = @"
             SELECT id, username, password, firstName, lastName, isActive, countryId, companyId, branchId, userDate
@@ -299,7 +318,7 @@ namespace ShabAdmin
         new SqlParameter("@id", id)
     };
 
-            if (e.NewValues["password"] != e.OldValues["password"])
+            if (e.NewValues["password"].ToString().Trim() != e.OldValues["password"].ToString().Trim())
             {
                 HashSalt hashed = MainHelper.HashPassword(plainPassword);
                 sql = @"UPDATE [usersMachine]
@@ -342,64 +361,6 @@ namespace ShabAdmin
             GridMachineUsers.DataBind();
         }
 
-
-        protected void callbackApprove_Callback(object sender, DevExpress.Web.CallbackEventArgs e)
-        {
-            if (int.TryParse(e.Parameter, out int id))
-            {
-                string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
-                using (SqlConnection conn = new SqlConnection(connStr))
-                {
-                    conn.Open();
-
-                    SqlCommand cmd1 = new SqlCommand(@"
-                UPDATE productsRates
-                SET rateApproved = 1
-                WHERE id = @id", conn);
-                    cmd1.Parameters.AddWithValue("@id", id);
-                    cmd1.ExecuteNonQuery();
-
-                    SqlCommand getProductIdCmd = new SqlCommand("SELECT productId FROM productsRates WHERE id = @id", conn);
-                    getProductIdCmd.Parameters.AddWithValue("@id", id);
-                    int productId = Convert.ToInt32(getProductIdCmd.ExecuteScalar());
-
-                    SqlCommand callProcedure = new SqlCommand("UpdateProductRates", conn);
-                    callProcedure.CommandType = System.Data.CommandType.StoredProcedure;
-                    callProcedure.Parameters.AddWithValue("@ProductId", productId);
-                    callProcedure.ExecuteNonQuery();
-                }
-
-            }
-        }
-        protected void ApproveOrderRate_Callback(object sender, DevExpress.Web.CallbackEventArgs e)
-        {
-            if (int.TryParse(e.Parameter, out int id))
-            {
-                string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
-                using (SqlConnection conn = new SqlConnection(connStr))
-                {
-                    conn.Open();
-
-                    SqlCommand cmd1 = new SqlCommand(@"
-                UPDATE orders
-                SET rateApproved = 1
-                WHERE id = @id", conn);
-                    cmd1.Parameters.AddWithValue("@id", id);
-                    cmd1.ExecuteNonQuery();
-
-                    SqlCommand getCompanyIdCmd = new SqlCommand("SELECT companyId FROM orders WHERE id = @id", conn);
-                    getCompanyIdCmd.Parameters.AddWithValue("@id", id);
-                    int companyId = Convert.ToInt32(getCompanyIdCmd.ExecuteScalar());
-
-                    SqlCommand callProcedure = new SqlCommand("UpdateCompanyRates", conn);
-                    callProcedure.CommandType = System.Data.CommandType.StoredProcedure;
-                    callProcedure.Parameters.AddWithValue("@CompanyId", companyId);
-                    callProcedure.ExecuteNonQuery();
-                }
-
-            }
-        }
-
         protected void GridMachineUsers_CellEditorInitialize(object sender, ASPxGridViewEditorEventArgs e)
         {
             if ((e.Column.FieldName == "password") && (!GridMachineUsers.IsNewRowEditing))
@@ -423,9 +384,9 @@ namespace ShabAdmin
                     int countryId = countryObj != null ? Convert.ToInt32(countryObj) : 0;
                     if (countryId > 0)
                     {
-                        db_companyName.SelectCommand = "SELECT id, companyName FROM companies WHERE countryId = @countryId";
-                        db_companyName.SelectParameters.Clear();
-                        db_companyName.SelectParameters.Add("countryId", countryId.ToString());
+                        db_companyName.SelectCommand = "SELECT id, companyName FROM companies WHERE countryId = " + countryId.ToString();
+                        //db_companyName.SelectParameters.Clear();
+                        //db_companyName.SelectParameters.Add("countryId", countryId.ToString());
                         combo.DataBind();
                     }
                     else
@@ -502,14 +463,69 @@ namespace ShabAdmin
             }
         }
 
+        protected void callbackApprove_Callback(object sender, DevExpress.Web.CallbackEventArgs e)
+        {
+            if (int.TryParse(e.Parameter, out int id))
+            {
+                string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd1 = new SqlCommand(@"
+                UPDATE productsRates
+                SET rateApproved = 1
+                WHERE id = @id", conn);
+                    cmd1.Parameters.AddWithValue("@id", id);
+                    cmd1.ExecuteNonQuery();
+
+                    SqlCommand getProductIdCmd = new SqlCommand("SELECT productId FROM productsRates WHERE id = @id", conn);
+                    getProductIdCmd.Parameters.AddWithValue("@id", id);
+                    int productId = Convert.ToInt32(getProductIdCmd.ExecuteScalar());
+
+                    SqlCommand callProcedure = new SqlCommand("UpdateProductRates", conn);
+                    callProcedure.CommandType = System.Data.CommandType.StoredProcedure;
+                    callProcedure.Parameters.AddWithValue("@ProductId", productId);
+                    callProcedure.ExecuteNonQuery();
+                }
+
+            }
+        }
+        protected void ApproveOrderRate_Callback(object sender, DevExpress.Web.CallbackEventArgs e)
+        {
+            if (int.TryParse(e.Parameter, out int id))
+            {
+                string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd1 = new SqlCommand(@"
+                UPDATE orders
+                SET rateApproved = 1
+                WHERE id = @id", conn);
+                    cmd1.Parameters.AddWithValue("@id", id);
+                    cmd1.ExecuteNonQuery();
+
+                    SqlCommand getCompanyIdCmd = new SqlCommand("SELECT companyId FROM orders WHERE id = @id", conn);
+                    getCompanyIdCmd.Parameters.AddWithValue("@id", id);
+                    int companyId = Convert.ToInt32(getCompanyIdCmd.ExecuteScalar());
+
+                    SqlCommand callProcedure = new SqlCommand("UpdateCompanyRates", conn);
+                    callProcedure.CommandType = System.Data.CommandType.StoredProcedure;
+                    callProcedure.Parameters.AddWithValue("@CompanyId", companyId);
+                    callProcedure.ExecuteNonQuery();
+                }
+
+            }
+        }
 
         protected void GridDeliveryUsers_RowValidating(object sender, DevExpress.Web.Data.ASPxDataValidationEventArgs e)
         {
             string plainPassword = e.NewValues["password"]?.ToString();
-            string oldPassword = e.OldValues.Contains("password") ? e.OldValues["password"]?.ToString() : null;
-
             bool isNewRow = e.IsNewRow;
 
+            // ====== فحص كلمة المرور في حالة إضافة مستخدم جديد ======
             if (isNewRow)
             {
                 if (string.IsNullOrWhiteSpace(plainPassword))
@@ -519,89 +535,24 @@ namespace ShabAdmin
                 }
             }
 
-            int id = e.Keys["id"] != null ? Convert.ToInt32(e.Keys["id"]) : 0;
-
-            string newUsername = e.NewValues["username"]?.ToString();
-            string newEmail = e.NewValues["email"]?.ToString();
-
-            string oldUsername = e.OldValues["username"]?.ToString();
-            string oldEmail = e.OldValues["email"]?.ToString();
-
-            var grid = GridDeliveryUsers;
-
-            using (SqlConnection conn = new SqlConnection(WebConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
-            {
-                conn.Open();
-
-                if (id == 0 || !string.Equals(newUsername, oldUsername, StringComparison.OrdinalIgnoreCase))
-                {
-                    using (SqlCommand cmd = new SqlCommand(
-                        "SELECT COUNT(*) FROM usersDelivery WHERE username = @username AND id <> @id", conn))
-                    {
-                        cmd.Parameters.AddWithValue("@username", newUsername ?? string.Empty);
-                        cmd.Parameters.AddWithValue("@id", id);
-
-                        int found = (int)cmd.ExecuteScalar();
-                        if (found > 0)
-                        {
-                            var col = grid.Columns["username"] as DevExpress.Web.GridViewDataColumn;
-                            string errorMsg = "اسم المستخدم موجود مسبقاً.";
-                            if (col != null)
-                                e.Errors[col] = errorMsg;
-                            else
-                                e.RowError = errorMsg;
-                        }
-                    }
-                }
-
-                if (id == 0 || !string.Equals(newEmail, oldEmail, StringComparison.OrdinalIgnoreCase))
-                {
-                    using (SqlCommand cmd = new SqlCommand(
-                        "SELECT COUNT(*) FROM usersDelivery WHERE email = @Email AND id <> @id", conn))
-                    {
-                        cmd.Parameters.AddWithValue("@Email", newEmail ?? string.Empty);
-                        cmd.Parameters.AddWithValue("@id", id);
-
-                        int found = (int)cmd.ExecuteScalar();
-                        if (found > 0)
-                        {
-                            var col = grid.Columns["email"] as DevExpress.Web.GridViewDataColumn;
-                            string errorMsg = "البريد الإلكتروني مستخدم مسبقاً.";
-                            if (col != null)
-                                e.Errors[col] = errorMsg;
-                            else
-                                e.RowError = errorMsg;
-                        }
-                    }
-                }
-
-                if (!string.IsNullOrWhiteSpace(newUsername))
-                {
-                    if (!newUsername.All(char.IsDigit))
-                    {
-                        var col = grid.Columns["username"] as DevExpress.Web.GridViewDataColumn;
-                        string errorMsg = "اسم المستخدم يجب أن يكون رقم هاتف (فقط ارقام).";
-                        if (col != null)
-                            e.Errors[col] = errorMsg;
-                        else
-                            e.RowError = errorMsg;
-                    }
-                }
-
-
-            }
-
+            // ====== تجميع الأخطاء وعرضها عبر JS ======
             if (e.Errors.Count > 0 || !string.IsNullOrEmpty(e.RowError))
             {
-                string message = e.RowError ?? "";
+                // تجميع الأخطاء في رسالة واحدة
+                string message = "";
+
+                if (!string.IsNullOrEmpty(e.RowError))
+                    message += e.RowError;
+
                 foreach (var error in e.Errors.Values)
                 {
-                    message += "\n" + error.ToString();
+                    message += (message == "" ? "" : "\n") + error;
                 }
 
                 GridDeliveryUsers.JSProperties["cpErrorMessage"] = message;
             }
         }
+
 
         protected void GridDeliveryUsers_RowInserting(object sender, DevExpress.Web.Data.ASPxDataInsertingEventArgs e)
         {
@@ -613,90 +564,46 @@ namespace ShabAdmin
 
         protected void GridDeliveryUsers_RowUpdating(object sender, DevExpress.Web.Data.ASPxDataUpdatingEventArgs e)
         {
+            string newPassword = e.NewValues["password"]?.ToString();
+            string oldPassword = e.OldValues["password"]?.ToString();
 
-            int id = (int)e.Keys["id"];
-            string username = e.NewValues["username"]?.ToString();
-            string plainPassword = e.NewValues["password"]?.ToString();
-            string firstName = e.NewValues["firstName"]?.ToString();
-            string email = e.NewValues["email"]?.ToString();
-            string vehicleVin = e.NewValues["vehicleVin"]?.ToString();
-            string vehicleNo = e.NewValues["vehicleNo"]?.ToString();
-            string lastName = e.NewValues["lastName"]?.ToString();
-            string l_vehicleType = e.NewValues["l_vehicleType"]?.ToString();
-            bool isActive = Convert.ToBoolean(e.NewValues["isActive"]);
+            int id = Convert.ToInt32(e.Keys["id"]);
 
-            /////////////
-
-            string sql;
-            var parameters = new List<SqlParameter>
-    {
-        new SqlParameter("@username", username),
-        new SqlParameter("@firstName", firstName),
-        new SqlParameter("@lastName", lastName),
-        new SqlParameter("@email", email),
-        new SqlParameter("@l_vehicleType", l_vehicleType),
-        new SqlParameter("@isActive", isActive),
-        new SqlParameter("@vehicleVin", vehicleVin),
-        new SqlParameter("@vehicleNo", vehicleNo),
-        new SqlParameter("@id", id)
-    };
-
-            if (e.NewValues["password"] != e.OldValues["password"])
+            // إذا ما تغيّر الباسورد -> لا تعمل شيء
+            if (newPassword.Trim() == oldPassword.Trim())
             {
-                HashSalt hashed = MainHelper.HashPassword(plainPassword);
-                sql = @"UPDATE [usersDelivery]
-                SET username = @username,
-                    password = @password,
-                    storedsalt = @storedsalt,
-                    firstName = @firstName,
-                    lastName = @lastName,
-                    email = @email,
-                    vehicleNo = @vehicleNo,
-                    vehicleVin = @vehicleVin,
-                    isActive = @isActive
-                WHERE id = @id";
-                parameters.Add(new SqlParameter("@password", hashed.Hash));
-                parameters.Add(new SqlParameter("@storedsalt", Convert.FromBase64String(hashed.Salt)));
+                e.Cancel = true;
+                GridDeliveryUsers.CancelEdit();
+                GridDeliveryUsers.DataBind();
+                return;
             }
-            else
-            {
-                sql = @"UPDATE [usersDelivery]
-                SET username = @username,
-                    firstName = @firstName,
-                    lastName = @lastName,
-                    email=@email,
-                    vehicleNo = @vehicleNo,
-                    vehicleVin = @vehicleVin,
-                    isActive = @isActive
-                    WHERE id = @id";
-            }
+
+            // إذا تغيّر الباسورد -> اعمل الهاش
+            HashSalt hashed = MainHelper.HashPassword(newPassword);
+
+            string sql = @"
+        UPDATE usersDelivery
+        SET password = @password,
+            storedsalt = @storedsalt
+        WHERE id = @id
+    ";
 
             using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
             using (SqlCommand cmd = new SqlCommand(sql, conn))
             {
-                cmd.Parameters.AddRange(parameters.ToArray());
+                cmd.Parameters.Add(new SqlParameter("@password", hashed.Hash));
+                cmd.Parameters.Add(new SqlParameter("@storedsalt", Convert.FromBase64String(hashed.Salt)));
+                cmd.Parameters.Add(new SqlParameter("@id", id));
+
                 conn.Open();
                 cmd.ExecuteNonQuery();
             }
 
+            // نمنع التحديث الداخلي تبع الديف إكسبرس
             e.Cancel = true;
             GridDeliveryUsers.CancelEdit();
             GridDeliveryUsers.DataBind();
-        }
-        void DeleteOldFileIfChanged(string fileCheck, string fileOld)
-        {
-            if (fileCheck == "1")
-            {
-                int pos = fileOld.LastIndexOf("/");
-                if (pos > -1)
-                {
-                    string fileToDelete = fileOld.Substring(pos + 1);
-                    string[] fileList = Directory.GetFiles(Server.MapPath("~/assets/uploads/delivery-users"), fileToDelete);
-                    foreach (string file in fileList)
-                        System.IO.File.Delete(file);
-                }
-            }
-        }
+        }        
 
         string fileName = string.Empty;
         int checkError = 0;
@@ -855,7 +762,6 @@ namespace ShabAdmin
         protected void GridDeliveryUsers_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
         {
             string[] parts = e.Parameters.Split(':');
-
             string action = parts[0];
             int userId = int.Parse(parts[1]);
             string note = parts.Length > 2 ? parts[2] : "";
@@ -863,6 +769,17 @@ namespace ShabAdmin
             using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
             {
                 conn.Open();
+
+                // ======== جلب رقم الهاتف للمستخدم ========
+                string userNumber = "";
+                using (SqlCommand getUserCmd = new SqlCommand("SELECT username FROM usersDelivery WHERE id=@id", conn))
+                {
+                    getUserCmd.Parameters.AddWithValue("@id", userId);
+                    object result = getUserCmd.ExecuteScalar();
+                    if (result != null)
+                        userNumber = result.ToString();
+                }
+
                 SqlCommand cmd = null;
 
                 switch (action)
@@ -871,17 +788,37 @@ namespace ShabAdmin
                         cmd = new SqlCommand(
                             "UPDATE usersDelivery SET l_deliveryStatusId=3,isActive=1 WHERE id=@id", conn);
 
-                        SendSmsBackground("962798579769", "تم الموافقة عليك اخي");
+                        // توليد الرابط المشفر
+                        string encryptedUserId = MainHelper.Encrypt_Me(userId.ToString(), true);
+                        string baseUrl = "https://www.alshaeb.net";
+                        string longUrl = $"{baseUrl}/ldeliveryCompleted?id={encryptedUserId}";
+                        string smsMessage = $"مبروك! تمت الموافقة اضغط الرابط لإكمال العملية: {longUrl}";
 
+                        // إرسال SMS مع اختصار الرابط
+                        Task.Run(async () =>
+                        {
+                            try
+                            {
+                                string shortUrl = longUrl;
+                                using (var client = new WebClient())
+                                {
+                                    shortUrl = await client.DownloadStringTaskAsync($"https://is.gd/create.php?format=simple&url={longUrl}");
+                                }
+                                string shortMessage = $"تمت الموافقة عليك! اضغط الرابط لإكمال الطلب: {shortUrl}";
+                                await MainHelper.SendSms(userNumber, shortMessage);
+                            }
+                            catch
+                            {
+                                // إذا فشل الاختصار، نرسل الرابط الطويل
+                                await MainHelper.SendSms(userNumber, smsMessage);
+                            }
+                        });
                         break;
-
                     case "reject":
                         cmd = new SqlCommand(
                             "UPDATE usersDelivery SET l_deliveryStatusId=4,isActive=0, rejectNote=@note WHERE id=@id", conn);
-
-                        SendSmsBackground("962798579769", "مرفوضة يمعلم");
-
                         cmd.Parameters.AddWithValue("@note", note);
+                        SendSmsBackground(userNumber, "مرفوضة يمعلم");
                         break;
 
                     case "incomplete":
@@ -890,42 +827,29 @@ namespace ShabAdmin
                         cmd.Parameters.AddWithValue("@status", 2);
                         cmd.Parameters.AddWithValue("@note", note);
 
-                        // توليد الرابط المشفر
-                        string encryptedUserId = MainHelper.Encrypt_Me(userId.ToString(), true);
-                        string baseUrl = $"https://www.alshaeb.net";
-                        string longUrl = $"{baseUrl}/registerDriver?id={encryptedUserId}";
+                        string encryptedUserId1 = MainHelper.Encrypt_Me(userId.ToString(), true);
+                        string baseUrl1 = "https://www.alshaeb.net";
+                        string longUrl1 = $"{baseUrl1}/registerDriver?id={encryptedUserId1}";
+                        string smsMessage1 = $"طلبك غير مكتمل اضغط الرابط لاستكمال الطلب: {longUrl1}";
 
-                        // صياغة رسالة SMS
-                        string smsMessage = $"طلبك غير مكتمل اضغط الرابط لاستكمال الطلب: {longUrl}";
-
-                        string isGdApi = $"https://is.gd/create.php?format=simple&url={longUrl}";
-
-                        // إرسال SMS في الخلفية مع اختصار الرابط
                         Task.Run(async () =>
                         {
                             try
                             {
-                                string shortUrl = longUrl; // افتراضي
-                                isGdApi = $"https://is.gd/create.php?format=simple&url={longUrl}";
-
+                                string shortUrl1 = longUrl1;
                                 using (var client = new WebClient())
                                 {
-                                    shortUrl = await client.DownloadStringTaskAsync(isGdApi);
+                                    shortUrl1 = await client.DownloadStringTaskAsync($"https://is.gd/create.php?format=simple&url={longUrl1}");
                                 }
-
-                                string shortMessage = $"طلبك غير مكتمل اضغط الرابط لاستكمال الطلب: {shortUrl}";
-                                await MainHelper.SendSms("962798579769", shortMessage);
+                                string shortMessage1 = $"طلبك غير مكتمل اضغط الرابط لاستكمال الطلب: {shortUrl1}";
+                                await MainHelper.SendSms(userNumber, shortMessage1);
                             }
                             catch
                             {
-                                // لو فشل الاختصار، نرسل الرابط الطويل
-                                await MainHelper.SendSms("962798579769", smsMessage);
+                                await MainHelper.SendSms(userNumber, smsMessage1);
                             }
                         });
-
                         break;
-
-
                 }
 
                 cmd.Parameters.AddWithValue("@id", userId);
@@ -934,6 +858,7 @@ namespace ShabAdmin
 
             GridDeliveryUsers.DataBind();
         }
+
 
         protected void GridDeliveryUsers_HtmlRowPrepared(object sender, ASPxGridViewTableRowEventArgs e)
         {
@@ -986,16 +911,26 @@ namespace ShabAdmin
                     btnIncompleteBulb.ClientSideEvents.Init = "function(s, e) { s.GetMainElement().innerHTML = 'غير مكتمل<br/>تم التحديث'; }";
                     btnIncompleteBulb.ClientSideEvents.Click = $"function(s,e){{ ShowASPXPopup('incomplete',{recordId}); }}";
                 }
-                else
+                else if (statusId == 2 && isUpdated == 0)
                 {
+
                     btnIncomplete.Visible = true;
                     btnIncompleteBulb.ClientVisible = false;
                     btnApprove.Enabled = false;
                     btnReject.Enabled = false;
                     btnIncomplete.ClientSideEvents.Click = $"function(s,e){{ ShowASPXPopup('incomplete',{recordId}); }}";
                 }
+                else if (statusId == 1)
+                {
+                    btnIncomplete.Visible = true;
+                    btnIncompleteBulb.ClientVisible = false;
+                    btnApprove.Enabled = true;
+                    btnReject.Enabled = true;
+                    btnIncomplete.ClientSideEvents.Click = $"function(s,e){{ ShowASPXPopup('incomplete',{recordId}); }}";
+                }
             }
         }
+
 
         protected string GetDocumentHtml(object l_documentType, object idFront, object idBack, object passport, object residence)
         {

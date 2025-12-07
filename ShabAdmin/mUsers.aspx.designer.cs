@@ -249,6 +249,15 @@ namespace ShabAdmin
         protected global::System.Web.UI.WebControls.SqlDataSource db_L_DeliveryStatus;
 
         /// <summary>
+        /// db_L_Gender control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource db_L_Gender;
+
+        /// <summary>
         /// popupImageViewer control.
         /// </summary>
         /// <remarks>
@@ -283,6 +292,15 @@ namespace ShabAdmin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxLabel lblPopupMessage;
+
+        /// <summary>
+        /// lblNoteHint control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxLabel lblNoteHint;
 
         /// <summary>
         /// lblPopupError control.

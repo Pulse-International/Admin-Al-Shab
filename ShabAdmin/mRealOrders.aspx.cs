@@ -114,7 +114,7 @@ namespace ShabAdmin
                     o.[companyId], 
                     c.[countryID] AS countryId,
                     o.usersDeliveryId,
-                    o.totalAmount,
+                    o.[totalAmount],
                     ud.username AS deliveryUserName,
                     ud.firstName AS deliveryFirstName,
                     ud.lastName AS deliveryLastName,

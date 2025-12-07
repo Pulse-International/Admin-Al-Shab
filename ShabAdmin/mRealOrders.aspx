@@ -514,14 +514,21 @@
                 Eval("deliveryUserName"),
                 Eval("id")
               )
-        %>
+                                                %>
                                             </DataItemTemplate>
 
                                             <EditFormSettings Visible="False" />
                                             <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                                         </dx:GridViewDataColumn>
 
-
+                                        <dx:GridViewDataColumn Caption="المبلغ الكلي" FieldName="totalAmount">
+                                            <DataItemTemplate>
+                                                <%# Eval("totalAmount") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
+                                            </DataItemTemplate>
+                                            <EditFormSettings Visible="False" />
+                                            <CellStyle VerticalAlign="Middle" Font-Bold="true" HorizontalAlign="Center">
+                                            </CellStyle>
+                                        </dx:GridViewDataColumn>
 
                                         <dx:GridViewDataDateColumn FieldName="userDate" Caption="التاريخ">
                                             <PropertiesDateEdit DisplayFormatString="yyyy/MM/dd hh:mm tt" />
@@ -619,6 +626,7 @@
                                                 o.[addressId], 
                                                 c.[countryID] AS countryId, 
                                                 o.[username], 
+                                                o.[totalAmount], 
                                                 o.[usersDeliveryId],
                                                 ud.[username]  AS deliveryUserName,
                                                 ud.[firstName] AS deliveryFirstName,
@@ -982,7 +990,7 @@
 
                         <Paddings Padding="2em" />
 
-                       <Columns>
+                        <Columns>
                             <dx:GridViewDataColumn FieldName="id" Caption="الرقم">
                                 <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
                             </dx:GridViewDataColumn>

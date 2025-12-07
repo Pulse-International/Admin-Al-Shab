@@ -28,29 +28,59 @@
 
 <body class="g-sidenav-show rtl bg-gray-200">
     <form runat="server">
-         <script>
-             function countrySelectedChanged(s, e) {
-                 setCookie('SelectedCountry', s.GetValue(), 365);
+        <script>
+            function countrySelectedChanged(s, e) {
+                setCookie('SelectedCountry', s.GetValue(), 365);
 
-                 setCookie('SelectedCompany', '1000', 365);
-
-
-                 window.location.href = "Default";
-             }
-
-             function companySelectedChanged(s, e) {
-                 setCookie('SelectedCompany', s.GetValue(), 365);
-
-                 window.location.href = "Default";
-             }
+                setCookie('SelectedCompany', '1000', 365);
 
 
-             window.onload = function () {
-                 if (window.location.pathname !== "/Default") {
-                     document.getElementById("divCountryCombo").style.display = "none";
-                 }
-             }
-         </script>
+                window.location.href = "Default";
+            }
+
+            function companySelectedChanged(s, e) {
+                setCookie('SelectedCompany', s.GetValue(), 365);
+
+                window.location.href = "Default";
+            }
+
+
+            window.onload = function () {
+                if (window.location.pathname !== "/Default") {
+                    document.getElementById("divCountryCombo").style.display = "none";
+                }
+            }
+        </script>
+        <style>
+            /* تصغير حجم الخط */
+            #sidenav-main .nav-link-text {
+                font-size: 13px !important;
+            }
+
+            #sidenav-main .navbar-brand span {
+                font-size: 14px !important;
+            }
+
+            /* تقليل العرض */
+            #sidenav-main {
+                width: 220px !important;
+            }
+
+                #sidenav-main .navbar-collapse {
+                    width: 220px !important;
+                }
+
+                /* تحسين المسافات */
+                #sidenav-main .nav-link .text-center {
+                    margin-left: 4px !important;
+                }
+
+            @media (min-width: 1200px) {
+                .sidenav.fixed-end + .main-content {
+                    margin-right: 14.125rem;
+                }
+            }
+        </style>
         <asp:SqlDataSource
             ID="dsCountries"
             runat="server"
@@ -186,7 +216,7 @@
         <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg overflow-x-hidden">
             <!-- Navbar -->
             <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl sticky-top bg-white shadow mt-3 mb-1"
-                style="border:  2px solid #a2adff" id="navbarBlur" navbar-scroll="true">
+                style="border: 2px solid #a2adff" id="navbarBlur" navbar-scroll="true">
                 <div class="container-fluid py-1 px-3 d-flex align-items-center justify-content-between position-relative">
 
                     <!-- Breadcrumb (يسار) -->
@@ -194,7 +224,7 @@
                         <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0">
                             <li class="breadcrumb-item text-sm ps-2">
                                 <a class="opacity-5 text-dark" href="javascript:;" style="font-size: 2em">شاشة تطبيق الشعب
-         </a>
+                                </a>
                             </li>
                         </ol>
                     </nav>
@@ -287,7 +317,14 @@
                 ID="MainContent"
                 runat="server">
             </asp:ContentPlaceHolder>
-            <br /><br /><br /><br /><br /><br /><br /><br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
             <footer class="footer py-4  ">
                 <div class="container-fluid">
                     <div class="row align-items-center justify-content-lg-between">

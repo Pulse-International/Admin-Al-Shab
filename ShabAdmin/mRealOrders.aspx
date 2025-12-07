@@ -345,7 +345,7 @@
                     <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="X-Large"></TabStyle>
                     <ContentCollection>
                         <dx:ContentControl>
-                            <span style="color: #000000;font-family:Cairo ;font-size:1.2em; font-weight: bold">سيتم تحديث الطلبات كل 30 ثانية
+                            <span style="color: #000000; font-family: Cairo; font-size: 1.2em; font-weight: bold">سيتم تحديث الطلبات كل 30 ثانية
                             </span>
                             <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
 
@@ -466,19 +466,6 @@
                                             <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                                         </dx:GridViewDataColumn>
 
-                                        <dx:GridViewDataColumn Caption="مستخدم التوصيل" FieldName="usersDeliveryId">
-                                            <DataItemTemplate>
-                                                <div style="text-align: center; font-family: 'Cairo'; direction: rtl;">
-                                                    <div style="font-weight: bold;">
-                                                        <%# Eval("deliveryFirstName") + " " + Eval("deliveryLastName") %>
-                                                    </div>
-                                                    <div style="color: gray; font-size: smaller;">
-                                                        <%# Eval("deliveryUserName") %>
-                                                    </div>
-                                                </div>
-                                            </DataItemTemplate>
-                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
-                                        </dx:GridViewDataColumn>
 
                                         <dx:GridViewDataColumn Caption="الفرع" FieldName="branchId">
                                             <DataItemTemplate>
@@ -508,16 +495,28 @@
                                         <dx:GridViewDataColumn Caption="تتبع السائق" FieldName="addressId">
                                             <DataItemTemplate>
                                                 <%# 
-                                                        Eval("l_orderStatus") != null && Convert.ToInt32(Eval("l_orderStatus")) == 1 
-                                                        ? "لا يوجد سائق" 
-                                                        :
-                                                        string.Format(
-                                                            "<a href=\"javascript:void(0);\" onclick=\"callbackAddress.PerformCallback('{0}'); popupAddress.Show();\" " +
-                                                            "style=\"text-decoration: underline; color: #007bff; font-family: Cairo;\">تتبع السائق</a>",
-                                                            Eval("id")
-                                                        )
-                                                    %>
+            (Eval("usersDeliveryId") == null || Convert.ToInt32(Eval("usersDeliveryId")) == 0)
+
+            ? "لا يوجد سائق"
+
+            : string.Format(
+                "<div style='text-align:center; font-family:Cairo;'>" +
+
+                    "<div style='font-weight:bold; margin-bottom:2px;'>{0}</div>" +
+
+                    "<div style='font-size:12px; color:#666; direction:ltr; margin-bottom:6px;'>{1}</div>" +
+
+                    "<a href=\"javascript:void(0);\" onclick=\"callbackAddress.PerformCallback('{2}'); popupAddress.Show();\" " +
+                    "style=\"text-decoration: underline; color: #007bff;\">تتبع السائق</a>" +
+
+                "</div>",
+                Eval("deliveryFirstName") + " " + Eval("deliveryLastName"),
+                Eval("deliveryUserName"),
+                Eval("id")
+              )
+        %>
                                             </DataItemTemplate>
+
                                             <EditFormSettings Visible="False" />
                                             <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                                         </dx:GridViewDataColumn>
@@ -983,7 +982,7 @@
 
                         <Paddings Padding="2em" />
 
-                        <Columns>
+                       <Columns>
                             <dx:GridViewDataColumn FieldName="id" Caption="الرقم">
                                 <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
                             </dx:GridViewDataColumn>
@@ -1057,6 +1056,7 @@
                             </dx:GridViewDataColumn>
 
                         </Columns>
+
                         <TotalSummary>
                             <dx:ASPxSummaryItem FieldName="id" SummaryType="Count" DisplayFormat="العدد = {0}" />
                         </TotalSummary>

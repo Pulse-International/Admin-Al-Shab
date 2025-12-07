@@ -51,7 +51,7 @@ namespace ShabAdmin
                 FROM [usersDelivery] u
                 LEFT JOIN L_Gender g ON u.l_gender = g.id
                 WHERE u.countryId = @countryId
-                ORDER BY u.isOnline desc, u.id";
+                ORDER BY u.l_deliveryStatusId,u.isOnline desc,u.userDate";
 
                 db_DeliveryUsers.SelectParameters.Add("countryId", countryId.ToString());
 
@@ -116,7 +116,7 @@ namespace ShabAdmin
                 FROM [usersDelivery] u
                 LEFT JOIN L_Gender g ON u.l_gender = g.id
                 WHERE u.countryId = @countryId
-                ORDER BY u.isOnline desc, u.id";
+                ORDER BY u.l_deliveryStatusId,u.isOnline,u.userDate";
 
                 db_DeliveryUsers.SelectParameters.Add("countryId", countryId.ToString());
 
@@ -176,7 +176,7 @@ namespace ShabAdmin
                        u.userplatform,u.vehicleModel,u.rate, u.userDate
                 FROM [usersDelivery] u
                 LEFT JOIN L_Gender g ON u.l_gender = g.id
-                ORDER BY u.isOnline desc, u.id";
+                ORDER BY u.l_deliveryStatusId,u.isOnline,u.userDate";
 
                 db_MachineUsers.SelectCommand = @"
             SELECT id, username, password, firstName, lastName, isActive, countryId, companyId, branchId, userDate
@@ -385,8 +385,7 @@ namespace ShabAdmin
                     if (countryId > 0)
                     {
                         db_companyName.SelectCommand = "SELECT id, companyName FROM companies WHERE countryId = " + countryId.ToString();
-                        //db_companyName.SelectParameters.Clear();
-                        //db_companyName.SelectParameters.Add("countryId", countryId.ToString());
+
                         combo.DataBind();
                     }
                     else
@@ -403,16 +402,12 @@ namespace ShabAdmin
                         var (countryId1, companyId1) = GetUserPrivileges();
                         if (companyId1 != 1000)
                         {
-                            db_companyName.SelectCommand = "SELECT id, companyName FROM companies WHERE countryId = @countryId AND id =@companyId ";
-                            db_companyName.SelectParameters.Clear();
-                            db_companyName.SelectParameters.Add("countryId", countryId.ToString());
-                            db_companyName.SelectParameters.Add("companyId", companyId1.ToString());
+                            db_companyName.SelectCommand = "SELECT id, companyName FROM companies WHERE countryId =" + countryId.ToString() + "AND id =" + companyId1.ToString();
+
                         }
                         else
                         {
-                            db_companyName.SelectCommand = "SELECT id, companyName FROM companies WHERE countryId = @countryId";
-                            db_companyName.SelectParameters.Clear();
-                            db_companyName.SelectParameters.Add("countryId", countryId.ToString());
+                            db_companyName.SelectCommand = "SELECT id, companyName FROM companies WHERE countryId =" + countryId.ToString();
                         }
                         combo.DataBind();
                     }
@@ -462,6 +457,7 @@ namespace ShabAdmin
                 };
             }
         }
+
 
         protected void callbackApprove_Callback(object sender, DevExpress.Web.CallbackEventArgs e)
         {
@@ -519,6 +515,8 @@ namespace ShabAdmin
 
             }
         }
+
+
 
         protected void GridDeliveryUsers_RowValidating(object sender, DevExpress.Web.Data.ASPxDataValidationEventArgs e)
         {
@@ -603,7 +601,22 @@ namespace ShabAdmin
             e.Cancel = true;
             GridDeliveryUsers.CancelEdit();
             GridDeliveryUsers.DataBind();
-        }        
+        }
+
+        void DeleteOldFileIfChanged(string fileCheck, string fileOld)
+        {
+            if (fileCheck == "1")
+            {
+                int pos = fileOld.LastIndexOf("/");
+                if (pos > -1)
+                {
+                    string fileToDelete = fileOld.Substring(pos + 1);
+                    string[] fileList = Directory.GetFiles(Server.MapPath("~/assets/uploads/delivery-users"), fileToDelete);
+                    foreach (string file in fileList)
+                        System.IO.File.Delete(file);
+                }
+            }
+        }
 
         string fileName = string.Empty;
         int checkError = 0;
@@ -780,6 +793,8 @@ namespace ShabAdmin
                         userNumber = result.ToString();
                 }
 
+                string baseUrl = WebConfigurationManager.AppSettings["SourceURL"];
+
                 SqlCommand cmd = null;
 
                 switch (action)
@@ -790,7 +805,6 @@ namespace ShabAdmin
 
                         // توليد الرابط المشفر
                         string encryptedUserId = MainHelper.Encrypt_Me(userId.ToString(), true);
-                        string baseUrl = "https://www.alshaeb.net";
                         string longUrl = $"{baseUrl}/ldeliveryCompleted?id={encryptedUserId}";
                         string smsMessage = $"مبروك! تمت الموافقة اضغط الرابط لإكمال العملية: {longUrl}";
 
@@ -828,8 +842,7 @@ namespace ShabAdmin
                         cmd.Parameters.AddWithValue("@note", note);
 
                         string encryptedUserId1 = MainHelper.Encrypt_Me(userId.ToString(), true);
-                        string baseUrl1 = "https://www.alshaeb.net";
-                        string longUrl1 = $"{baseUrl1}/registerDriver?id={encryptedUserId1}";
+                        string longUrl1 = $"{baseUrl}/registerDriver?id={encryptedUserId1}";
                         string smsMessage1 = $"طلبك غير مكتمل اضغط الرابط لاستكمال الطلب: {longUrl1}";
 
                         Task.Run(async () =>

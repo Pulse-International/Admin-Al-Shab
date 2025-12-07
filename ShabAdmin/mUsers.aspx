@@ -1889,7 +1889,7 @@
                                            u.userplatform,u.vehicleModel,u.rate, u.userDate
                                     FROM [usersDelivery] u
                                     LEFT JOIN L_Gender g ON u.l_gender = g.id
-                                    ORDER BY u.isOnline desc, u.id"
+                                    ORDER BY u.l_deliveryStatusId,u.isOnline,u.userDate"
                                 UpdateCommand="UPDATE [usersDelivery]
                                     SET password = @password,
                                         storedsalt = @storedsalt

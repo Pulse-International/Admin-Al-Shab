@@ -449,7 +449,7 @@
                 <div class="logo-section">
                         <div class="logo">
                             <a href="lMain_page.aspx">
-                                <img src="assets/imagess/header-255.png" class="logoimage" />
+                                <img src="assets/img/header-255.png" class="logoimage" />
                             </a>
                         </div>
                 </div>
@@ -470,7 +470,7 @@
                     <div class="footer-logo-section">
                         <div class="footer-logo">
                             <div class="footer-logo-icon">
-                                <img src="assets/imagess/alshaeb_default_image-removebg-preview.png" width="105" height="85"  />
+                                <img src="assets/img/alshaeb_default_image-removebg-preview.png" width="105" height="85"  />
                             </div>
                             <span class="footer-logo-text">الشعب</span>
                         </div>

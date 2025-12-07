@@ -1126,7 +1126,9 @@
                                 var phone = s.GetValue();
                                 if (phone && phone.length >= 10) { phoneCallback.PerformCallback(phone); }
                             }" />
-                            <ValidationSettings RequiredField-IsRequired="true" Display="Dynamic" />
+                            <ValidationSettings RequiredField-IsRequired="true" Display="Dynamic" SetFocusOnError="True" >
+<RequiredField IsRequired="True"></RequiredField>
+                            </ValidationSettings>
                         </dx:ASPxTextBox>
                         <dx:ASPxLabel ID="lblPhoneMessage" runat="server" ClientInstanceName="lblPhoneMessage" />
                         <dx:ASPxCallback ID="phoneCallback" runat="server" ClientInstanceName="phoneCallback" OnCallback="phoneCallback_Callback">

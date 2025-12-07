@@ -780,7 +780,7 @@
                         <div class="hero-circle hero-circle-1"></div>
                         <div class="hero-circle hero-circle-2"></div>
                         <div class="hero-image-wrapper">
-                            <img src="assets/imagess/header.png" />
+                            <img src="assets/img/header.png" />
                         </div>
                     </div>
                 </div>

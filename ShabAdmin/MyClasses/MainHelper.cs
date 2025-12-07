@@ -70,7 +70,7 @@ public class MainHelper
         string PreCode = Decrypt_Me(Decrypt_Me(Decrypt_Me(Username, true), true), true);
         return PreCode;
     }
-    public static string Encrypt_Me(string toEncrypt, bool useHashing) 
+    public static string Encrypt_Me(string toEncrypt, bool useHashing)
     {
         try
         {
@@ -318,6 +318,24 @@ public class MainHelper
             var apiToken = WebConfigurationManager.AppSettings["Sms:ApiToken"];
             var senderText = WebConfigurationManager.AppSettings["Sms:senderText"];
 
+            string userNumber = mobileNumber;
+
+            bool countryCode1 = userNumber.StartsWith("962");
+            bool countryCode2 = userNumber.StartsWith("+962");
+            bool countryCode3 = userNumber.StartsWith("00962");
+
+            if (countryCode1)
+                userNumber = userNumber.Substring(3);
+            else if (countryCode2)
+                userNumber = userNumber.Substring(4);
+            else if (countryCode3)
+                userNumber = userNumber.Substring(5);
+
+            if (userNumber.Substring(0, 1) == "0")
+                userNumber = "962" + userNumber.Substring(1);
+            else
+                userNumber = "962" + userNumber;
+
             using (var client = new HttpClient())
             {
                 var encodedMessage = Uri.EscapeDataString(messageBody);
@@ -326,7 +344,7 @@ public class MainHelper
                           $"?api-token={apiToken}" +
                           $"&SenderText={senderText}" +
                           $"&MessageBody={encodedMessage}" +
-                          $"&MobileNumber={mobileNumber}";
+                          $"&MobileNumber={userNumber}";
 
                 var response = await client.GetAsync(url);
                 var result = await response.Content.ReadAsStringAsync();
@@ -339,6 +357,7 @@ public class MainHelper
             return $"Error: {ex.Message}";
         }
     }
+
 
     public static void SendSmsBackground(string mobileNumber, string messageBody)
     {

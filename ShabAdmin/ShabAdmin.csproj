@@ -163,6 +163,10 @@
     <Content Include="assets\css\nucleo-icons.css" />
     <Content Include="assets\css\nucleo-svg.css" />
     <Content Include="assets\fonts\nucleo-icons.svg" />
+    <Content Include="assets\imagess\alshaeb_default_image-removebg-preview.png" />
+    <Content Include="assets\imagess\download__10_-removebg-preview.png" />
+    <Content Include="assets\imagess\header-255.png" />
+    <Content Include="assets\imagess\header.png" />
     <Content Include="assets\img\allowedImage.png" />
     <Content Include="assets\img\back.jpg" />
     <Content Include="assets\img\back.png" />
@@ -203,7 +207,9 @@
     <Content Include="assets\js\plugins\perfect-scrollbar.min.js" />
     <Content Include="assets\js\plugins\smooth-scrollbar.min.js" />
     <Content Include="assets\js\plugins\world.js" />
-    <Content Include="LMain_page.aspx" />
+    <Content Include="ldeliveryCompleted.aspx" />
+    <Content Include="registerDriver.aspx" />
+    <Content Include="lMain_page.aspx" />
     <Content Include="mCoupons.aspx" />
     <Content Include="mLookUps.aspx" />
     <Content Include="mNotifications.aspx" />
@@ -459,19 +465,33 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="LMain_page.aspx.cs">
-      <DependentUpon>LMain_page.aspx</DependentUpon>
+    <Compile Include="ldeliveryCompleted.aspx.cs">
+      <DependentUpon>ldeliveryCompleted.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="LMain_page.aspx.designer.cs">
-      <DependentUpon>LMain_page.aspx</DependentUpon>
+    <Compile Include="ldeliveryCompleted.aspx.designer.cs">
+      <DependentUpon>ldeliveryCompleted.aspx</DependentUpon>
     </Compile>
-    <Compile Include="LSite.Master.cs">
-      <DependentUpon>LSite.Master</DependentUpon>
+    <Compile Include="registerDriver.aspx.cs">
+      <DependentUpon>registerDriver.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="LSite.Master.designer.cs">
-      <DependentUpon>LSite.Master</DependentUpon>
+    <Compile Include="registerDriver.aspx.designer.cs">
+      <DependentUpon>registerDriver.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="lMain_page.aspx.cs">
+      <DependentUpon>lMain_page.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="lMain_page.aspx.designer.cs">
+      <DependentUpon>lMain_page.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="lSite.Master.cs">
+      <DependentUpon>lSite.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="lSite.Master.designer.cs">
+      <DependentUpon>lSite.Master</DependentUpon>
     </Compile>
     <Compile Include="mCoupons.aspx.cs">
       <DependentUpon>mCoupons.aspx</DependentUpon>
@@ -694,6 +714,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="assets\temp\" />
     <Folder Include="assets\uploads\categories\" />
     <Folder Include="assets\uploads\delivery-users\" />
     <Folder Include="assets\uploads\extras\" />
@@ -712,7 +733,7 @@
     <Content Include="assets\animations\Danger.json" />
     <Content Include="assets\animations\bike.json" />
     <Content Include="alshaeb-click-firebase-adminsdk-fbsvc-1c66124f5a.json" />
-    <Content Include="LSite.Master" />
+    <Content Include="lSite.Master" />
     <None Include="packages.config" />
     <Content Include="mSite.Master" />
     <None Include="Web.Debug.config">

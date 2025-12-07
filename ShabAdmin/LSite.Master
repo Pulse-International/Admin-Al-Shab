@@ -1,4 +1,5 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true"  CodeBehind="LSite.master.cs" Inherits="ShabAdmin.LSite" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="LSite.master.cs" Inherits="ShabAdmin.LSite" %>
+
 <%@ Register Assembly="DevExpress.Web.v24.1, Version=24.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Namespace="DevExpress.Web" TagPrefix="dx" %>
 
 
@@ -9,16 +10,571 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
-    <title> Become part of Alshaeb today
+    <title>Become part of Alshaeb today
     </title>
+    <!-- Bootstrap RTL CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts - Arabic -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!--     Fonts and icons     -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+            direction: rtl;
+            text-align: right;
+        }
+
+        /* ==================== HEADER ==================== */
+        .main-header {
+            box-shadow: 0 2px 15px rgba(220, 53, 69, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 0;
+            border-bottom: 3px solid #ffc107;
+            padding: 9px;
+            background: #d61821;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 46px 30px;
+/*            display: flex;*/
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+            /* Golden Border Effect */
+            .header-container::before {
+                content: '';
+                position: absolute;
+                top: -3px;
+                left: 0;
+                right: 0;
+                height: 3px;
+            }
+
+        /* Logo */
+        .logo-section {
+/*            display: flex;*/
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+
+        .logo {
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 900;
+            color: #dc3545;
+            position: relative;
+        }
+
+            .logo::before {
+                position: absolute;
+                width: 70px;
+                height: 70px;
+                border: 2px solid rgba(255, 193, 7, 0.2);
+                border-radius: 50%;
+                animation: pulse 2s infinite;
+            }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.5;
+            }
+        }
+
+        .logo-text {
+            color: black;
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+            padding-right: 12px;
+        }
+
+        /* Navigation */
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+            .nav-links a {
+                color: black;
+                text-decoration: none;
+                font-size: 17px;
+                font-weight: 600;
+                padding: 10px 20px;
+                border-radius: 25px;
+                transition: all 0.3s ease;
+                position: relative;
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            }
+
+                .nav-links a:hover {
+                    background: rgba(255, 193, 7, 0.15);
+                    transform: translateY(-2px);
+                    box-shadow: 0 3px 10px rgba(255, 193, 7, 0.2);
+                }
+
+                .nav-links a.active {
+                    background: linear-gradient(135deg, #ffc107 0%, #ffdb4d 100%);
+                    color: #dc3545;
+                    font-weight: 700;
+                    box-shadow: 0 3px 12px rgba(255, 193, 7, 0.4);
+                }
+
+        .btn-merchant {
+            background: linear-gradient(135deg, #ffc107 0%, #ffdb4d 100%);
+            color: #dc3545;
+            border-color: #ffc107;
+            font-weight: 700;
+        }
+
+            .btn-merchant:hover {
+                background: white;
+                color: #dc3545;
+                transform: translateY(-3px);
+                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+            }
+
+        .btn-driver {
+            background: white;
+            color: #dc3545;
+            border: 2px solid #ffc107;
+            font-weight: 700;
+        }
+
+            .btn-driver:hover {
+                background: linear-gradient(135deg, #ffc107 0%, #ffdb4d 100%);
+                color: #dc3545;
+                transform: translateY(-3px);
+                box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+            }
+
+        /* Mobile Menu Toggle */
+        .mobile-toggle {
+            display: none;
+            background: linear-gradient(135deg, #ffc107 0%, #ffdb4d 100%);
+            border: 2px solid white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #dc3545;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        /* ==================== MAIN CONTENT ==================== */
+        .main-content {
+            min-height: calc(100vh - 200px);
+            padding: 40px 20px;
+        }
+
+        /* ==================== FOOTER ==================== */
+        .main-footer {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+            color: white;
+            padding: 60px 0 20px;
+            margin-top: 80px;
+            border-top: 3px solid #ffc107;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 50px;
+            margin-bottom: 40px;
+        }
+
+        /* Footer Logo Section */
+        .footer-logo-section {
+            padding-left: 20px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 900;
+            color: #ffc107;
+            border: 2px solid #ffc107;
+        }
+
+        .footer-logo-text {
+            font-size: 28px;
+            font-weight: 900;
+            color: white;
+            padding-right: 12px;
+        }
+
+        .footer-description {
+            color: #b0bec5;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            font-size: 15px;
+        }
+
+        /* Social Media */
+        .social-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-link {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffc107;
+            font-size: 18px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+            .social-link:hover {
+                background: linear-gradient(135deg, #ffc107 0%, #ffdb4d 100%);
+                color: #dc3545;
+                transform: translateY(-3px);
+                border-color: #ffc107;
+            }
+
+        /* Footer Links */
+        .footer-section h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #ffc107;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .footer-links li {
+                margin-bottom: 12px;
+            }
+
+            .footer-links a {
+                color: #b0bec5;
+                text-decoration: none;
+                font-size: 15px;
+                transition: all 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+                .footer-links a:hover {
+                    color: #ffc107;
+                    padding-right: 5px;
+                }
+
+                .footer-links a i {
+                    font-size: 12px;
+                }
+
+        /* Footer Bottom */
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 193, 7, 0.2);
+            padding-top: 30px;
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .copyright {
+            color: #b0bec5;
+            font-size: 14px;
+        }
+
+        .footer-bottom-links {
+            display: flex;
+            gap: 25px;
+        }
+
+            .footer-bottom-links a {
+                color: #b0bec5;
+                text-decoration: none;
+                font-size: 14px;
+                transition: color 0.3s ease;
+            }
+
+                .footer-bottom-links a:hover {
+                    color: #ffc107;
+                }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 992px) {
+            .header-container {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                gap: 10px;
+                padding: 20px 0;
+                border-top: 2px solid rgba(255, 193, 7, 0.2);
+            }
+
+                .nav-links.active {
+                    display: flex;
+                }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .auth-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header-container {
+                padding: 0px;
+            }
+
+            .logo-text {
+                font-size: 22px;
+            }
+            .main-header{
+                padding:1px;
+            }
+            .logo {
+                width: 100%;
+                height: 100%;
+                font-size: 24px;
+            }
+            .logoimage{
+                width:100%;
+            }
+            .btn-register {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-register {
+                width: 100%;
+                justify-content: center;
+            }
+            .logo-section{
+                    margin: 5px auto;
+            }
+            .hero-image-wrapper img{
+                width:100%;
+            }
+        }
+    </style>
 </head>
 
 <body class="g-sidenav-show rtl bg-gray-200">
     <form runat="server">
-           <asp:ContentPlaceHolder
-       ID="MainContent"
-       runat="server">
-   </asp:ContentPlaceHolder>
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-container">
+                <!-- Logo -->
+                <div class="logo-section">
+                        <div class="logo">
+                            <a href="lMain_page.aspx">
+                                <img src="assets/imagess/header-255.png" class="logoimage" />
+                            </a>
+                        </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server">
+            </asp:ContentPlaceHolder>
+        </main>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="footer-container">
+                <div class="footer-content">
+                    <!-- Logo & Description -->
+                    <div class="footer-logo-section">
+                        <div class="footer-logo">
+                            <div class="footer-logo-icon">
+                                <img src="assets/imagess/alshaeb_default_image-removebg-preview.png" width="105" height="85"  />
+                            </div>
+                            <span class="footer-logo-text">الشعب</span>
+                        </div>
+                        <p class="footer-description">
+                            أكثر من مجرد توصيل، نحن شركاء نجاحك. منصة الشعب تجمع التجار 
+والسائقين في عائلة واحدة من الثقة والاحترافية.
+                   
+                        </p>
+                        <!-- Social Media -->
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/nuts.alshaeb/?locale=ar_AR" class="social-link" title="فيسبوك">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://www.instagram.com/alshaeb.roasters_jordan/?hl=ar" class="social-link" title="إنستغرام">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="https://www.linkedin.com/company/shaeb-roasters-%D9%85%D8%AD%D8%A7%D9%85%D8%B5-%D8%A7%D9%84%D8%B4%D8%B9%D8%A8/" class="social-link" title="لينكد إن">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="https://www.youtube.com/@ALSHAEB-ROASTERS" class="social-link" title="يوتيوب">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="footer-section">
+                        <h3>روابط سريعة</h3>
+                        <ul class="footer-links">
+                            <li><a href="/Default.aspx"><i class="fas fa-angle-left"></i>الرئيسية</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Services -->
+                    <div class="footer-section">
+                        <h3>الخدمات</h3>
+                        <ul class="footer-links">
+                            <li><a href="#"><i class="fas fa-angle-left"></i>خدمة الشراء والتوصيل</a></li>
+                            <li><a href="#"><i class="fas fa-angle-left"></i>محفظة الشعب (Wallet)</a></li>
+                            <li><a href="#"><i class="fas fa-angle-left"></i>خدمة العملاء والدعم الفني</a></li>
+                            <li><a href="#"><i class="fas fa-angle-left"></i>نظام إدارة الطلبات</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div class="footer-section">
+                        <h3>تواصل معنا</h3>
+                        <ul class="footer-links">
+                            <li><a href="tel:+962 7 9799 9090"><i class="fas fa-phone"></i>+962 7 9799 9090</a></li>
+                            <li><a href="mailto:info@alsheib.com"><i class="fas fa-envelope"></i>info@alshaeb.com</a></li>
+                            <li><a href="#"><i class="fas fa-map-marker-alt"></i>عمان، الأردن</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Footer Bottom -->
+                <div class="footer-bottom">
+                    <div class="copyright">
+                        © 2025 الشعب. جميع الحقوق محفوظة.
+               
+                    </div>
+                    <div class="footer-bottom-links">
+                        <a href="/Privacy.aspx">سياسة الخصوصية</a>
+                        <a href="/Terms.aspx">الشروط والأحكام</a>
+                        <a href="/FAQ.aspx">الأسئلة الشائعة</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </form>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.8/inputmask.min.js"></script>
+    <!-- Mobile Menu Toggle Script -->
+    <script>
+        function toggleMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function (event) {
+            const navMenu = document.getElementById('navMenu');
+            const toggle = document.querySelector('.mobile-toggle');
+
+            if (!navMenu.contains(event.target) && !toggle.contains(event.target)) {
+                navMenu.classList.remove('active');
+            }
+        });
+
+        // Highlight active page
+        window.addEventListener('DOMContentLoaded', function () {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-links a');
+
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
     </form>
 </body>
 

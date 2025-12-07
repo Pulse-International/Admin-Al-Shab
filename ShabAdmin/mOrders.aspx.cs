@@ -1268,7 +1268,7 @@ WHERE o.id = @orderId";
                 if ((status == 5 || status == 6) && (refundType == 2))
                     return "<span style='color:green;font-weight:bold;'>تم الإرجاع بالكامل</span>";
 
-                return "الارجاع غير مسموح";
+                return "يمكن الارجاع فقط في حالة تم التسليم";
             }
 
             // ==================== الزر يظهر دائماً في باقي الحالات ====================

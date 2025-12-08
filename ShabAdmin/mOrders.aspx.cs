@@ -38,8 +38,8 @@ namespace ShabAdmin
                         o.[id], 
                         o.[companyId], 
                         c.[countryID] AS countryId, 
- c.[companyName] AS companyName, 
- co.[countryName] AS countryName,
+                        c.[companyName] AS companyName, 
+                        co.[countryName] AS countryName,
                         o.[username], 
                         u.[firstName] + ' ' + u.[lastName] AS fullName,
                         o.[addressId], 
@@ -48,16 +48,21 @@ namespace ShabAdmin
                         o.[taxAmount], 
                         o.[totalAmount], 
                         o.[couponId], 
-o.pointId,
                         o.[pointsUsed],
- po.[points],
- po.[discountAmount],
+                        o.[pointId],
+                        po.[points],
+                        po.[discountAmount],
+
                         o.[l_paymentMethodId],
- o.[l_paymentMethodId2],
-                    o.[l_paymentMethodId2Amount],
-                        br.[name] AS branchName, 
+                        o.[l_paymentMethodId2],
+                        o.[l_paymentMethodId2Amount],
+
+                        pm1.[description] AS paymentMethod1,
+                        pm2.[description] AS paymentMethod2,
+
                         o.[l_RefundType],
-                        pm.[description] AS paymentMethod, 
+
+                        br.[name] AS branchName, 
                         o.[transactionId], 
                         o.[invoiceNo], 
                         o.[notes], 
@@ -67,22 +72,32 @@ o.pointId,
                         o.[realTotalAmount], 
                         o.[realTax], 
                         o.[userDate]
-                    FROM 
-                        [Orders] o
-                    JOIN 
-                        [companies] c ON o.companyId = c.id
-                    LEFT JOIN 
-                        l_paymentMethod pm ON o.l_paymentMethodId = pm.id
-                    LEFT JOIN 
-                        branches br ON o.branchId = br.id
-                    LEFT JOIN 
-                          countries co ON c.countryID = co.id
-                    LEFT JOIN 
-                        l_orderStatus os ON o.l_orderStatus = os.id
-                    LEFT JOIN 
-                        [usersApp] u ON o.username = u.username
-LEFT JOIN 
-    [pointsOffers] po ON o.pointId = po.id
+
+                    FROM [Orders] o
+
+                    JOIN [companies] c 
+                        ON o.companyId = c.id
+
+                    LEFT JOIN l_paymentMethod pm1 
+                        ON o.l_paymentMethodId = pm1.id
+
+                    LEFT JOIN l_paymentMethod pm2 
+                        ON o.l_paymentMethodId2 = pm2.id
+
+                    LEFT JOIN branches br 
+                        ON o.branchId = br.id
+
+                    LEFT JOIN countries co 
+                        ON c.countryID = co.id
+
+                    LEFT JOIN l_orderStatus os 
+                        ON o.l_orderStatus = os.id
+
+                    LEFT JOIN [usersApp] u 
+                        ON o.username = u.username
+
+                    LEFT JOIN [pointsOffers] po 
+                        ON o.pointId = po.id
                     WHERE o.companyId = @companyId AND c.countryID = @countryId order by o.id desc";
 
                 db_Orders.SelectParameters.Add("companyId", companyId.ToString());
@@ -101,8 +116,8 @@ LEFT JOIN
                         o.[id], 
                         o.[companyId], 
                         c.[countryID] AS countryId, 
- c.[companyName] AS companyName, 
- co.[countryName] AS countryName,
+                        c.[companyName] AS companyName, 
+                        co.[countryName] AS countryName,
                         o.[username], 
                         u.[firstName] + ' ' + u.[lastName] AS fullName,
                         o.[addressId], 
@@ -112,15 +127,20 @@ LEFT JOIN
                         o.[totalAmount], 
                         o.[couponId], 
                         o.[pointsUsed],
-o.pointId,
- po.[points],
- po.[discountAmount],
+                        o.[pointId],
+                        po.[points],
+                        po.[discountAmount],
+
                         o.[l_paymentMethodId],
- o.[l_paymentMethodId2],
-                    o.[l_paymentMethodId2Amount],
-                        br.[name] AS branchName, 
+                        o.[l_paymentMethodId2],
+                        o.[l_paymentMethodId2Amount],
+
+                        pm1.[description] AS paymentMethod1,
+                        pm2.[description] AS paymentMethod2,
+
                         o.[l_RefundType],
-                        pm.[description] AS paymentMethod, 
+
+                        br.[name] AS branchName, 
                         o.[transactionId], 
                         o.[invoiceNo], 
                         o.[notes], 
@@ -130,22 +150,32 @@ o.pointId,
                         o.[realTotalAmount], 
                         o.[realTax], 
                         o.[userDate]
-                    FROM 
-                        [Orders] o
-                    JOIN 
-                        [companies] c ON o.companyId = c.id
-                    LEFT JOIN 
-                        l_paymentMethod pm ON o.l_paymentMethodId = pm.id
-                    LEFT JOIN 
-                        branches br ON o.branchId = br.id
-                    LEFT JOIN 
-                          countries co ON c.countryID = co.id
-                    LEFT JOIN 
-                        l_orderStatus os ON o.l_orderStatus = os.id
-                    LEFT JOIN 
-                        [usersApp] u ON o.username = u.username
-LEFT JOIN 
-    [pointsOffers] po ON o.pointId = po.id
+
+                    FROM [Orders] o
+
+                    JOIN [companies] c 
+                        ON o.companyId = c.id
+
+                    LEFT JOIN l_paymentMethod pm1 
+                        ON o.l_paymentMethodId = pm1.id
+
+                    LEFT JOIN l_paymentMethod pm2 
+                        ON o.l_paymentMethodId2 = pm2.id
+
+                    LEFT JOIN branches br 
+                        ON o.branchId = br.id
+
+                    LEFT JOIN countries co 
+                        ON c.countryID = co.id
+
+                    LEFT JOIN l_orderStatus os 
+                        ON o.l_orderStatus = os.id
+
+                    LEFT JOIN [usersApp] u 
+                        ON o.username = u.username
+
+                    LEFT JOIN [pointsOffers] po 
+                        ON o.pointId = po.id
                     WHERE c.countryID = @countryId order by o.id desc";
 
                 db_Orders.SelectParameters.Add("countryId", countryId.ToString());
@@ -162,9 +192,9 @@ LEFT JOIN
                     SELECT 
                         o.[id], 
                         o.[companyId], 
-                        c.[countryID] AS countryId,
- c.[companyName] AS companyName, 
- co.[countryName] AS countryName,
+                        c.[countryID] AS countryId, 
+                        c.[companyName] AS companyName, 
+                        co.[countryName] AS countryName,
                         o.[username], 
                         u.[firstName] + ' ' + u.[lastName] AS fullName,
                         o.[addressId], 
@@ -174,14 +204,19 @@ LEFT JOIN
                         o.[totalAmount], 
                         o.[couponId], 
                         o.[pointsUsed],
-o.pointId,
- po.[points],
- po.[discountAmount],
+                        o.[pointId],
+                        po.[points],
+                        po.[discountAmount],
+
                         o.[l_paymentMethodId],
- o.[l_paymentMethodId2],
-                    o.[l_paymentMethodId2Amount],
+                        o.[l_paymentMethodId2],
+                        o.[l_paymentMethodId2Amount],
+
+                        pm1.[description] AS paymentMethod1,
+                        pm2.[description] AS paymentMethod2,
+
                         o.[l_RefundType],
-                        pm.[description] AS paymentMethod, 
+
                         br.[name] AS branchName, 
                         o.[transactionId], 
                         o.[invoiceNo], 
@@ -192,22 +227,32 @@ o.pointId,
                         o.[realTotalAmount], 
                         o.[realTax], 
                         o.[userDate]
-                    FROM 
-                        [Orders] o
-                    JOIN 
-                        [companies] c ON o.companyId = c.id
-                    LEFT JOIN 
-                        l_paymentMethod pm ON o.l_paymentMethodId = pm.id
-                    LEFT JOIN 
-                        branches br ON o.branchId = br.id
-                    LEFT JOIN 
-                          countries co ON c.countryID = co.id
-                    LEFT JOIN 
-                        l_orderStatus os ON o.l_orderStatus = os.id
-                    LEFT JOIN 
-                        [usersApp] u ON o.username = u.username
-LEFT JOIN 
-    [pointsOffers] po ON o.pointId = po.id
+
+                    FROM [Orders] o
+
+                    JOIN [companies] c 
+                        ON o.companyId = c.id
+
+                    LEFT JOIN l_paymentMethod pm1 
+                        ON o.l_paymentMethodId = pm1.id
+
+                    LEFT JOIN l_paymentMethod pm2 
+                        ON o.l_paymentMethodId2 = pm2.id
+
+                    LEFT JOIN branches br 
+                        ON o.branchId = br.id
+
+                    LEFT JOIN countries co 
+                        ON c.countryID = co.id
+
+                    LEFT JOIN l_orderStatus os 
+                        ON o.l_orderStatus = os.id
+
+                    LEFT JOIN [usersApp] u 
+                        ON o.username = u.username
+
+                    LEFT JOIN [pointsOffers] po 
+                        ON o.pointId = po.id
                     order by o.id desc";
 
                 dsCountries.SelectCommand = "SELECT id, countryName FROM countries where id <> 1000";

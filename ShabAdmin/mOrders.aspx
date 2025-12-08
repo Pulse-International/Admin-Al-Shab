@@ -484,11 +484,20 @@
                         </CellStyle>
                     </dx:GridViewDataColumn>
 
-                    <dx:GridViewDataColumn Caption="طريقة الدفع" FieldName="paymentMethod">
+                    <dx:GridViewDataColumn Caption="طريقة الدفع">
+                        <DataItemTemplate>
+                            <%# 
+            (Eval("l_paymentMethodId2") != DBNull.Value 
+             && Convert.ToInt32(Eval("l_paymentMethodId2")) > 0)
+            ? Eval("paymentMethod1") + "<br/>+<br/>" + Eval("paymentMethod2")
+            : Eval("paymentMethod1")
+        %>
+                        </DataItemTemplate>
+
                         <EditFormSettings Visible="False" />
-                        <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
-                        </CellStyle>
+                        <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                     </dx:GridViewDataColumn>
+
 
                     <dx:GridViewDataColumn Caption="رقم المعاملة" FieldName="transactionId">
                         <EditFormSettings Visible="False" />
@@ -637,11 +646,16 @@
                     o.[pointId],
                     po.[points],
                     po.[discountAmount],
+
                     o.[l_paymentMethodId],
                     o.[l_paymentMethodId2],
                     o.[l_paymentMethodId2Amount],
+
+                    pm1.[description] AS paymentMethod1,
+                    pm2.[description] AS paymentMethod2,
+
                     o.[l_RefundType],
-                    pm.[description] AS paymentMethod, 
+
                     br.[name] AS branchName, 
                     o.[transactionId], 
                     o.[invoiceNo], 
@@ -652,22 +666,32 @@
                     o.[realTotalAmount], 
                     o.[realTax], 
                     o.[userDate]
-                FROM 
-                    [Orders] o
-                JOIN 
-                    [companies] c ON o.companyId = c.id
-                LEFT JOIN 
-                    l_paymentMethod pm ON o.l_paymentMethodId = pm.id
-                LEFT JOIN 
-                    branches br ON o.branchId = br.id
-                LEFT JOIN 
-                    countries co ON c.countryID = co.id
-                LEFT JOIN 
-                    l_orderStatus os ON o.l_orderStatus = os.id
-                LEFT JOIN 
-                    [usersApp] u ON o.username = u.username
-                LEFT JOIN 
-                    [pointsOffers] po ON o.pointId = po.id
+
+                FROM [Orders] o
+
+                JOIN [companies] c 
+                    ON o.companyId = c.id
+
+                LEFT JOIN l_paymentMethod pm1 
+                    ON o.l_paymentMethodId = pm1.id
+
+                LEFT JOIN l_paymentMethod pm2 
+                    ON o.l_paymentMethodId2 = pm2.id
+
+                LEFT JOIN branches br 
+                    ON o.branchId = br.id
+
+                LEFT JOIN countries co 
+                    ON c.countryID = co.id
+
+                LEFT JOIN l_orderStatus os 
+                    ON o.l_orderStatus = os.id
+
+                LEFT JOIN [usersApp] u 
+                    ON o.username = u.username
+
+                LEFT JOIN [pointsOffers] po 
+                    ON o.pointId = po.id
                 ORDER BY o.id DESC"></asp:SqlDataSource>
 
         </div>

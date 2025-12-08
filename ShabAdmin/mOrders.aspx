@@ -100,8 +100,11 @@
                 if (availableWallet < 0) availableWallet = 0;
 
                 spinRefundQty.SetMaxValue(availableWallet);
-                spinRefundQty.SetValue(availableWallet > 0 ? 1 : 0);
+                spinRefundQty.SetValue(0); // ✅ الافتراضي صفر
                 spinRefundQty.SetEnabled(true);
+
+                var btn = document.getElementById("btnConfirmRefund");
+                if (btn) btn.disabled = true; // ✅ تعطيل زر التأكيد عند الفتح
 
                 var txtWallet = document.getElementById("maxRefundText");
                 if (txtWallet) {
@@ -111,52 +114,36 @@
 
                 // ==================== Credit Card Tab ====================
                 var creditMax = 0;
-
-                // التبويب يكون مرئي دائمًا
                 pageTab.GetTab(1).SetEnabled(false);
-
-                // بشكل افتراضي نخلي كل عناصر التبويب معطلة
                 spinRefundCardQty.SetEnabled(false);
                 spinRefundCardQty.SetValue(0);
+
                 var btnCard = document.getElementById("btnConfirmRefundCard");
                 if (btnCard) {
                     btnCard.disabled = true;
                     btnCard.style.opacity = "0.5";
                 }
 
-                // نفحص الشروط لتفعيل التبويب
                 var enableCreditTab = false;
 
-                // الحالة 1: الدفع الأول بطاقة والـ refundType = 3 والمبلغ المرجع >= المبلغ الكلي
-                if (paymentMethod1 == 2 && refundType == 3 && r >= t) {
-                    enableCreditTab = true;
-                }
-
-                // الحالة 2: الدفع الأول طريقة 3، الدفع الثاني بطاقة، والمبلغ المرجع >= secondAmount
-                if (paymentMethod1 == 3 && paymentMethod2 == 2 && r >= sec) {
-                    enableCreditTab = true;
-                }
+                if (paymentMethod1 == 2 && refundType == 3 && r >= t) enableCreditTab = true;
+                if (paymentMethod1 == 3 && paymentMethod2 == 2 && r >= sec) enableCreditTab = true;
 
                 if (enableCreditTab) {
                     pageTab.GetTab(1).SetEnabled(true);
 
-                    // تحديد الحد الأقصى للإرجاع حسب شروطك السابقة
-                    if (refundType == 0 || refundType == 1 || refundType == 3) {
+                    if (refundType == 0 || refundType == 1 || refundType == 3)
                         creditMax = sec > 0 ? sec : totalAmount;
-                    } else if (refundType == 2) {
+                    else if (refundType == 2)
                         creditMax = 0;
-                    }
 
-                    // شرط الدفع الثاني
-                    if (paymentMethod2 == 2 && refundType == 3) {
+                    if (paymentMethod2 == 2 && refundType == 3)
                         creditMax = Math.min(r, sec);
-                    }
 
                     creditMax = parseFloat(creditMax.toFixed(3));
 
-                    // تمكين عناصر التبويب
                     spinRefundCardQty.SetMaxValue(creditMax);
-                    spinRefundCardQty.SetValue(creditMax > 0 ? creditMax : 0);
+                    spinRefundCardQty.SetValue(creditMax);
                     spinRefundCardQty.SetEnabled(true);
                     spinRefundCardQty.SetReadOnly(true);
 
@@ -176,19 +163,18 @@
                         btnCard.style.opacity = creditMax > 0 ? "1" : "0.5";
                     }
                 }
-                // حساب المبالغ
-                var amountMethod1 = t - sec; // المبلغ الأول
-                var amountMethod2 = sec;     // المبلغ الثاني
 
-                // اسماء الطرق حسب النوع
+                var amountMethod1 = t - sec;
+                var amountMethod2 = sec;
+
                 var method1Name = (paymentMethod1 == 1 ? "نقداً" : paymentMethod1 == 2 ? "بطاقة" : "رصيد");
                 var method2Name = (paymentMethod2 == 1 ? "نقداً" : paymentMethod2 == 2 ? "بطاقة" : "رصيد");
 
-                // تحديث النصوص
                 var lbl1 = document.getElementById("lblPaymentMethod1");
                 var lbl2 = document.getElementById("lblPaymentMethod2");
 
-                if (lbl1) lbl1.innerText = "طريقة الدفع  (" + method1Name + "): " + amountMethod1.toFixed(3) + " دينار";
+                if (lbl1)
+                    lbl1.innerText = "طريقة الدفع  (" + method1Name + "): " + amountMethod1.toFixed(3) + " دينار";
 
                 if (lbl2) {
                     if (amountMethod2 > 0) {
@@ -201,6 +187,16 @@
 
                 pageTab.SetActiveTabIndex(0);
                 popupRefund.Show();
+            }
+
+            // ✅ تفعيل وتعطيل زر التأكيد حسب القيمة
+            function OnSpinRefundChanged() {
+                var val = spinRefundQty.GetValue();
+                var btn = document.getElementById("btnConfirmRefund");
+
+                if (btn) {
+                    btn.disabled = (!val || val <= 0);
+                }
             }
 
 
@@ -262,6 +258,8 @@
                 } else {
                     spinRefundQty.SetValue(1);
                 }
+                var btn = document.getElementById("btnConfirmRefund");
+                if (btn) btn.disabled = false; // ✅ تعطيل زر التأكيد عند الفتح
             }
 
             // ==================== Tab 2: Card Refund ====================
@@ -730,6 +728,7 @@
                                                                 DecimalPlaces="3"
                                                                 Width="100%"
                                                                 Font-Names="Cairo" Font-Size="21px">
+                                                                <ClientSideEvents ValueChanged="OnSpinRefundChanged" />
                                                             </dx:ASPxSpinEdit>
                                                         </div>
 
@@ -800,6 +799,8 @@
                                                                 DecimalPlaces="3"
                                                                 Width="100%"
                                                                 Font-Names="Cairo" Font-Size="21px">
+                                                                <ClientSideEvents ValueChanged="OnSpinRefundChanged" />
+
                                                             </dx:ASPxSpinEdit>
                                                         </div>
 

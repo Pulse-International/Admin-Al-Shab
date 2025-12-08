@@ -850,7 +850,7 @@ WHERE o.id = @orderId";
                                 amount = Convert.ToDecimal(val);
                         }
 
-                        int earnedPoints = Convert.ToInt32(amount * 100);
+                        int earnedPoints = Convert.ToInt32(requestedRefund * 100);
 
                         if (earnedPoints > 0)
                         {
@@ -1120,18 +1120,7 @@ WHERE o.id = @orderId";
                         // ==============================
                         //   خصم النقاط المكتسبة (amount * 100)
                         // ==============================
-                        string getAmountSql = @"SELECT totalAmount FROM orders WHERE id = @orderId";
-
-                        decimal amount = 0;
-                        using (SqlCommand cmd = new SqlCommand(getAmountSql, conn, tx))
-                        {
-                            cmd.Parameters.AddWithValue("@orderId", orderId);
-                            var val = cmd.ExecuteScalar();
-                            if (val != null && val != DBNull.Value)
-                                amount = Convert.ToDecimal(val);
-                        }
-
-                        int earnedPoints = Convert.ToInt32(amount * 100);
+                        int earnedPoints = Convert.ToInt32(requestedRefund * 100);
 
                         if (earnedPoints > 0)
                         {

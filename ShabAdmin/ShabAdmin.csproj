@@ -210,6 +210,7 @@
     <Content Include="assets\js\plugins\smooth-scrollbar.min.js" />
     <Content Include="assets\js\plugins\world.js" />
     <Content Include="ldeliveryCompleted.aspx" />
+    <Content Include="GetApp.aspx" />
     <Content Include="registerDriver.aspx" />
     <Content Include="lMain_page.aspx" />
     <Content Include="mCoupons.aspx" />
@@ -473,6 +474,13 @@
     </Compile>
     <Compile Include="ldeliveryCompleted.aspx.designer.cs">
       <DependentUpon>ldeliveryCompleted.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="GetApp.aspx.cs">
+      <DependentUpon>GetApp.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GetApp.aspx.designer.cs">
+      <DependentUpon>GetApp.aspx</DependentUpon>
     </Compile>
     <Compile Include="registerDriver.aspx.cs">
       <DependentUpon>registerDriver.aspx</DependentUpon>

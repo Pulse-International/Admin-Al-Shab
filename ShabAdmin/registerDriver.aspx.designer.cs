@@ -33,15 +33,6 @@ namespace ShabAdmin
         protected global::System.Web.UI.HtmlControls.HtmlImage driverProfilePic;
 
         /// <summary>
-        /// editBadge control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl editBadge;
-
-        /// <summary>
         /// lastheader control.
         /// </summary>
         /// <remarks>
@@ -67,6 +58,15 @@ namespace ShabAdmin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxLabel driverEmailAddress;
+
+        /// <summary>
+        /// editBadge control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl editBadge;
 
         /// <summary>
         /// notePopup control.

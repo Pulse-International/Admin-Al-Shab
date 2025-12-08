@@ -51,24 +51,6 @@ namespace ShabAdmin
         protected global::DevExpress.Web.ASPxPopupControl popupApprove1;
 
         /// <summary>
-        /// btnConfirmApprove control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxButton btnConfirmApprove;
-
-        /// <summary>
-        /// btnCancelApprove control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxButton btnCancelApprove;
-
-        /// <summary>
         /// callbackApprove control.
         /// </summary>
         /// <remarks>

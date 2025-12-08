@@ -36,24 +36,37 @@ namespace ShabAdmin
                     o.[id], 
                     o.[l_orderStatus],
                     o.[companyId], 
-                    c.[countryID] AS countryId,
-                    o.[usersDeliveryId],
-                    o.[totalAmount],
-                    ud.[username]   AS deliveryUserName,
-                    ud.[firstName]  AS deliveryFirstName,
-                    ud.[lastName]   AS deliveryLastName,
+                    o.[addressId], 
+                    c.[countryID] AS countryId, 
                     o.[username], 
+                    o.[totalAmount], 
+                    o.[usersDeliveryId],
+                    ud.[username]  AS deliveryUserName,
+                    ud.[firstName] AS deliveryFirstName,
+                    ud.[lastName]  AS deliveryLastName,
+                    ua.[firstName], 
+                    ua.[lastName], 
+                    o.[branchId],
                     b.[name]  AS branchName, 
                     b.[phone] AS branchPhone,
-                    ua.[firstName], 
-                    ua.[lastName],                      
-                    o.[addressId], 
+                    o.[l_paymentMethodId],
+                    o.[l_paymentMethodId2],
+                    pm1.[description] AS paymentMethod1,
+                    pm2.[description] AS paymentMethod2,
                     o.[userDate]
                 FROM [Orders] o
-                JOIN [companies] c ON o.companyId = c.id
-                JOIN [usersApp] ua ON o.username = ua.username
-                JOIN [branches] b ON o.branchId = b.id
-                LEFT JOIN [usersDelivery] ud ON o.usersDeliveryId = ud.id
+                JOIN [companies] c 
+                    ON o.[companyId] = c.[id]
+                JOIN [usersApp] ua 
+                    ON o.[username] = ua.[username]
+                JOIN [branches] b 
+                    ON o.[branchId] = b.[id]
+                LEFT JOIN [usersDelivery] ud 
+                    ON o.[usersDeliveryId] = ud.[id]
+                LEFT JOIN l_paymentMethod pm1 
+                    ON o.l_paymentMethodId = pm1.id
+                LEFT JOIN l_paymentMethod pm2 
+                    ON o.l_paymentMethodId2 = pm2.id
                 WHERE 
                     ((o.[l_orderStatus] = 1) or (o.[l_orderStatus] = 2) or (o.[l_orderStatus] = 3))
                     AND o.companyId = @companyId 
@@ -72,27 +85,40 @@ namespace ShabAdmin
             {
                 db_Orders.SelectCommand = @"
                 SELECT 
-                    o.[id],
+                    o.[id], 
                     o.[l_orderStatus],
-                    o.[companyId],
-                    c.[countryID] AS countryId,
+                    o.[companyId], 
+                    o.[addressId], 
+                    c.[countryID] AS countryId, 
+                    o.[username], 
+                    o.[totalAmount], 
                     o.[usersDeliveryId],
-                    o.[totalAmount],
-                    ud.[username]   AS deliveryUserName,
-                    ud.[firstName]  AS deliveryFirstName,
-                    ud.[lastName]   AS deliveryLastName,
-                    o.[username],
-                    b.[name]  AS branchName,
+                    ud.[username]  AS deliveryUserName,
+                    ud.[firstName] AS deliveryFirstName,
+                    ud.[lastName]  AS deliveryLastName,
+                    ua.[firstName], 
+                    ua.[lastName], 
+                    o.[branchId],
+                    b.[name]  AS branchName, 
                     b.[phone] AS branchPhone,
-                    ua.[firstName],
-                    ua.[lastName],
-                    o.[addressId],
+                    o.[l_paymentMethodId],
+                    o.[l_paymentMethodId2],
+                    pm1.[description] AS paymentMethod1,
+                    pm2.[description] AS paymentMethod2,
                     o.[userDate]
                 FROM [Orders] o
-                JOIN [companies] c ON o.companyId = c.id
-                JOIN [usersApp] ua ON o.[username] = ua.[username]
-                JOIN [branches] b ON o.[branchId] = b.[id]
-                LEFT JOIN [usersDelivery] ud ON o.[usersDeliveryId] = ud.[id]
+                JOIN [companies] c 
+                    ON o.[companyId] = c.[id]
+                JOIN [usersApp] ua 
+                    ON o.[username] = ua.[username]
+                JOIN [branches] b 
+                    ON o.[branchId] = b.[id]
+                LEFT JOIN [usersDelivery] ud 
+                    ON o.[usersDeliveryId] = ud.[id]
+                LEFT JOIN l_paymentMethod pm1 
+                    ON o.l_paymentMethodId = pm1.id
+                LEFT JOIN l_paymentMethod pm2 
+                    ON o.l_paymentMethodId2 = pm2.id
                 WHERE 
                     ((o.[l_orderStatus] = 1) or (o.[l_orderStatus] = 2) or (o.[l_orderStatus] = 3))
                     AND c.[countryID] = @countryId order by o.id desc";
@@ -112,24 +138,37 @@ namespace ShabAdmin
                     o.[id], 
                     o.[l_orderStatus],
                     o.[companyId], 
-                    c.[countryID] AS countryId,
-                    o.usersDeliveryId,
-                    o.[totalAmount],
-                    ud.username AS deliveryUserName,
-                    ud.firstName AS deliveryFirstName,
-                    ud.lastName AS deliveryLastName,
-                    o.[username], 
-                    b.[name] AS branchName, 
-                    b.[phone] AS branchPhone,
-                    ua.[firstName], 
-                    ua.[lastName],                      
                     o.[addressId], 
+                    c.[countryID] AS countryId, 
+                    o.[username], 
+                    o.[totalAmount], 
+                    o.[usersDeliveryId],
+                    ud.[username]  AS deliveryUserName,
+                    ud.[firstName] AS deliveryFirstName,
+                    ud.[lastName]  AS deliveryLastName,
+                    ua.[firstName], 
+                    ua.[lastName], 
+                    o.[branchId],
+                    b.[name]  AS branchName, 
+                    b.[phone] AS branchPhone,
+                    o.[l_paymentMethodId],
+                    o.[l_paymentMethodId2],
+                    pm1.[description] AS paymentMethod1,
+                    pm2.[description] AS paymentMethod2,
                     o.[userDate]
                 FROM [Orders] o
-                JOIN [companies] c ON o.companyId = c.id
-                JOIN [usersApp] ua ON o.username = ua.username
-                JOIN [branches] b ON o.branchId = b.id
-                LEFT JOIN [usersDelivery] ud ON o.usersDeliveryId = ud.id
+                JOIN [companies] c 
+                    ON o.[companyId] = c.[id]
+                JOIN [usersApp] ua 
+                    ON o.[username] = ua.[username]
+                JOIN [branches] b 
+                    ON o.[branchId] = b.[id]
+                LEFT JOIN [usersDelivery] ud 
+                    ON o.[usersDeliveryId] = ud.[id]
+                LEFT JOIN l_paymentMethod pm1 
+                    ON o.l_paymentMethodId = pm1.id
+                LEFT JOIN l_paymentMethod pm2 
+                    ON o.l_paymentMethodId2 = pm2.id
                 WHERE 
                 ((o.[l_orderStatus] = 1) or (o.[l_orderStatus] = 2) or (o.[l_orderStatus] = 3))
                 order by o.id desc";

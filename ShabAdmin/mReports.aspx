@@ -1032,7 +1032,7 @@ ORDER BY o.id DESC">
                                             <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                                         </dx:GridViewDataColumn>
 
-                                        <dx:GridViewDataColumn Caption="المرجع" FieldName="transactionRef">
+                                        <dx:GridViewDataColumn Caption="رقم الحركة" FieldName="transactionRef">
                                             <EditFormSettings Visible="False" />
                                             <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                                         </dx:GridViewDataColumn>

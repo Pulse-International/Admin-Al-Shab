@@ -28,10 +28,6 @@
             .dxtcLite_Material.dxtc-top > .dxtc-stripContainer {
                 display: inline-block;
             }
-
-            .dxpc-contentWrapper {
-                height: 200px !important;
-            }
         </style>
 
         <script>
@@ -266,7 +262,7 @@
                 popupApprove1.Hide();
                 callbackApprove.PerformCallback(approveOrderId);
                 setTimeout(function () {
-                GridOrders.Refresh();
+                    GridOrders.Refresh();
                 }, 300);
             }
             setInterval(function () {
@@ -534,14 +530,31 @@
                                             <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                                         </dx:GridViewDataColumn>
 
-                                        <dx:GridViewDataColumn Caption="المبلغ الكلي" FieldName="totalAmount">
+                                        <dx:GridViewDataColumn Caption="المبلغ الكلي">
                                             <DataItemTemplate>
-                                                <%# Eval("totalAmount") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
+                                                <%# 
+                                                    "<div style='font-weight:bold;'>" +
+                                                        Eval("totalAmount") + " " + MainHelper.GetCurrency(Eval("countryId")) +
+                                                    "</div>" +
+
+                                                    ((Eval("l_paymentMethodId2") != DBNull.Value 
+                                                      && Convert.ToInt32(Eval("l_paymentMethodId2")) > 0)
+                                                    ?
+                                                    "<div style='font-size:12px; color:#555; margin-top:4px;'>" +
+                                                        Eval("paymentMethod1") + "<br/>" +"+"+"<br/>" +
+                                                        Eval("paymentMethod2") +
+                                                    "</div>"
+                                                    :
+                                                    "<div style='font-size:12px; color:#555; margin-top:4px;'>" +
+                                                        Eval("paymentMethod1") +
+                                                    "</div>")
+                                                %>
                                             </DataItemTemplate>
+
                                             <EditFormSettings Visible="False" />
-                                            <CellStyle VerticalAlign="Middle" Font-Bold="true" HorizontalAlign="Center">
-                                            </CellStyle>
+                                            <CellStyle VerticalAlign="Middle" Font-Bold="true" HorizontalAlign="Center" />
                                         </dx:GridViewDataColumn>
+
 
                                         <dx:GridViewDataDateColumn FieldName="userDate" Caption="التاريخ">
                                             <PropertiesDateEdit DisplayFormatString="yyyy/MM/dd hh:mm tt" />
@@ -563,21 +576,25 @@
                                         <dx:GridViewDataColumn Caption="التحكم">
                                             <DataItemTemplate>
                                                 <%# 
-        Convert.ToInt32(Eval("l_orderStatus")) == 1 
-        ? 
-        "<div style='display:flex; gap:5px; justify-content:center;'>" +
+                                                    Convert.ToInt32(Eval("l_orderStatus")) == 1 
+                                                    ? 
+                                                    "<div style='display:flex; flex-direction:column; gap:6px; align-items:center;'>" +
 
-            "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" " +
-            "style='background-color:red;color:white;font-family:Cairo; width:70px;border:none;padding:5px;border-radius:4px;'>رفض</button>" +
+                                                        "<button type='button' class=\"dx-button\" onclick=\"ShowApprovePopup(" + Eval("id") + "); return false;\" " +
+                                                        "style='background-color:green;color:white;font-family:Cairo; width:90px;border:none;padding:6px;border-radius:4px;'>موافقة</button>" +
 
-            "<button type='button' class=\"dx-button\" onclick=\"ShowApprovePopup(" + Eval("id") + "); return false;\" " +
-            "style='background-color:green;color:white;font-family:Cairo; width:70px;border:none;padding:5px;border-radius:4px;'>موافقة</button>" +
+                                                        "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" " +
+                                                        "style='background-color:red;color:white;font-family:Cairo; width:90px;border:none;padding:6px;border-radius:4px;'>رفض</button>" +
 
-        "</div>"
-        :
-        "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" " +
-        "style='background-color:orange;color:white;font-family:Cairo; width:90px;border:none;padding:5px 10px;border-radius:4px;'>الغاء</button>"
-        %>
+                                                    "</div>"
+                                                    :
+                                                    "<div style='display:flex; flex-direction:column; align-items:center;'>" +
+
+                                                    "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" " +
+                                                    "style='background-color:orange;color:white;font-family:Cairo; width:90px;border:none;padding:6px;border-radius:4px;'>إلغاء</button>" +
+
+                                                    "</div>"
+                                                %>
                                             </DataItemTemplate>
 
                                             <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
@@ -618,44 +635,47 @@
                                 </dx:ASPxGridView>
 
                                 <dx:ASPxPopupControl ID="popupApprove1" runat="server"
+                                    Width="430px"
                                     ClientInstanceName="popupApprove1"
-                                    Width="350"
-                                    Height="100"
-                                    HeaderText="تأكيد الموافقة"
-                                    Modal="true"
-                                    CloseAction="CloseButton"
                                     PopupHorizontalAlign="WindowCenter"
                                     PopupVerticalAlign="WindowCenter"
-                                    Font-Names="Cairo"
-                                    Font-Size="14px">
+                                    CloseAction="CloseButton"
+                                    HeaderText="رفض الطلب"
+                                    Modal="True"
+                                    AllowDragging="True"
+                                    AutoUpdatePosition="True"
+                                    Style="height: 140px;"
+                                    HeaderStyle-Font-Names="Cairo"
+                                    HeaderStyle-Font-Size="18px"
+                                    BackColor="#ffffff"
+                                    Border-BorderStyle="Solid"
+                                    Border-BorderWidth="2px"
+                                    Border-BorderColor="#b7b7b7"
+                                    PopupAnimationType="Fade">
 
                                     <ContentCollection>
                                         <dx:PopupControlContentControl>
 
-                                            <div style="text-align: center; font-family: Cairo; font-size: 16px; margin-bottom: 20px;">
+                                            <div style="text-align: center; font-family: Cairo; font-size: 16px; margin-bottom: 10px;">
                                                 هل أنت متأكد من الموافقة على الطلب؟
            
                                             </div>
 
                                             <div style="text-align: center; font-family: Cairo;">
 
-                                                <dx:ASPxButton ID="btnConfirmApprove" runat="server"
-                                                    Text="موافقة"
-                                                    AutoPostBack="false"
-                                                    Font-Names="Cairo"
-                                                    Font-Bold="true"
-                                                    CssClass="dx-button"
-                                                    Style="background-color: green; color: white; width: 100px; margin-left: 10px;"
-                                                    ClientSideEvents-Click="function(){ ConfirmApproveNow(); }" />
+                                                <button type="button"
+                                                    onclick="ConfirmApproveNow();"
+                                                    style="background-color: green; color: white; width: 100px; padding: 6px 10px; border: none; border-radius: 4px; font-family: Cairo; font-weight: bold; margin-left: 10px;">
+                                                    موافقة
+               
+                                                </button>
 
-                                                <dx:ASPxButton ID="btnCancelApprove" runat="server"
-                                                    Text="إلغاء"
-                                                    AutoPostBack="false"
-                                                    Font-Names="Cairo"
-                                                    Font-Bold="true"
-                                                    CssClass="dx-button"
-                                                    Style="background-color: gray; color: white; width: 100px;"
-                                                    ClientSideEvents-Click="function(){ popupApprove1.Hide(); }" />
+                                                <button type="button"
+                                                    onclick="popupApprove1.Hide();"
+                                                    style="background-color: red; color: white; width: 100px; padding: 6px 10px; border: none; border-radius: 4px; font-family: Cairo; font-weight: bold;">
+                                                    إلغاء
+               
+                                                </button>
 
                                             </div>
 
@@ -712,17 +732,34 @@
                                                 ud.[lastName]  AS deliveryLastName,
                                                 ua.[firstName], 
                                                 ua.[lastName], 
-                                                o.[addressId], 
                                                 o.[branchId],
                                                 b.[name]  AS branchName, 
                                                 b.[phone] AS branchPhone,
+                                                o.[l_paymentMethodId],
+                                                o.[l_paymentMethodId2],
+                                                pm1.[description] AS paymentMethod1,
+                                                pm2.[description] AS paymentMethod2,
                                                 o.[userDate]
                                             FROM [Orders] o
-                                            JOIN [companies] c ON o.[companyId] = c.[id]
-                                            JOIN [usersApp] ua ON o.[username] = ua.[username]
-                                            JOIN [branches] b ON o.[branchId] = b.[id]
-                                            LEFT JOIN [usersDelivery] ud ON o.[usersDeliveryId] = ud.[id]
-                                            WHERE ((o.[l_orderStatus] = 1) or (o.[l_orderStatus] = 2) or (o.[l_orderStatus] = 3))  order by o.id desc" />
+                                            JOIN [companies] c 
+                                                ON o.[companyId] = c.[id]
+                                            JOIN [usersApp] ua 
+                                                ON o.[username] = ua.[username]
+                                            JOIN [branches] b 
+                                                ON o.[branchId] = b.[id]
+                                            LEFT JOIN [usersDelivery] ud 
+                                                ON o.[usersDeliveryId] = ud.[id]
+                                            LEFT JOIN l_paymentMethod pm1 
+                                                ON o.l_paymentMethodId = pm1.id
+                                            LEFT JOIN l_paymentMethod pm2 
+                                                ON o.l_paymentMethodId2 = pm2.id
+                                            WHERE 
+                                                (o.[l_orderStatus] = 1 
+                                                 OR o.[l_orderStatus] = 2 
+                                                 OR o.[l_orderStatus] = 3)
+
+                                            ORDER BY o.id DESC
+                                        " />
                             </div>
 
                             <dx:ASPxPopupControl ID="popupReject" runat="server"

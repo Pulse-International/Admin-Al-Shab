@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Prohibited" Language="C#" AutoEventWireup="true" CodeBehind="Prohibited.aspx.cs" Inherits="ShabAdmin.Prohibited" %>
+﻿<%@ Page Title="Prohibited" Language="C#" AutoEventWireup="true" CodeBehind="GetApp.aspx.cs" Inherits="ShabAdmin.GetApp" %>
 
 <%@ Register Assembly="DevExpress.Web.v24.1, Version=24.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Namespace="DevExpress.Web" TagPrefix="dx" %>
 
@@ -22,6 +22,46 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <!-- CSS Files -->
     <link id="pagestyle" href="/assets/css/material-dashboard.css?v=3.0.0" rel="stylesheet" />
+
+    <script>
+        function detectPlatformAndRedirect() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            // Your redirect URLs
+            const redirectUrls = {
+                web: "https://www.alshaeb.com",
+                ios: "https://apps.apple.com/us/app/alshaeb-click/id6752823758",
+                android: "https://play.google.com/store/apps/details?id=com.alshaeb.alshaeb"
+            };
+
+            let platform = 'web';
+
+            // Check if running in standalone mode (PWA)
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+                || window.navigator.standalone
+                || document.referrer.includes('android-app://');
+
+            // Android detection
+            if (/android/i.test(userAgent)) {
+                platform = 'android';
+            }
+            // iOS detection
+            else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                platform = 'ios';
+            }
+            // Additional checks for iOS in some cases
+            else if (navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform)) {
+                platform = 'ios';
+            }
+
+            // Redirect
+            console.log('Detected platform:', platform);
+            window.location.href = redirectUrls[platform];
+        }
+
+        // Execute on page load
+        detectPlatformAndRedirect();
+    </script>
 </head>
 
 <body class="bg-gray-200">
@@ -37,7 +77,7 @@
                                     <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
                                         <h4 class="text-white font-weight-bolder text-center mt-2 mb-0">الشــــعـب</h4>
                                         <hr />
-                                        <h6 class="text-white font-weight-bolder text-center mt-2 mb-0">(دخول النظام)</h6>
+                                        <h6 class="text-white font-weight-bolder text-center mt-2 mb-0">(تحويل لتنزيل التطبيق)</h6>
                                         <%--<div class="row mt-3">
                                             <div class="col-2 text-center ms-auto">
                                                 <a class="btn btn-link px-3" href="javascript:;">
@@ -58,7 +98,7 @@
                                     </div>
                                 </div>
                                 <div style="line-height: 1.5em; text-align:center; margin:0 auto; padding-top:3em; padding-bottom:3em; font-size:2em">
-                                    تم حظرك من استخدام المنصة<br /> الرجاء التواصل معنا
+                                    الرجاء الانتظار...
                                 </div>
                             </div>
                         </div>

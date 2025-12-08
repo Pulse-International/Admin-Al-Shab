@@ -33,6 +33,15 @@ namespace ShabAdmin
         protected global::System.Web.UI.HtmlControls.HtmlImage driverProfilePic;
 
         /// <summary>
+        /// editBadge control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl editBadge;
+
+        /// <summary>
         /// lastheader control.
         /// </summary>
         /// <remarks>

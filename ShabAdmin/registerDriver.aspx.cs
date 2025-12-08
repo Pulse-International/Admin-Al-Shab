@@ -34,8 +34,9 @@ namespace ShabAdmin
                 if (isEdit)
                 {
                     LoadDriverData(realId);
-                    divEditTitle.Visible = true;
+                    divEditTitle.Visible = false;
                     userinfo.Visible = true;
+                    editBadge.Visible = true;
                     note.Visible = true;
                     divAddTitle.Visible = false;
                     btnSubmit.Visible = false;
@@ -73,6 +74,7 @@ namespace ShabAdmin
                     btnSubmit.Visible = true;
                     btnUpdate.Visible = false;
                     EditModeSidebar.Visible = false;
+                    editBadge.Visible = false;
                 }
             }
         }

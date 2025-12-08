@@ -70,9 +70,11 @@ namespace ShabAdmin
             if (firstinput != confirmpass)
             {
                 confirm.Text = "لا يوجد تطابق بين القيم المدخلة";
+                return;
             }
             else
             {
+                confirm.Text = " ";
                 string connectionString = ConfigurationManager.ConnectionStrings["ShabDBConnectionString"].ConnectionString;
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {

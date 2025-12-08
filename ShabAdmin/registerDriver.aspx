@@ -25,10 +25,10 @@
 
         .new-stepper-container {
             background: linear-gradient(180deg, #fff5f5 0%, #ffffff 100%);
-            padding: 30px 20px 40px 20px;
+/*            padding: 30px 20px 40px 20px;*/
             direction: rtl;
             border-bottom: 1px solid #eee;
-            margin-bottom: 30px;
+            margin-bottom: 6px;
             border-radius: 0 0 30px 30px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.05);
         }
@@ -67,7 +67,7 @@
             justify-content: space-between;
             align-items: flex-start;
             position: relative;
-            padding: 0 10px;
+            padding: 11px 10px;
         }
 
         .step-item {
@@ -577,7 +577,7 @@
             background: transparent !important;
             box-shadow: none !important;
             padding: 0 !important;
-            max-width: 1550px !important;
+            max-width: 1330px !important;
         }
 
         .edit-sidebar {
@@ -713,6 +713,21 @@
                 /* إخفاء شريط السكرول للشكل الجمالي */
                 scrollbar-width: none; /* Firefox */
                 -ms-overflow-style: none; /* IE 10+ */
+                position:static !important;
+                display:block !important;
+                margin-bottom:11px;
+            }
+            .bts{
+                    padding: 10px 67px !important;    
+            }
+            .main-card.edit-layout{
+                gap:0px !important;
+            }
+            .driver-fullname{
+                font-size:16px;
+            }
+            .main-card{
+                padding:17px 0px;
             }
 
                 .edit-sidebar::-webkit-scrollbar {
@@ -746,6 +761,52 @@
                 justify-content: center;
             }
         }
+        .bts{
+            display:flex;
+            padding: 6px 34%;
+            gap:12px;
+        }
+        /* تصميم عنوان التعديل */
+.edit-profile-header {
+    background-color: #ffffff;
+    color: #ea1f29; /* لون النص أحمر */
+    padding: 12px 25px;
+    border-radius: 12px; /* حواف ناعمة */
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px; /* مسافة تفصله عن الترحيب */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15); /* ظل خفيف للبروز */
+    border-right: 5px solid #ffc107; /* خط برتقالي جانبي كلمسة جمالية */
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+}
+
+.edit-profile-header:hover {
+    transform: translateY(-3px); /* حركة خفيفة عند المرور */
+}
+
+.edit-profile-header i {
+    font-size: 22px;
+    color: #ea1f29;
+}
+
+.edit-profile-header .header-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.edit-profile-header .main-title {
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.edit-profile-header .sub-title {
+    font-size: 12px;
+    color: #666;
+    font-weight: 600;
+}
     </style>
     <script type="text/javascript">
         // 1. منطق الـ Stepper (5 خطوات مع علامة الصح)
@@ -778,16 +839,22 @@
         function nextStep(step) {
             var container = document.querySelector('.step-content[data-step="' + step + '"]');
 
-            // تحقق DevExpress
+            // 1. تحقق DevExpress للحقول النصية
             if (typeof ASPxClientEdit !== 'undefined' && !ASPxClientEdit.ValidateEditorsInContainer(container)) return;
 
-            // تحقق مخصص
+            // 2. (جديد) التحقق من الصور الإلزامية
+            if (!validateImagesForStep(step)) {
+                alert('⚠️ يرجى رفع جميع الصور المطلوبة لهذه الخطوة قبل المتابعة!');
+                return; // إيقاف العملية وعدم الانتقال
+            }
+
+            // 3. تحقق مخصص (الأرقام المكررة الخ)
             if (hasCustomErrors(step)) {
                 alert('⚠️ يرجى تصحيح البيانات المكررة (باللون الأحمر) قبل المتابعة!');
                 return;
             }
 
-            // التنقل
+            // التنقل (باقي الكود كما هو...)
             document.querySelector('.step-content[data-step="' + step + '"]').classList.remove('active');
             var nextStepNum = step + 1;
             currentStep = nextStepNum;
@@ -855,7 +922,6 @@
         }
 
         function populateReviewData() {
-            // (نفس الكود السابق للمراجعة)
             try {
                 function safeSetText(elementId, value) {
                     var element = document.getElementById(elementId);
@@ -972,6 +1038,54 @@
                 if (typeof documentnumber !== 'undefined') documentnumber.SetEnabled(false);
             }
         };
+        function hasImage(uploadControlName, previewId) {
+            // 1. التحقق هل قام المستخدم باختيار ملف جديد الآن
+            var uploadControl = ASPxClientControl.GetControlCollection().GetByName(uploadControlName);
+            if (uploadControl && uploadControl.GetText() !== "") return true;
+
+            // 2. التحقق هل هناك صورة ظاهرة في المعاينة (مهم في حالة التعديل أو إذا تم اختيار الصورة سابقاً)
+            var previewDiv = document.getElementById(previewId);
+            if (previewDiv && previewDiv.querySelector('img') && previewDiv.querySelector('img').src.length > 10) return true;
+
+            return false;
+        }
+        function validateImagesForStep(step) {
+            var isValid = true;
+
+            if (step === 1) {
+                // التحقق من الصورة الشخصية
+                if (!hasImage('userPic', 'preview_userPic')) isValid = false;
+            }
+            else if (step === 2) {
+                // التحقق حسب نوع الوثيقة المختار
+                var docType = documentType.GetValue();
+
+                if (docType == "1") { // هوية
+                    if (!hasImage('idFrontPic', 'preview_idFront') || !hasImage('idBackPic', 'preview_idBack')) isValid = false;
+                }
+                else if (docType == "2") { // جواز سفر
+                    if (!hasImage('passportPic', 'preview_passport')) isValid = false;
+                }
+                else if (docType == "3") { // إقامة
+                    if (!hasImage('residencePic', 'preview_residence')) isValid = false;
+                }
+                else {
+                    // لم يتم اختيار نوع وثيقة (سيتم كشفه عبر التحقق العادي، لكن نعتبره خطأ هنا أيضاً)
+                    isValid = false;
+                }
+            }
+            else if (step === 3) {
+                // رخصة القيادة
+                if (!hasImage('licensePic', 'preview_license')) isValid = false;
+            }
+            else if (step === 4) {
+                // رخصة المركبة + صورة المركبة
+                if (!hasImage('carLicensePic', 'preview_carLicense')) isValid = false;
+                if (!hasImage('carPic', 'preview_car')) isValid = false;
+            }
+
+            return isValid;
+        }
     </script>
     <main>
         
@@ -980,23 +1094,33 @@
             <img class="lightbox-content" id="imgLightboxContent">
         </div>
 
-        <div class="driver-header-wrapper" runat="server" id="userinfo">
-            <div class="driver-header-main">
-                <img src="" alt="صورة السائق" class="driver-profile-pic" id="driverProfilePic" runat="server">
-                <div class="driver-details-section">
-                    <div class="driver-greeting-text">
-                        مرحباً، <dx:ASPxLabel CssClass="driver-fullname" runat="server" ID="lastheader"></dx:ASPxLabel>
-                        <dx:ASPxLabel CssClass="driver-fullname" runat="server" ID="nameatheader"></dx:ASPxLabel>
-                    </div>
-                    <div class="driver-info-row">
-                        <div class="driver-info-field">
-                            <span class="driver-info-icon">✉</span>
-                            <dx:ASPxLabel CssClass="ss" runat="server" ID="driverEmailAddress"></dx:ASPxLabel>
+            <div class="driver-header-wrapper" runat="server" id="userinfo">
+                <div class="driver-header-main">
+                    <img src="" alt="صورة السائق" class="driver-profile-pic" id="driverProfilePic" runat="server">
+        
+                    <div class="driver-details-section">
+            
+                        <div id="editBadge" runat="server" class="edit-profile-header" visible="false">
+                            <i class="fas fa-pen-to-square"></i>
+                            <div class="header-text">
+                                <span class="main-title">تحديث ملفي الشخصي</span>
+                                <span class="sub-title">قم بتعديل بياناتك وحفظ التغييرات</span>
+                            </div>
+                        </div>
+                        <div class="driver-greeting-text">
+                            مرحباً، <dx:ASPxLabel CssClass="driver-fullname" runat="server" ID="lastheader"></dx:ASPxLabel>
+                            <dx:ASPxLabel CssClass="driver-fullname" runat="server" ID="nameatheader"></dx:ASPxLabel>
+                        </div>
+            
+                        <div class="driver-info-row">
+                            <div class="driver-info-field">
+                                <span class="driver-info-icon">✉</span>
+                                <dx:ASPxLabel CssClass="ss" runat="server" ID="driverEmailAddress"></dx:ASPxLabel>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
         <dx:ASPxPopupControl ID="notePopup" runat="server" ClientInstanceName="notePopup" ShowOnPageLoad="false"
             PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" AllowDragging="True" CloseOnEscape="True" CloseAction="CloseButton" Modal="True" Width="500px" MaxWidth="500px" HeaderText="تنبيه هام">
@@ -1062,11 +1186,11 @@
         <div class="main-card" id="mainCardPanel" runat="server">
             
             <div style="text-align:center; margin-bottom: 30px;">
-                <div id="divAddTitle" runat="server" style="background:#ea1f29; padding:20px; border-radius:15px; color:white;">
-                    <dx:ASPxLabel ID="addtitlee" style="color: #ffffff; font-size:28px; font-weight: 700;" runat="server" Text="تسجيل سائق جديد"></dx:ASPxLabel>
+                <div id="divAddTitle" runat="server" class="bts" style="background:#ea1f29; border-radius:15px; color:white;">
+                    <dx:ASPxLabel ID="addtitlee" style="color: #ffffff; font-size:22px; font-weight: 700;" runat="server" Text="تسجيل سائق جديد"></dx:ASPxLabel>
                     <i class="fas fa-user-plus" style="font-size:30px; margin-top:10px; display:block;"></i>
                 </div>
-                <div id="divEditTitle" runat="server" style="background:#ea1f29; padding:20px; border-radius:15px; color:white;">
+                <div id="divEditTitle" runat="server" class="bts" style="background:#ea1f29; border-radius:15px; color:white;">
                     <dx:ASPxLabel ID="ASPxLabel5" style="color: #ffffff; font-size:28px; font-weight: 700;" runat="server" Text="تحديث بيانات السائق"></dx:ASPxLabel>
                     <i class="fas fa-user-edit" style="font-size:30px; margin-top:10px; display:block;"></i>
                 </div>
@@ -1121,13 +1245,14 @@
 
                     <div style="margin-bottom: 20px;">
                         <label>رقم الهاتف <span style="color:red">*</span></label>
-                        <dx:ASPxTextBox ID="txtPhone" runat="server" ClientInstanceName="txtPhone" Width="100%" Height="45px">
+                        <dx:ASPxTextBox ID="txtPhone" runat="server" ClientInstanceName="txtPhone" Width="100%"  Height="45px">
                             <ClientSideEvents TextChanged="function(s, e) { 
                                 var phone = s.GetValue();
                                 if (phone && phone.length >= 10) { phoneCallback.PerformCallback(phone); }
                             }" />
                             <ValidationSettings RequiredField-IsRequired="true" Display="Dynamic" SetFocusOnError="True" >
-<RequiredField IsRequired="True"></RequiredField>
+                                    <RegularExpression ErrorText="الأدخال ارقام فقط" ValidationExpression="^(07\d{8}|009627\d{8}|\+9627\d{8}|9627\d{8})$" />
+                                    <RequiredField IsRequired="True"></RequiredField>
                             </ValidationSettings>
                         </dx:ASPxTextBox>
                         <dx:ASPxLabel ID="lblPhoneMessage" runat="server" ClientInstanceName="lblPhoneMessage" />
@@ -1169,14 +1294,16 @@
                                 if (emaill && emaill.length >= 10) { emailCallback.PerformCallback(emaill); }
                             }" />
                              <ValidationSettings RequiredField-IsRequired="true" Display="Dynamic">
-                                 <RegularExpression ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" ErrorText="غير صحيح" />
+                                 <RegularExpression ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" ErrorText="الايميل غير صحيح" />
+
+<RequiredField IsRequired="True"></RequiredField>
                              </ValidationSettings>
                         </dx:ASPxTextBox>
                         <dx:ASPxLabel ID="ASPxLabel2" runat="server" ClientInstanceName="ASPxLabel2" />
                         <dx:ASPxCallback ID="ASPxCallback1" runat="server" ClientInstanceName="emailCallback" OnCallback="emailCallback_Callback">
                             <ClientSideEvents CallbackComplete="function(s, e) { 
                                 if (e.result == 'exists') {
-                                    ASPxLabel2.SetText('❌ مسجل مسبقاً!');
+                                    ASPxLabel2.SetText('❌ الايميل مسجل مسبقاً!');
                                     ASPxLabel2.GetMainElement().style.color = 'red';
                                     if (typeof btnSubmit !== 'undefined') btnSubmit.SetEnabled(false);
                                 } else {
@@ -1209,18 +1336,46 @@
                         </div>
                     </div>
                     
-                    <div style="margin-bottom: 20px;">
-                        <label>اسم أحد الأقارب</label>
-                        <dx:ASPxTextBox ID="nerbyname" runat="server" Width="100%" Height="45px">
-                             <ValidationSettings RequiredField-IsRequired="true" Display="Dynamic" />
-                        </dx:ASPxTextBox>
+                    <div style="margin-bottom: 30px; padding-top: 10px;">
+
+                        <!-- الهيدر مع البوردر -->
+                        <div style="
+                            border-top: 3px solid red;
+                            padding-top: 10px;
+                            margin-bottom: 15px;
+                        ">
+                            <h3 style="margin: 0; font-size: 20px; font-weight: bold;">
+                                جهة اتصال الطوارئ
+                            </h3>
+                        </div>
+
+                        <!-- الوصف -->
+                        <p style="margin: 0 0 20px 0; color: #555; font-size: 14px;">
+                            يرجى تقديم معلومات جهة الاتصال للطوارئ
+                        </p>
+
+                        <!-- اسم القريب -->
+                        <div style="margin-bottom: 20px;">
+                            <label>اسم أحد الأقارب</label>
+                            <dx:ASPxTextBox ID="nerbyname" runat="server" Width="100%" Height="45px">
+                                <ValidationSettings RequiredField-IsRequired="true" Display="Dynamic" />
+                            </dx:ASPxTextBox>
+                        </div>
+
+                        <!-- رقم القريب -->
+                        <div style="margin-bottom: 20px;">
+                            <label>رقم هاتف القريب</label>
+                            <dx:ASPxTextBox ID="nerbynumber" runat="server" Width="100%" Height="45px">
+                                <ValidationSettings RequiredField-IsRequired="true" Display="Dynamic" SetFocusOnError="True" >
+                                    <RegularExpression ValidationExpression="^(07\d{8}|009627\d{8}|\+9627\d{8}|9627\d{8})$" ErrorText="الأدخال ارقام فقط"/>
+                                    <RequiredField IsRequired="True"></RequiredField>
+                                </ValidationSettings>
+                            </dx:ASPxTextBox>
+                        </div>
+
                     </div>
-                    <div style="margin-bottom: 20px;">
-                        <label>رقم هاتف القريب</label>
-                        <dx:ASPxTextBox ID="nerbynumber" runat="server" Width="100%" Height="45px">
-                             <ValidationSettings RequiredField-IsRequired="true" Display="Dynamic" />
-                        </dx:ASPxTextBox>
-                    </div>
+
+
 
                 </fieldset>
                 
@@ -1248,12 +1403,25 @@
                     <div style="margin-bottom: 20px;">
                         <label>رقم الوثيقة <span style="color:red">*</span></label>
                         <dx:ASPxTextBox runat="server" ID="documentnumber" ClientInstanceName="documentnumber" Width="100%" Height="45px">
+                            <ValidationSettings RequiredField-IsRequired="true" Display="Dynamic" SetFocusOnError="True">
+                                <RegularExpression ErrorText="الرجاء إدخال أرقام فقط" ValidationExpression="^\d+$" />
+                                <RequiredField IsRequired="True" />
+                            </ValidationSettings>
+
+                            <ClientSideEvents KeyPress="function(s, e){
+                                if(e.htmlEvent.key.length === 1 && !/[0-9]/.test(e.htmlEvent.key)){
+                                    e.htmlEvent.preventDefault();
+                                }
+                            }" />
+
                             <ClientSideEvents LostFocus="function(s,e){
                                 var num = s.GetValue();
                                 if(num) docnumnbercallback.PerformCallback(num);
                             }" />
                         </dx:ASPxTextBox>
+
                         <dx:ASPxLabel ID="ASPxLabel4" ClientInstanceName="abcdefg" runat="server" />
+
                         <dx:ASPxCallback ID="documentnumbercallback" runat="server" ClientInstanceName="docnumnbercallback" OnCallback="numnbercallback">
                             <ClientSideEvents CallbackComplete="function(s, e) { 
                                 if (e.result == 'exists') {
@@ -1268,6 +1436,7 @@
                             }" />
                         </dx:ASPxCallback>
                     </div>
+
 
                     <div id="docIdFront" style="display:none; margin-bottom:20px;">
                         <label>صورة الهوية (أمام)</label>
@@ -1417,7 +1586,7 @@
                             <label>رقم الشصي</label>
                             <dx:ASPxTextBox ID="vehieclevinn" runat="server" Width="100%" Height="45px">
                                  <ValidationSettings RequiredField-IsRequired="true" Display="Dynamic">
-                                    <RegularExpression ValidationExpression="^[A-Za-z0-9]{17}$" ErrorText="يجب إدخال 17 حرف أو رقم" />
+                                    <RegularExpression ValidationExpression="^[A-Za-z0-9]{1,17}$" ErrorText="يجب إدخال 17 حرف أو رقم" />
                                  </ValidationSettings>
                             </dx:ASPxTextBox>
                         </div>

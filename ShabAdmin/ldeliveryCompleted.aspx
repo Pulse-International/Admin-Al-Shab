@@ -302,28 +302,33 @@
         }
     </script>
     <main>
-        <dx:ASPxPopupControl ID="PopupSuccess" runat="server" ClientInstanceName="popupSuccess"
+                <dx:ASPxPopupControl ID="PopupSuccess" runat="server" ClientInstanceName="popupSuccess"
             ShowHeader="false" CloseAction="None" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter"
             Modal="true" Width="400px" AllowDragging="false">
             <ContentCollection>
                 <dx:PopupControlContentControl>
                     <div style="text-align: center; padding: 20px;">
-                        <div style="width: 80px; height: 80px; background: #e6fffa; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto;">
-                            <i class="fas fa-check" style="font-size: 40px; color: #00c851;"></i>
+                
+                        <div style="width: 110px; height: 105px; background: #e6fffa; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; overflow: hidden;">
+                    
+                            <img src="assets/img/bii.gif" style="width: 100%; height: 100%; object-fit: cover;" alt="Success" />
+                    
                         </div>
 
-                        <h3 style="color: #333; font-family: 'Cairo', sans-serif; margin-bottom: 15px; font-weight: 700;">
+                        <h3 style="color: #333; font-family: 'Cairo', sans-serif; margin-bottom: 15px; font-weight: 700;font-size:18px">
                             مبارك! لقد أصبحت فرداً من العائلة ❤️
                         </h3>
-                        <p style="color: #666; font-family: 'Cairo', sans-serif; font-size: 16px; margin-bottom: 20px;">
+                        <br />
+                        <p style="color: #666; font-family: 'Cairo', sans-serif; font-size: 16px; margin-bottom: 20px;font-size:18px;">
                             تم إعداد حسابك بنجاح.
+                            <br />
                             <br />
                             سيتم تحويلك إلى التطبيق على الفور للبدء.
                         </p>
                         <div style="font-weight: bold; color: #ea1f29; font-size: 18px; font-family: 'Cairo', sans-serif;">
                             جاري النقل خلال <span id="lblCountDown" clientidmode="Static" runat="server">5</span> ثوانٍ...
                         </div>
-        
+
                         <a id="lnkRedirect" clientidmode="Static" runat="server" href="#" style="display: block; margin-top: 15px; color: #999; text-decoration: underline; font-size: 12px;">اضغط هنا إذا لم يتم تحويلك تلقائياً</a>
                     </div>
                 </dx:PopupControlContentControl>

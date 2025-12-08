@@ -48,7 +48,7 @@
         .header-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 46px 30px;
+            padding: 11px 30px;
 /*            display: flex;*/
             align-items: center;
             justify-content: space-between;
@@ -449,7 +449,7 @@
                 <div class="logo-section">
                         <div class="logo">
                             <a href="lMain_page.aspx">
-                                <img src="assets/img/header-255.png" class="logoimage" />
+                                <img src="assets/img/header-2.png" class="logoimage" />
                             </a>
                         </div>
                 </div>
@@ -551,16 +551,6 @@
             const navMenu = document.getElementById('navMenu');
             navMenu.classList.toggle('active');
         }
-
-        // Close menu when clicking outside
-        document.addEventListener('click', function (event) {
-            const navMenu = document.getElementById('navMenu');
-            const toggle = document.querySelector('.mobile-toggle');
-
-            if (!navMenu.contains(event.target) && !toggle.contains(event.target)) {
-                navMenu.classList.remove('active');
-            }
-        });
 
         // Highlight active page
         window.addEventListener('DOMContentLoaded', function () {

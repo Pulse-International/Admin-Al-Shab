@@ -568,9 +568,9 @@
                                                 MinValue="0"
                                                 MaxValue="9999.99"
                                                 NumberType="Float"
-                                                Increment="0.01"
-                                                DecimalPlaces="2"
-                                                DisplayFormatString="N2" />
+                                                Increment="0.001"
+                                                DecimalPlaces="3"
+                                                DisplayFormatString="N3" />
                                             <EditCellStyle HorizontalAlign="Center" />
                                             <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
 
@@ -1795,7 +1795,7 @@
             : Convert.ToInt32(Eval("l_DeliveryStatusId")) == 2
                 ? Eval("incompleteNote").ToString().Replace("$", "<br />")
                 : "لا يوجد"
-        %>
+                                                %>
                                             </DataItemTemplate>
                                             <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataTextColumn>

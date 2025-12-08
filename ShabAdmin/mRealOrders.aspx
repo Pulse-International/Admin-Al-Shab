@@ -29,9 +29,7 @@
                 display: inline-block;
             }
 
-            .dxpc-contentWrapper {
-                height: 200px !important;
-            }
+            
         </style>
 
         <script>
@@ -563,21 +561,25 @@
                                         <dx:GridViewDataColumn Caption="التحكم">
                                             <DataItemTemplate>
                                                 <%# 
-        Convert.ToInt32(Eval("l_orderStatus")) == 1 
-        ? 
-        "<div style='display:flex; gap:5px; justify-content:center;'>" +
+Convert.ToInt32(Eval("l_orderStatus")) == 1 
+? 
+"<div style='display:flex; flex-direction:column; gap:6px; align-items:center;'>" +
 
-            "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" " +
-            "style='background-color:red;color:white;font-family:Cairo; width:70px;border:none;padding:5px;border-radius:4px;'>رفض</button>" +
+    "<button type='button' class=\"dx-button\" onclick=\"ShowApprovePopup(" + Eval("id") + "); return false;\" " +
+    "style='background-color:green;color:white;font-family:Cairo; width:90px;border:none;padding:6px;border-radius:4px;'>موافقة</button>" +
 
-            "<button type='button' class=\"dx-button\" onclick=\"ShowApprovePopup(" + Eval("id") + "); return false;\" " +
-            "style='background-color:green;color:white;font-family:Cairo; width:70px;border:none;padding:5px;border-radius:4px;'>موافقة</button>" +
+    "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" " +
+    "style='background-color:red;color:white;font-family:Cairo; width:90px;border:none;padding:6px;border-radius:4px;'>رفض</button>" +
 
-        "</div>"
-        :
-        "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" " +
-        "style='background-color:orange;color:white;font-family:Cairo; width:90px;border:none;padding:5px 10px;border-radius:4px;'>الغاء</button>"
-        %>
+"</div>"
+:
+"<div style='display:flex; flex-direction:column; align-items:center;'>" +
+
+"<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" " +
+"style='background-color:orange;color:white;font-family:Cairo; width:90px;border:none;padding:6px;border-radius:4px;'>إلغاء</button>" +
+
+"</div>"
+%>
                                             </DataItemTemplate>
 
                                             <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
@@ -618,44 +620,47 @@
                                 </dx:ASPxGridView>
 
                                 <dx:ASPxPopupControl ID="popupApprove1" runat="server"
+                                    Width="430px"
                                     ClientInstanceName="popupApprove1"
-                                    Width="350"
-                                    Height="100"
-                                    HeaderText="تأكيد الموافقة"
-                                    Modal="true"
-                                    CloseAction="CloseButton"
                                     PopupHorizontalAlign="WindowCenter"
                                     PopupVerticalAlign="WindowCenter"
-                                    Font-Names="Cairo"
-                                    Font-Size="14px">
+                                    CloseAction="CloseButton"
+                                    HeaderText="رفض الطلب"
+                                    Modal="True"
+                                    AllowDragging="True"
+                                    AutoUpdatePosition="True"
+                                    Style="height: 140px;"
+                                    HeaderStyle-Font-Names="Cairo"
+                                    HeaderStyle-Font-Size="18px"
+                                    BackColor="#ffffff"
+                                    Border-BorderStyle="Solid"
+                                    Border-BorderWidth="2px"
+                                    Border-BorderColor="#b7b7b7"
+                                    PopupAnimationType="Fade">
 
                                     <ContentCollection>
                                         <dx:PopupControlContentControl>
 
-                                            <div style="text-align: center; font-family: Cairo; font-size: 16px; margin-bottom: 20px;">
+                                            <div style="text-align: center; font-family: Cairo; font-size: 16px; margin-bottom: 10px;">
                                                 هل أنت متأكد من الموافقة على الطلب؟
            
                                             </div>
 
                                             <div style="text-align: center; font-family: Cairo;">
 
-                                                <dx:ASPxButton ID="btnConfirmApprove" runat="server"
-                                                    Text="موافقة"
-                                                    AutoPostBack="false"
-                                                    Font-Names="Cairo"
-                                                    Font-Bold="true"
-                                                    CssClass="dx-button"
-                                                    Style="background-color: green; color: white; width: 100px; margin-left: 10px;"
-                                                    ClientSideEvents-Click="function(){ ConfirmApproveNow(); }" />
+                                                <button type="button"
+                                                    onclick="ConfirmApproveNow();"
+                                                    style="background-color: green; color: white; width: 100px; padding: 6px 10px; border: none; border-radius: 4px; font-family: Cairo; font-weight: bold; margin-left: 10px;">
+                                                    موافقة
+               
+                                                </button>
 
-                                                <dx:ASPxButton ID="btnCancelApprove" runat="server"
-                                                    Text="إلغاء"
-                                                    AutoPostBack="false"
-                                                    Font-Names="Cairo"
-                                                    Font-Bold="true"
-                                                    CssClass="dx-button"
-                                                    Style="background-color: gray; color: white; width: 100px;"
-                                                    ClientSideEvents-Click="function(){ popupApprove1.Hide(); }" />
+                                                <button type="button"
+                                                    onclick="popupApprove1.Hide();"
+                                                    style="background-color: red; color: white; width: 100px; padding: 6px 10px; border: none; border-radius: 4px; font-family: Cairo; font-weight: bold;">
+                                                    إلغاء
+               
+                                                </button>
 
                                             </div>
 

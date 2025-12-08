@@ -28,8 +28,6 @@
             .dxtcLite_Material.dxtc-top > .dxtc-stripContainer {
                 display: inline-block;
             }
-
-            
         </style>
 
         <script>
@@ -264,7 +262,7 @@
                 popupApprove1.Hide();
                 callbackApprove.PerformCallback(approveOrderId);
                 setTimeout(function () {
-                GridOrders.Refresh();
+                    GridOrders.Refresh();
                 }, 300);
             }
             setInterval(function () {
@@ -532,14 +530,31 @@
                                             <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                                         </dx:GridViewDataColumn>
 
-                                        <dx:GridViewDataColumn Caption="المبلغ الكلي" FieldName="totalAmount">
+                                        <dx:GridViewDataColumn Caption="المبلغ الكلي">
                                             <DataItemTemplate>
-                                                <%# Eval("totalAmount") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
+                                                <%# 
+                                                    "<div style='font-weight:bold;'>" +
+                                                        Eval("totalAmount") + " " + MainHelper.GetCurrency(Eval("countryId")) +
+                                                    "</div>" +
+
+                                                    ((Eval("l_paymentMethodId2") != DBNull.Value 
+                                                      && Convert.ToInt32(Eval("l_paymentMethodId2")) > 0)
+                                                    ?
+                                                    "<div style='font-size:12px; color:#555; margin-top:4px;'>" +
+                                                        Eval("paymentMethod1") + "<br/>" +"+"+"<br/>" +
+                                                        Eval("paymentMethod2") +
+                                                    "</div>"
+                                                    :
+                                                    "<div style='font-size:12px; color:#555; margin-top:4px;'>" +
+                                                        Eval("paymentMethod1") +
+                                                    "</div>")
+                                                %>
                                             </DataItemTemplate>
+
                                             <EditFormSettings Visible="False" />
-                                            <CellStyle VerticalAlign="Middle" Font-Bold="true" HorizontalAlign="Center">
-                                            </CellStyle>
+                                            <CellStyle VerticalAlign="Middle" Font-Bold="true" HorizontalAlign="Center" />
                                         </dx:GridViewDataColumn>
+
 
                                         <dx:GridViewDataDateColumn FieldName="userDate" Caption="التاريخ">
                                             <PropertiesDateEdit DisplayFormatString="yyyy/MM/dd hh:mm tt" />
@@ -561,25 +576,25 @@
                                         <dx:GridViewDataColumn Caption="التحكم">
                                             <DataItemTemplate>
                                                 <%# 
-Convert.ToInt32(Eval("l_orderStatus")) == 1 
-? 
-"<div style='display:flex; flex-direction:column; gap:6px; align-items:center;'>" +
+                                                    Convert.ToInt32(Eval("l_orderStatus")) == 1 
+                                                    ? 
+                                                    "<div style='display:flex; flex-direction:column; gap:6px; align-items:center;'>" +
 
-    "<button type='button' class=\"dx-button\" onclick=\"ShowApprovePopup(" + Eval("id") + "); return false;\" " +
-    "style='background-color:green;color:white;font-family:Cairo; width:90px;border:none;padding:6px;border-radius:4px;'>موافقة</button>" +
+                                                        "<button type='button' class=\"dx-button\" onclick=\"ShowApprovePopup(" + Eval("id") + "); return false;\" " +
+                                                        "style='background-color:green;color:white;font-family:Cairo; width:90px;border:none;padding:6px;border-radius:4px;'>موافقة</button>" +
 
-    "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" " +
-    "style='background-color:red;color:white;font-family:Cairo; width:90px;border:none;padding:6px;border-radius:4px;'>رفض</button>" +
+                                                        "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" " +
+                                                        "style='background-color:red;color:white;font-family:Cairo; width:90px;border:none;padding:6px;border-radius:4px;'>رفض</button>" +
 
-"</div>"
-:
-"<div style='display:flex; flex-direction:column; align-items:center;'>" +
+                                                    "</div>"
+                                                    :
+                                                    "<div style='display:flex; flex-direction:column; align-items:center;'>" +
 
-"<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" " +
-"style='background-color:orange;color:white;font-family:Cairo; width:90px;border:none;padding:6px;border-radius:4px;'>إلغاء</button>" +
+                                                    "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" " +
+                                                    "style='background-color:orange;color:white;font-family:Cairo; width:90px;border:none;padding:6px;border-radius:4px;'>إلغاء</button>" +
 
-"</div>"
-%>
+                                                    "</div>"
+                                                %>
                                             </DataItemTemplate>
 
                                             <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
@@ -717,17 +732,34 @@ Convert.ToInt32(Eval("l_orderStatus")) == 1
                                                 ud.[lastName]  AS deliveryLastName,
                                                 ua.[firstName], 
                                                 ua.[lastName], 
-                                                o.[addressId], 
                                                 o.[branchId],
                                                 b.[name]  AS branchName, 
                                                 b.[phone] AS branchPhone,
+                                                o.[l_paymentMethodId],
+                                                o.[l_paymentMethodId2],
+                                                pm1.[description] AS paymentMethod1,
+                                                pm2.[description] AS paymentMethod2,
                                                 o.[userDate]
                                             FROM [Orders] o
-                                            JOIN [companies] c ON o.[companyId] = c.[id]
-                                            JOIN [usersApp] ua ON o.[username] = ua.[username]
-                                            JOIN [branches] b ON o.[branchId] = b.[id]
-                                            LEFT JOIN [usersDelivery] ud ON o.[usersDeliveryId] = ud.[id]
-                                            WHERE ((o.[l_orderStatus] = 1) or (o.[l_orderStatus] = 2) or (o.[l_orderStatus] = 3))  order by o.id desc" />
+                                            JOIN [companies] c 
+                                                ON o.[companyId] = c.[id]
+                                            JOIN [usersApp] ua 
+                                                ON o.[username] = ua.[username]
+                                            JOIN [branches] b 
+                                                ON o.[branchId] = b.[id]
+                                            LEFT JOIN [usersDelivery] ud 
+                                                ON o.[usersDeliveryId] = ud.[id]
+                                            LEFT JOIN l_paymentMethod pm1 
+                                                ON o.l_paymentMethodId = pm1.id
+                                            LEFT JOIN l_paymentMethod pm2 
+                                                ON o.l_paymentMethodId2 = pm2.id
+                                            WHERE 
+                                                (o.[l_orderStatus] = 1 
+                                                 OR o.[l_orderStatus] = 2 
+                                                 OR o.[l_orderStatus] = 3)
+
+                                            ORDER BY o.id DESC
+                                        " />
                             </div>
 
                             <dx:ASPxPopupControl ID="popupReject" runat="server"

@@ -35,7 +35,7 @@ namespace ShabAdmin
         }
         public void LoadDriverData(string id)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["ShabDBConnectionString"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 //int integerid = Convert.ToInt32(id);
@@ -75,7 +75,7 @@ namespace ShabAdmin
             else
             {
                 confirm.Text = " ";
-                string connectionString = ConfigurationManager.ConnectionStrings["ShabDBConnectionString"].ConnectionString;
+                string connectionString = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     string query = @"update usersDelivery set password = @hashed 
@@ -95,11 +95,11 @@ namespace ShabAdmin
 
             if (userplatform == "ANDROID")
             {
-                storeUrl = "https://play.google.com/store/apps/details?id=com.yourcompany.shabclick";
+                storeUrl = "https://play.google.com/store/apps/details?id=com.alshaeb.alshaeb";
             }
             else  
             {
-                storeUrl = "https://apps.apple.com/jo/app/shab-click/id123456789";
+                storeUrl = "https://apps.apple.com/us/app/alshaeb-click/id6752823758";
             }
             //else
             //{

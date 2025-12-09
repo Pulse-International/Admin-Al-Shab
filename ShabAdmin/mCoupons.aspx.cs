@@ -137,7 +137,7 @@ namespace ShabAdmin
                                     var senderObj = new FcmSender();
                                     var usernames = grid.GetSelectedFieldValues("username");
 
-                                    cmd.Parameters.Add("@InsertAll", SqlDbType.Bit).Value = checkAll.Checked ? 1 : (GridUsersApp.VisibleRowCount == usernames.Count ? 1 : 0);
+                                    cmd.Parameters.Add("@InsertAll", SqlDbType.Bit).Value = checkAll.Checked ? 1 : 0;
 
                                     if (!checkAll.Checked)
                                     {
@@ -165,7 +165,8 @@ namespace ShabAdmin
                                             {
                                                 if (reader.Read())
                                                 {
-                                                    usersGroup = reader["usersGroup"].ToString();
+                                                    if (checkAll.Checked)
+                                                        usersGroup = reader["usersGroup"].ToString();
                                                     actionType = reader["actionType"].ToString();
                                                     title = reader["title"].ToString();
                                                     body = reader["body"].ToString();
@@ -190,7 +191,8 @@ namespace ShabAdmin
                                             {
                                                 if (reader.Read())
                                                 {
-                                                    usersGroup = reader["usersGroup"].ToString();
+                                                    if (checkAll.Checked)
+                                                        usersGroup = reader["usersGroup"].ToString();
                                                     actionType = reader["actionType"].ToString();
                                                     title = reader["title"].ToString();
                                                     body = reader["body"].ToString();

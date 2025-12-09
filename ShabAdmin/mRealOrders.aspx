@@ -540,12 +540,13 @@
                                                     ((Eval("l_paymentMethodId2") != DBNull.Value 
                                                       && Convert.ToInt32(Eval("l_paymentMethodId2")) > 0)
                                                     ?
-                                                    "<div style='font-size:12px; color:#555; margin-top:4px;'>" +
-                                                        Eval("paymentMethod1") + "<br/>" +"+"+"<br/>" +
+                                                    "<div style='font-size:12px; color:#555; margin-top:4px; line-height:12px; border-top:1px solid #ccc; padding-top:6px'>" +
+                                                        Eval("paymentMethod1") + "<br/>" +
+                                                        "<b style='color:#777'>+</b><br/>" +
                                                         Eval("paymentMethod2") +
                                                     "</div>"
                                                     :
-                                                    "<div style='font-size:12px; color:#555; margin-top:4px;'>" +
+                                                    "<div style='font-size:12px; color:#555; margin-top:4px;border-top:1px solid #ccc; padding-top:6px'>" +
                                                         Eval("paymentMethod1") +
                                                     "</div>")
                                                 %>

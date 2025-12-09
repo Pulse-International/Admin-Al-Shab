@@ -1539,8 +1539,8 @@
                                                         ShowProgressPanel="True" UploadMode="Auto" Width="100%" AutoStartUpload="True">
                                                         <ValidationSettings AllowedFileExtensions=".jpg, .jpeg, .png, .bmp"
                                                             GeneralErrorText="حدث خطأ أثناء تحميل الصور"
-                                                            MaxFileSize="5048576"
-                                                            MaxFileSizeErrorText="الحجم أكبر من 1 ميجابايت"
+                                                            MaxFileSize="10000000"
+                                                            MaxFileSizeErrorText="الحجم أكبر من 10 ميجابايت"
                                                             NotAllowedFileExtensionErrorText="امتداد غير مسموح به" />
                                                         <ClientSideEvents
                                                             FilesUploadStart="function(s,e){ onFileUploadStart(s,e,'image'); }"
@@ -1568,8 +1568,8 @@
                                                         ShowProgressPanel="True" UploadMode="Auto" Width="100%" AutoStartUpload="True">
                                                         <ValidationSettings AllowedFileExtensions=".jpg, .jpeg, .png, .bmp"
                                                             GeneralErrorText="حدث خطأ أثناء تحميل الصور"
-                                                            MaxFileSize="5048576"
-                                                            MaxFileSizeErrorText="الحجم أكبر من 1 ميجابايت"
+                                                            MaxFileSize="10000000"
+                                                            MaxFileSizeErrorText="الحجم أكبر من 10 ميجابايت"
                                                             NotAllowedFileExtensionErrorText="امتداد غير مسموح به" />
                                                         <ClientSideEvents
                                                             FilesUploadStart="function(s,e){ onFileUploadStart(s,e,'carPicture'); }"
@@ -1597,8 +1597,8 @@
                                                         ShowProgressPanel="True" UploadMode="Auto" Width="100%" AutoStartUpload="True">
                                                         <ValidationSettings AllowedFileExtensions=".jpg, .jpeg, .png, .bmp"
                                                             GeneralErrorText="حدث خطأ أثناء تحميل الصور"
-                                                            MaxFileSize="5048576"
-                                                            MaxFileSizeErrorText="الحجم أكبر من 1 ميجابايت"
+                                                            MaxFileSize="10000000"
+                                                            MaxFileSizeErrorText="الحجم أكبر من 10 ميجابايت"
                                                             NotAllowedFileExtensionErrorText="امتداد غير مسموح به" />
                                                         <ClientSideEvents
                                                             FilesUploadStart="function(s,e){ onFileUploadStart(s,e,'carLicense'); }"
@@ -1626,8 +1626,8 @@
                                                         ShowProgressPanel="True" UploadMode="Auto" Width="100%" AutoStartUpload="True">
                                                         <ValidationSettings AllowedFileExtensions=".jpg, .jpeg, .png, .bmp"
                                                             GeneralErrorText="حدث خطأ أثناء تحميل الصور"
-                                                            MaxFileSize="5048576"
-                                                            MaxFileSizeErrorText="الحجم أكبر من 1 ميجابايت"
+                                                            MaxFileSize="10000000"
+                                                            MaxFileSizeErrorText="الحجم أكبر من 10 ميجابايت"
                                                             NotAllowedFileExtensionErrorText="امتداد غير مسموح به" />
                                                         <ClientSideEvents
                                                             FilesUploadStart="function(s,e){ onFileUploadStart(s,e,'idFront'); }"
@@ -1655,8 +1655,8 @@
                                                         ShowProgressPanel="True" UploadMode="Auto" Width="100%" AutoStartUpload="True">
                                                         <ValidationSettings AllowedFileExtensions=".jpg, .jpeg, .png, .bmp"
                                                             GeneralErrorText="حدث خطأ أثناء تحميل الصور"
-                                                            MaxFileSize="5048576"
-                                                            MaxFileSizeErrorText="الحجم أكبر من 1 ميجابايت"
+                                                            MaxFileSize="10000000"
+                                                            MaxFileSizeErrorText="الحجم أكبر من 10 ميجابايت"
                                                             NotAllowedFileExtensionErrorText="امتداد غير مسموح به" />
                                                         <ClientSideEvents
                                                             FilesUploadStart="function(s,e){ onFileUploadStart(s,e,'idBack'); }"
@@ -1684,8 +1684,8 @@
                                                         ShowProgressPanel="True" UploadMode="Auto" Width="100%" AutoStartUpload="True">
                                                         <ValidationSettings AllowedFileExtensions=".jpg, .jpeg, .png, .bmp"
                                                             GeneralErrorText="حدث خطأ أثناء تحميل الصور"
-                                                            MaxFileSize="5048576"
-                                                            MaxFileSizeErrorText="الحجم أكبر من 1 ميجابايت"
+                                                            MaxFileSize="10000000"
+                                                            MaxFileSizeErrorText="الحجم أكبر من 10 ميجابايت"
                                                             NotAllowedFileExtensionErrorText="امتداد غير مسموح به" />
                                                         <ClientSideEvents
                                                             FilesUploadStart="function(s,e){ onFileUploadStart(s,e,'license'); }"

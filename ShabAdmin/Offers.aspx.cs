@@ -275,7 +275,7 @@ namespace ShabAdmin
                 string filePath = Path.Combine(MapPath(UploadDirectory), Docs);
                 using (System.Drawing.Image original = System.Drawing.Image.FromStream(uploadedFile.FileContent))
                 {
-                    MainHelper.CompressAndSaveImage(original, filePath, 550, 350, 75);
+                    MainHelper.CompressAndSaveImage(original, filePath, 550, 350, 85);
                 }
             }
             catch

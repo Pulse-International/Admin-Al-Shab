@@ -186,6 +186,7 @@
     <Content Include="assets\img\gridExpand.png" />
     <Content Include="assets\img\g_map.jpg" />
     <Content Include="assets\img\hidePassword.png" />
+    <Content Include="assets\img\loading.gif" />
     <Content Include="assets\img\logo.png" />
     <Content Include="assets\img\productPopup.png" />
     <Content Include="assets\img\productSlider.png" />

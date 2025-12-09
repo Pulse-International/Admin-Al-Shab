@@ -816,70 +816,75 @@ WHERE o.id = @orderId";
                         // ==============================
                         //   استرجاع نقاط العرض
                         // ==============================
-                        string getOfferPointsSql = @"
+                        if (requestedRefund + refundedAmount >= totalAmount)
+                        {
+
+                            string getOfferPointsSql = @"
                     SELECT points 
                     FROM pointsOffers 
                     WHERE id = (SELECT pointId FROM orders WHERE id = @orderId)
                 ";
 
-                        int offerPoints = 0;
-                        using (SqlCommand cmd = new SqlCommand(getOfferPointsSql, conn, tx))
-                        {
-                            cmd.Parameters.AddWithValue("@orderId", orderId);
-                            var val = cmd.ExecuteScalar();
-                            if (val != null && val != DBNull.Value)
-                                offerPoints = Convert.ToInt32(val);
-                        }
+                            int offerPoints = 0;
+                            using (SqlCommand cmd = new SqlCommand(getOfferPointsSql, conn, tx))
+                            {
+                                cmd.Parameters.AddWithValue("@orderId", orderId);
+                                var val = cmd.ExecuteScalar();
+                                if (val != null && val != DBNull.Value)
+                                    offerPoints = Convert.ToInt32(val);
+                            }
 
-                        if (offerPoints > 0)
-                        {
-                            string returnOfferPointsSql = @"
+                            if (offerPoints > 0)
+                            {
+                                string returnOfferPointsSql = @"
                         UPDATE usersApp
                         SET userPoints = userPoints + @offerPoints
                         WHERE username = @username
                     ";
 
-                            using (SqlCommand cmd = new SqlCommand(returnOfferPointsSql, conn, tx))
-                            {
-                                cmd.Parameters.AddWithValue("@offerPoints", offerPoints);
-                                cmd.Parameters.AddWithValue("@username", username);
-                                cmd.ExecuteNonQuery();
+                                using (SqlCommand cmd = new SqlCommand(returnOfferPointsSql, conn, tx))
+                                {
+                                    cmd.Parameters.AddWithValue("@offerPoints", offerPoints);
+                                    cmd.Parameters.AddWithValue("@username", username);
+                                    cmd.ExecuteNonQuery();
+                                }
                             }
-                        }
 
-                        // ==============================
-                        //   استرجاع النقاط المستخدمة
-                        // ==============================
-                        string getUsedPointsSql = @"
+                            // ==============================
+                            //   استرجاع النقاط المستخدمة
+                            // ==============================
+                            string getUsedPointsSql = @"
                     SELECT pointsUsed 
                     FROM orders 
                     WHERE id = @orderId
                 ";
 
-                        int usedPoints = 0;
-                        using (SqlCommand cmd = new SqlCommand(getUsedPointsSql, conn, tx))
-                        {
-                            cmd.Parameters.AddWithValue("@orderId", orderId);
-                            var val = cmd.ExecuteScalar();
-                            if (val != null && val != DBNull.Value)
-                                usedPoints = Convert.ToInt32(val);
-                        }
+                            int usedPoints = 0;
+                            using (SqlCommand cmd = new SqlCommand(getUsedPointsSql, conn, tx))
+                            {
+                                cmd.Parameters.AddWithValue("@orderId", orderId);
+                                var val = cmd.ExecuteScalar();
+                                if (val != null && val != DBNull.Value)
+                                    usedPoints = Convert.ToInt32(val);
+                            }
 
-                        if (usedPoints > 0)
-                        {
-                            string returnUsedPointsSql = @"
+                            if (usedPoints > 0)
+                            {
+                                string returnUsedPointsSql = @"
                         UPDATE usersApp
                         SET userPoints = userPoints + @used
                         WHERE username = @username
                     ";
 
-                            using (SqlCommand cmd = new SqlCommand(returnUsedPointsSql, conn, tx))
-                            {
-                                cmd.Parameters.AddWithValue("@used", usedPoints);
-                                cmd.Parameters.AddWithValue("@username", username);
-                                cmd.ExecuteNonQuery();
+                                using (SqlCommand cmd = new SqlCommand(returnUsedPointsSql, conn, tx))
+                                {
+                                    cmd.Parameters.AddWithValue("@used", usedPoints);
+                                    cmd.Parameters.AddWithValue("@username", username);
+                                    cmd.ExecuteNonQuery();
+                                }
                             }
                         }
+
 
                         // ==============================
                         //   خصم النقاط المكتسبة (amount * 100)
@@ -1097,68 +1102,71 @@ WHERE o.id = @orderId";
                         // ==============================
                         //   استرجاع نقاط العرض
                         // ==============================
-                        string getOfferPointsSql = @"
+                        if (requestedRefund + refundedAmount >= totalAmount)
+                        {
+                            string getOfferPointsSql = @"
                     SELECT points 
                     FROM pointsOffers 
                     WHERE id = (SELECT pointId FROM orders WHERE id = @orderId)
                 ";
 
-                        int offerPoints = 0;
-                        using (SqlCommand cmd = new SqlCommand(getOfferPointsSql, conn, tx))
-                        {
-                            cmd.Parameters.AddWithValue("@orderId", orderId);
-                            var val = cmd.ExecuteScalar();
-                            if (val != null && val != DBNull.Value)
-                                offerPoints = Convert.ToInt32(val);
-                        }
+                            int offerPoints = 0;
+                            using (SqlCommand cmd = new SqlCommand(getOfferPointsSql, conn, tx))
+                            {
+                                cmd.Parameters.AddWithValue("@orderId", orderId);
+                                var val = cmd.ExecuteScalar();
+                                if (val != null && val != DBNull.Value)
+                                    offerPoints = Convert.ToInt32(val);
+                            }
 
-                        if (offerPoints > 0)
-                        {
-                            string returnOfferPointsSql = @"
+                            if (offerPoints > 0)
+                            {
+                                string returnOfferPointsSql = @"
                         UPDATE usersApp
                         SET userPoints = userPoints + @offerPoints
                         WHERE username = @username
                     ";
 
-                            using (SqlCommand cmd = new SqlCommand(returnOfferPointsSql, conn, tx))
-                            {
-                                cmd.Parameters.AddWithValue("@offerPoints", offerPoints);
-                                cmd.Parameters.AddWithValue("@username", username);
-                                cmd.ExecuteNonQuery();
+                                using (SqlCommand cmd = new SqlCommand(returnOfferPointsSql, conn, tx))
+                                {
+                                    cmd.Parameters.AddWithValue("@offerPoints", offerPoints);
+                                    cmd.Parameters.AddWithValue("@username", username);
+                                    cmd.ExecuteNonQuery();
+                                }
                             }
-                        }
 
-                        // ==============================
-                        //   استرجاع النقاط المستخدمة
-                        // ==============================
-                        string getUsedPointsSql = @"
+                            // ==============================
+                            //   استرجاع النقاط المستخدمة
+                            // ==============================
+                            string getUsedPointsSql = @"
                     SELECT pointsUsed 
                     FROM orders 
                     WHERE id = @orderId
                 ";
 
-                        int usedPoints = 0;
-                        using (SqlCommand cmd = new SqlCommand(getUsedPointsSql, conn, tx))
-                        {
-                            cmd.Parameters.AddWithValue("@orderId", orderId);
-                            var val = cmd.ExecuteScalar();
-                            if (val != null && val != DBNull.Value)
-                                usedPoints = Convert.ToInt32(val);
-                        }
+                            int usedPoints = 0;
+                            using (SqlCommand cmd = new SqlCommand(getUsedPointsSql, conn, tx))
+                            {
+                                cmd.Parameters.AddWithValue("@orderId", orderId);
+                                var val = cmd.ExecuteScalar();
+                                if (val != null && val != DBNull.Value)
+                                    usedPoints = Convert.ToInt32(val);
+                            }
 
-                        if (usedPoints > 0)
-                        {
-                            string returnUsedPointsSql = @"
+                            if (usedPoints > 0)
+                            {
+                                string returnUsedPointsSql = @"
                         UPDATE usersApp
                         SET userPoints = userPoints + @used
                         WHERE username = @username
                     ";
 
-                            using (SqlCommand cmd = new SqlCommand(returnUsedPointsSql, conn, tx))
-                            {
-                                cmd.Parameters.AddWithValue("@used", usedPoints);
-                                cmd.Parameters.AddWithValue("@username", username);
-                                cmd.ExecuteNonQuery();
+                                using (SqlCommand cmd = new SqlCommand(returnUsedPointsSql, conn, tx))
+                                {
+                                    cmd.Parameters.AddWithValue("@used", usedPoints);
+                                    cmd.Parameters.AddWithValue("@username", username);
+                                    cmd.ExecuteNonQuery();
+                                }
                             }
                         }
 

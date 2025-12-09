@@ -81,7 +81,7 @@ namespace ShabAdmin
 
         public void LoadDriverData(string id)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["ShabDBConnectionString"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 string query = @"select * from usersDelivery where id = @integerid";
@@ -243,7 +243,7 @@ namespace ShabAdmin
             string passportt = SaveUploadedFile(passport, "passport");
             string residentt = SaveUploadedFile(resident, "resident");
 
-            string connectionString = ConfigurationManager.ConnectionStrings["ShabDBConnectionString"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 // جملة التحديث الذكية: تستخدم COALESCE لتبقي القيمة القديمة إذا كانت الجديدة NULL
@@ -371,7 +371,7 @@ namespace ShabAdmin
             if (country == "الأردن") country = "1";
             if (carkind == "سيارة") carkind = "1"; else carkind = "2";
 
-            string connectionString = ConfigurationManager.ConnectionStrings["ShabDBConnectionString"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 string query = "";
@@ -456,7 +456,7 @@ namespace ShabAdmin
         private bool CheckExists(string column, string value)
         {
             if (string.IsNullOrWhiteSpace(value)) return false;
-            string connection = ConfigurationManager.ConnectionStrings["ShabDBConnectionString"].ConnectionString;
+            string connection = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connection))
             {
                 string query = $"SELECT COUNT(*) FROM usersDelivery WHERE {column}=@val";

@@ -1,11 +1,10 @@
 ﻿<%@ Page Title="Prohibited" Language="C#" AutoEventWireup="true" CodeBehind="GetApp.aspx.cs" Inherits="ShabAdmin.GetApp" %>
 
-<%@ Register Assembly="DevExpress.Web.v24.1, Version=24.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Namespace="DevExpress.Web" TagPrefix="dx" %>
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+    <title>Loading...</title>
     <style>
         body {
             margin: 0;
@@ -44,12 +43,6 @@
             const isMobile = /Mobi|Android/i.test(userAgent) ||
                 ('ontouchstart' in window && window.innerWidth <= 768);
 
-            console.log('UserAgent:', userAgent);
-            console.log('Platform:', platform);
-            console.log('isAndroid:', isAndroid);
-            console.log('isIOS:', isIOS);
-            console.log('isMobile:', isMobile);
-
             if (isIOS) {
                 targetUrl = redirectUrls.ios;
             } else if (isAndroid) {
@@ -59,7 +52,6 @@
                 targetUrl = redirectUrls.android;
             }
 
-            console.log('Redirecting to:', targetUrl);
             window.location.href = targetUrl;
         }
 
@@ -69,7 +61,7 @@
 
 <body>
     <h1>
-        <img src="assets/img/loading.gif" />
+        <img src="assets/img/loading.gif?v=1" />
     </h1>
 </body>
 

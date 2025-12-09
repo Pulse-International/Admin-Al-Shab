@@ -35,7 +35,7 @@ namespace ShabAdmin
         }
         public void LoadDriverData(string id)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["ShabDBConnectionString"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 //int integerid = Convert.ToInt32(id);
@@ -75,7 +75,7 @@ namespace ShabAdmin
             else
             {
                 confirm.Text = " ";
-                string connectionString = ConfigurationManager.ConnectionStrings["ShabDBConnectionString"].ConnectionString;
+                string connectionString = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     string query = @"update usersDelivery set password = @hashed 

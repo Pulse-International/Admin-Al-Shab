@@ -1248,7 +1248,8 @@
                         <dx:ASPxUploadControl ID="userPic" runat="server" ClientInstanceName="userPic" Width="100%" 
                             UploadMode="Standard" ShowProgressPanel="false" BrowseButton-Text="رفع صورة">
                              <ClientSideEvents TextChanged="function(s,e){ onPreviewImage(s,e,'preview_userPic'); }" />
-                             <ValidationSettings AllowedFileExtensions=".jpg,.jpeg,.png,.gif" />
+                             <ValidationSettings AllowedFileExtensions=".jpg, .jpeg, .png, .bmp" GeneralErrorText="حدث خطأ أثناء تحميل الصور ، الرجاء المحاولة لاحقا" MaxFileSize="10000000" MaxFileSizeErrorText="حجم الصورة أكبر من 10 ميجابايت ، الرجاء اختيار صورة بحجم أقل" NotAllowedFileExtensionErrorText="امتداد الصورة غير مسموح به">
+                              </ValidationSettings>
                         </dx:ASPxUploadControl>
                         <div id="preview_userPic" class="image-preview-container">
                             <span style="color:#aaa;">ستظهر الصورة هنا</span>
@@ -1277,7 +1278,13 @@
                                                         if (ASPxClientEdit.ValidateGroup('userGroupRegister')) {  
                                                          phoneCallback.PerformCallback(phone); 
                                                         }
-                                                    }" />
+                                                    }"
+                                 KeyPress="function(s, e){
+                                    // منع كتابة أي شيء غير الأرقام
+                                    if(e.htmlEvent.key.length === 1 && !/[0-9]/.test(e.htmlEvent.key)){
+                                        e.htmlEvent.preventDefault();
+                                    }
+                                }" />
                                                   <HelpTextStyle Font-Names="Arabic Typesetting">
                             </HelpTextStyle>
                                                   <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="userGroupRegister" ErrorDisplayMode="Text" ErrorTextPosition="Bottom">
@@ -1414,6 +1421,14 @@
                                     <RegularExpression ValidationExpression="^(?=.{10,})[0-9]*$" ErrorText="الأدخال ارقام فقط"/>
                                     <RequiredField IsRequired="True"></RequiredField>
                                 </ValidationSettings>
+                                <ClientSideEvents
+                                          KeyPress="function(s, e){
+                                            // منع كتابة أي شيء غير الأرقام
+                                            if(e.htmlEvent.key.length === 1 && !/[0-9]/.test(e.htmlEvent.key)){
+                                                e.htmlEvent.preventDefault();
+                                            }
+                                        }" 
+                                    />
                             </dx:ASPxTextBox>
                         </div>
 
@@ -1490,7 +1505,8 @@
                         <label>صورة الهوية (أمام)</label>
                         <dx:ASPxUploadControl ID="ASPxUploadControl5" runat="server" ClientInstanceName="idFrontPic" Width="100%" UploadMode="Standard" ShowProgressPanel="false" BrowseButton-Text="اختر صورة">
                             <ClientSideEvents TextChanged="function(s,e){ onPreviewImage(s,e,'preview_idFront'); }" />
-                            <ValidationSettings AllowedFileExtensions=".jpg,.jpeg,.png,.gif" />
+                            <ValidationSettings AllowedFileExtensions=".jpg, .jpeg, .png, .bmp" GeneralErrorText="حدث خطأ أثناء تحميل الصور ، الرجاء المحاولة لاحقا" MaxFileSize="10000000" MaxFileSizeErrorText="حجم الصورة أكبر من 10 ميجابايت ، الرجاء اختيار صورة بحجم أقل" NotAllowedFileExtensionErrorText="امتداد الصورة غير مسموح به">
+                            </ValidationSettings>
                         </dx:ASPxUploadControl>
                         <div id="preview_idFront" class="image-preview-container">
                             <span style="color:#aaa;">ستظهر الصورة هنا</span>
@@ -1500,7 +1516,8 @@
                         <label>صورة الهوية (خلف)</label>
                         <dx:ASPxUploadControl ID="ASPxUploadControl4" runat="server" ClientInstanceName="idBackPic" Width="100%" UploadMode="Standard" ShowProgressPanel="false" BrowseButton-Text="اختر صورة">
                             <ClientSideEvents TextChanged="function(s,e){ onPreviewImage(s,e,'preview_idBack'); }" />
-                            <ValidationSettings AllowedFileExtensions=".jpg,.jpeg,.png,.gif" />
+                            <ValidationSettings AllowedFileExtensions=".jpg, .jpeg, .png, .bmp" GeneralErrorText="حدث خطأ أثناء تحميل الصور ، الرجاء المحاولة لاحقا" MaxFileSize="10000000" MaxFileSizeErrorText="حجم الصورة أكبر من 10 ميجابايت ، الرجاء اختيار صورة بحجم أقل" NotAllowedFileExtensionErrorText="امتداد الصورة غير مسموح به">
+                            </ValidationSettings>
                         </dx:ASPxUploadControl>
                         <div id="preview_idBack" class="image-preview-container">
                             <span style="color:#aaa;">ستظهر الصورة هنا</span>
@@ -1510,7 +1527,8 @@
                           <label>صورة جواز السفر *</label>
                           <dx:ASPxUploadControl ID="passport" runat="server" ClientInstanceName="passportPic" Width="100%" UploadMode="Standard" ShowProgressPanel="false" BrowseButton-Text="اختر صورة">
                               <ClientSideEvents TextChanged="function(s,e){ onPreviewImage(s,e,'preview_passport'); }" />
-                              <ValidationSettings AllowedFileExtensions=".jpg,.jpeg,.png,.gif" />
+                                <ValidationSettings AllowedFileExtensions=".jpg, .jpeg, .png, .bmp" GeneralErrorText="حدث خطأ أثناء تحميل الصور ، الرجاء المحاولة لاحقا" MaxFileSize="10000000" MaxFileSizeErrorText="حجم الصورة أكبر من 10 ميجابايت ، الرجاء اختيار صورة بحجم أقل" NotAllowedFileExtensionErrorText="امتداد الصورة غير مسموح به">
+                               </ValidationSettings>
                           </dx:ASPxUploadControl>
                           <div id="preview_passport" class="image-preview-container">
                             <span style="color:#aaa;">ستظهر الصورة هنا</span>
@@ -1520,7 +1538,8 @@
                           <label>صورة الإقامة *</label>
                           <dx:ASPxUploadControl ID="resident" runat="server" ClientInstanceName="residencePic" Width="100%" UploadMode="Standard" ShowProgressPanel="false" BrowseButton-Text="اختر صورة">
                               <ClientSideEvents TextChanged="function(s,e){ onPreviewImage(s,e,'preview_residence'); }" />
-                              <ValidationSettings AllowedFileExtensions=".jpg,.jpeg,.png,.gif" />
+                               <ValidationSettings AllowedFileExtensions=".jpg, .jpeg, .png, .bmp" GeneralErrorText="حدث خطأ أثناء تحميل الصور ، الرجاء المحاولة لاحقا" MaxFileSize="10000000" MaxFileSizeErrorText="حجم الصورة أكبر من 10 ميجابايت ، الرجاء اختيار صورة بحجم أقل" NotAllowedFileExtensionErrorText="امتداد الصورة غير مسموح به">
+                               </ValidationSettings>
                           </dx:ASPxUploadControl>
                            <div id="preview_residence" class="image-preview-container">
                             <span style="color:#aaa;">ستظهر الصورة هنا</span>
@@ -1551,7 +1570,8 @@
                         <label style="font-weight:bold; font-size:16px;">صورة رخصة القيادة <span style="color:red">*</span></label>
                         <dx:ASPxUploadControl ID="ASPxUploadControl3" runat="server" ClientInstanceName="licensePic" Width="100%" UploadMode="Standard" ShowProgressPanel="false" BrowseButton-Text="اختر صورة الرخصة">
                             <ClientSideEvents TextChanged="function(s,e){ onPreviewImage(s,e,'preview_license'); }" />
-                            <ValidationSettings AllowedFileExtensions=".jpg,.jpeg,.png" />
+                            <ValidationSettings AllowedFileExtensions=".jpg, .jpeg, .png, .bmp" GeneralErrorText="حدث خطأ أثناء تحميل الصور ، الرجاء المحاولة لاحقا" MaxFileSize="10000000" MaxFileSizeErrorText="حجم الصورة أكبر من 10 ميجابايت ، الرجاء اختيار صورة بحجم أقل" NotAllowedFileExtensionErrorText="امتداد الصورة غير مسموح به">
+                             </ValidationSettings>
                         </dx:ASPxUploadControl>
                         <div id="preview_license" class="image-preview-container">
                             <span style="color:#aaa;">ستظهر الصورة هنا</span>
@@ -1659,7 +1679,8 @@
                         <label>صورة رخصة المركبة (الاقتناء)</label>
                         <dx:ASPxUploadControl ID="ASPxUploadControl2" runat="server" ClientInstanceName="carLicensePic" Width="100%" UploadMode="Standard" ShowProgressPanel="false" BrowseButton-Text="اختر صورة">
                             <ClientSideEvents TextChanged="function(s,e){ onPreviewImage(s,e,'preview_carLicense'); }" />
-                            <ValidationSettings AllowedFileExtensions=".jpg,.jpeg,.png,.gif" />
+                            <ValidationSettings AllowedFileExtensions=".jpg, .jpeg, .png, .bmp" GeneralErrorText="حدث خطأ أثناء تحميل الصور ، الرجاء المحاولة لاحقا" MaxFileSize="10000000" MaxFileSizeErrorText="حجم الصورة أكبر من 10 ميجابايت ، الرجاء اختيار صورة بحجم أقل" NotAllowedFileExtensionErrorText="امتداد الصورة غير مسموح به">
+                            </ValidationSettings>
                         </dx:ASPxUploadControl>
                         <div id="preview_carLicense" class="image-preview-container">
                             <span style="color:#aaa;">ستظهر الصورة هنا</span>
@@ -1670,7 +1691,8 @@
                         <label>صورة المركبة من الأمام</label>
                         <dx:ASPxUploadControl ID="ASPxUploadControl1" runat="server" ClientInstanceName="carPic" Width="100%" UploadMode="Standard" ShowProgressPanel="false" BrowseButton-Text="اختر صورة">
                             <ClientSideEvents TextChanged="function(s,e){ onPreviewImage(s,e,'preview_car'); }" />
-                            <ValidationSettings AllowedFileExtensions=".jpg,.jpeg,.png,.gif" />
+                            <ValidationSettings AllowedFileExtensions=".jpg, .jpeg, .png, .bmp" GeneralErrorText="حدث خطأ أثناء تحميل الصور ، الرجاء المحاولة لاحقا" MaxFileSize="10000000" MaxFileSizeErrorText="حجم الصورة أكبر من 10 ميجابايت ، الرجاء اختيار صورة بحجم أقل" NotAllowedFileExtensionErrorText="امتداد الصورة غير مسموح به">
+                            </ValidationSettings>
                         </dx:ASPxUploadControl>
                         <div id="preview_car" class="image-preview-container">
                             <span style="color:#aaa;">ستظهر الصورة هنا</span>

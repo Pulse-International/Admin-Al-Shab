@@ -1013,7 +1013,7 @@ WHERE o.id = @orderId";
                     SELECT o.username, o.totalAmount, o.refundedAmount, 
                            o.realTotalAmount, o.realTax, pa.transactionRef AS paymentTR,
                            o.VerifiedTransactionRef, o.l_refundType,
-                           o.paymentMethodId, o.paymentMethodId2
+                           o.l_paymentMethodId, o.l_paymentMethodId2
                     FROM Orders o
                     LEFT JOIN [payments] pa ON o.id = pa.orderId
                     WHERE o.id = @orderId";
@@ -1039,8 +1039,8 @@ WHERE o.id = @orderId";
                                 refundedAmount = r["refundedAmount"] == DBNull.Value ? 0m : Convert.ToDecimal(r["refundedAmount"]);
                                 transactionRef = r["paymentTR"]?.ToString() ?? "";
                                 refundType = r["l_refundType"] == DBNull.Value ? 0 : Convert.ToInt32(r["l_refundType"]);
-                                paymentMethod1 = r["paymentMethodId"] == DBNull.Value ? 0 : Convert.ToInt32(r["paymentMethodId"]);
-                                paymentMethod2 = r["paymentMethodId2"] == DBNull.Value ? 0 : Convert.ToInt32(r["paymentMethodId2"]);
+                                paymentMethod1 = r["l_paymentMethodId"] == DBNull.Value ? 0 : Convert.ToInt32(r["l_paymentMethodId"]);
+                                paymentMethod2 = r["l_paymentMethodId2"] == DBNull.Value ? 0 : Convert.ToInt32(r["l_paymentMethodId2"]);
                             }
                         }
 

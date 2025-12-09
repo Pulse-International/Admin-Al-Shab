@@ -813,24 +813,24 @@ namespace ShabAdmin
                 {
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(@"
-                        SELECT 
-                            a.username,
-                            t.description AS addressType,
-                            a.countrycode,
-                            a.city,
-                            a.area,
-                            a.addressnickname,
-                            a.apartmentno,
-                            a.floorno,
-                            a.[buildingno],
-                            a.[latitude],
-                            a.[longitude],
-                            a.street,
-                            a.addressnotes,
-                            a.isStored
-                        FROM Addresses a
-                        LEFT JOIN l_addressType t ON a.l_addressTypeId = t.id
-                        WHERE a.id = @id", conn);
+                SELECT 
+                    a.username,
+                    t.description AS addressType,
+                    a.countrycode,
+                    a.city,
+                    a.area,
+                    a.addressnickname,
+                    a.apartmentno,
+                    a.floorno,
+                    a.[buildingno],
+                    a.[latitude],
+                    a.[longitude],
+                    a.street,
+                    a.addressnotes,
+                    a.isStored
+                FROM Addresses a
+                LEFT JOIN l_addressType t ON a.l_addressTypeId = t.id
+                WHERE a.id = @id", conn);
 
                     cmd.Parameters.AddWithValue("@id", addressId);
 
@@ -842,7 +842,10 @@ namespace ShabAdmin
                         string isStored = Convert.ToBoolean(reader["isStored"]) ? "عنوان محفوظ" : "عنوان مؤقت";
                         string mapDivId = $"map_{addressId}";
 
-                        // ضع بيانات الخريطة هنا كـ JSON String
+                        // رابط Google Maps
+                        string googleMapsLink = $"https://www.google.com/maps?q={latitude},{longitude}";
+
+                        // JSON للخريطة
                         var mapData = new
                         {
                             lat = latitude,
@@ -854,34 +857,59 @@ namespace ShabAdmin
                         };
                         string json = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(mapData);
 
-                        // أرسلها عبر JSProperties
                         callbackAddress1.JSProperties["cpMapData"] = json;
 
+                        // HTML + زر النسخ + سكربت النسخ
                         lblAddressInfo1.Text = $@"
-                        <div style='font-family: Cairo; direction: rtl; font-size: 1.1em; line-height: 2; padding: 20px; background-color: #f9f9f9; border-radius: 10px; border: 1px solid #ddd; max-width: 100%;'>
-                            <h3 style='margin-top: 0;font-family: Cairo; margin-bottom:1em; color: #333;'>📍 تفاصيل العنوان</h3>
-                            <div style='display: flex; flex-direction: row; flex-wrap: nowrap; gap: 20px; max-width: 100%;'>
-                                <div style='width: 50%;'>
-                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>📱 الهاتف:</b> {reader["username"]}</div>
-                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>🏠 نوع العنوان:</b> {reader["addressType"]}</div>
-                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>🌍 الدولة:</b> {reader["countrycode"]}</div>
-                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>🏙️ المدينة:</b> {reader["city"]}</div>
-                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>📍 المنطقة:</b> {reader["area"]}</div>
-                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>🏷️ الاسم المستعار:</b> {reader["addressnickname"]}</div>
-                                    <hr style='margin: 15px 0; border-top: 1px dashed #ccc;' />
-                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>🛣️ الشارع:</b> {reader["street"]}</div>
-                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>🏢 رقم المبنى:</b> {reader["buildingno"]}</div>
-                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>🪜 الطابق:</b> {reader["floorno"]}</div>
-                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>🚪 رقم الشقة:</b> {reader["apartmentno"]}</div>
-                                    <div style='margin-bottom: 10px;'><b style='color:#555;'>📝 ملاحظات:</b> {reader["addressnotes"]}</div>
-                                    <div style='margin-top: 20px; color: #888; font-style: Cairo;'>{isStored}</div>
-                                </div>
-                                <div style='width: 50%;'>
-                                    <div id='{mapDivId}' style='width: 100%; height: 400px; border: 1px solid #ccc; border-radius: 8px;'></div>
-                                </div>
-                            </div>
-                        </div>";
+                <div style='font-family: Cairo; direction: rtl; font-size: 1.1em; line-height: 2; padding: 20px; background-color: #f9f9f9; border-radius: 10px; border: 1px solid #ddd; max-width: 100%;'>
+                    <h3 style='margin-top: 0;font-family: Cairo; margin-bottom:1em; color: #333;'>📍 تفاصيل العنوان</h3>
 
+                    <div style='display: flex; flex-direction: row; flex-wrap: nowrap; gap: 20px; max-width: 100%;'>
+                        <div style='width: 50%;'>
+                            <div style='margin-bottom: 10px;'><b style='color:#555;'>📱 الهاتف:</b> {reader["username"]}</div>
+                            <div style='margin-bottom: 10px;'><b style='color:#555;'>🏠 نوع العنوان:</b> {reader["addressType"]}</div>
+                            <div style='margin-bottom: 10px;'><b style='color:#555;'>🌍 الدولة:</b> {reader["countrycode"]}</div>
+                            <div style='margin-bottom: 10px;'><b style='color:#555;'>🏙️ المدينة:</b> {reader["city"]}</div>
+                            <div style='margin-bottom: 10px;'><b style='color:#555;'>📍 المنطقة:</b> {reader["area"]}</div>
+                            <div style='margin-bottom: 10px;'><b style='color:#555;'>🏷️ الاسم المستعار:</b> {reader["addressnickname"]}</div>
+                            <hr style='margin: 15px 0; border-top: 1px dashed #ccc;' />
+                            <div style='margin-bottom: 10px;'><b style='color:#555;'>🛣️ الشارع:</b> {reader["street"]}</div>
+                            <div style='margin-bottom: 10px;'><b style='color:#555;'>🏢 رقم المبنى:</b> {reader["buildingno"]}</div>
+                            <div style='margin-bottom: 10px;'><b style='color:#555;'>🪜 الطابق:</b> {reader["floorno"]}</div>
+                            <div style='margin-bottom: 10px;'><b style='color:#555;'>🚪 رقم الشقة:</b> {reader["apartmentno"]}</div>
+                            <div style='margin-bottom: 10px;'><b style='color:#555;'>📝 ملاحظات:</b> {reader["addressnotes"]}</div>
+                            <div style='margin-top: 20px; color: #888; font-style: Cairo;'>{isStored}</div>
+                        </div>
+                        <div style='width: 50%; text-align: center;'>
+
+                            <!-- خريطة الموقع -->
+                            <div id='{mapDivId}' style='width: 100%; height: 400px; border: 1px solid #ccc; border-radius: 8px;'></div>
+
+
+                            <div style='text-align:center; margin-top:15px;'>
+
+                                <a href='#' 
+                                   onclick=""copyMapLink('{googleMapsLink}', 'copyIcon_{addressId}'); return false;""
+                                   style='display:inline-block; background:#0d6efd; color:white; padding:12px 22px;
+                                          border-radius:8px; font-family:Cairo; font-size:16px; text-decoration:none;
+                                          box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:0.2s;'>
+                                    📍 نسخ رابط الموقع
+                                </a>
+
+                                <div style='margin-top:10px;'>
+                                    <span id='copyIcon_{addressId}' 
+                                          style='color:green; font-size:22px; display:none; font-weight:bold;'>
+                                        ✔ تم النسخ
+                                    </span>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                </div>";
                     }
                     else
                     {
@@ -894,6 +922,7 @@ namespace ShabAdmin
                 lblAddressInfo1.Text = "رقم العنوان غير صالح.";
             }
         }
+
 
         protected void callbackApprove_Callback(object sender, DevExpress.Web.CallbackEventArgsBase e)
         {

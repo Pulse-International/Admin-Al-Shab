@@ -265,6 +265,18 @@
                     GridOrders.Refresh();
                 }, 300);
             }
+
+            function copyMapLink(link, iconId) {
+                navigator.clipboard.writeText(link).then(function () {
+                    var icon = document.getElementById(iconId);
+                    icon.style.display = 'inline';
+
+                    setTimeout(function () {
+                        icon.style.display = 'none';
+                    }, 2500);
+                });
+            }
+
             setInterval(function () {
                 if (typeof GridOrders !== "undefined") {
                     GridOrders.Refresh();

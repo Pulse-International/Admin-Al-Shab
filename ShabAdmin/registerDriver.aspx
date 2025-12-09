@@ -14,7 +14,9 @@
         .dxeBase_Moderno {
             font-family: 'Cairo', sans-serif;
         }
-
+        #MainContent_txtPhone_EC{
+            font-family: 'Cairo', sans-serif;
+        }
         .auth-buttons {
             display: none !important;
         }
@@ -392,17 +394,17 @@
             color: white !important;
             font-size: 16px !important;
             font-weight: bold !important;
-            border-radius: 50px !important; /* جعل الزر دائري الحواف بالكامل */
-            padding: 12px 35px !important; /* مساحة داخلية مريحة */
-            box-shadow: 0 10px 25px rgba(234, 31, 41, 0.4) !important; /* ظل قوي وجميل */
+            border-radius: 50px !important;
+            padding: 12px 35px !important; 
+            box-shadow: 0 10px 25px rgba(234, 31, 41, 0.4) !important; 
             border: none !important;
-            width: auto !important; /* العرض تلقائي */
+            width: auto !important; 
             min-width: 200px;
             transition: all 0.3s ease;
         }
 
             #MainContent_btnUpdate:hover {
-                transform: translateY(-5px); /* يرتفع قليلاً عند المرور */
+                transform: translateY(-5px); 
                 box-shadow: 0 15px 30px rgba(234, 31, 41, 0.6) !important;
             }
         /* حركة الظهور */
@@ -717,7 +719,11 @@
                 margin-bottom:11px;
             }
             .bts{
-                    padding: 10px 67px !important;    
+                    padding: 10px 67px !important; 
+                    margin:0px 5px;
+            }
+            .btn-next {
+                margin:0px 5px;
             }
             .main-card.edit-layout{
                 gap:0px !important;
@@ -809,6 +815,15 @@
         flex-grow: 1;              
         padding-left: 10px;
     }
+@media (max-width:900px){
+    .info-and-badge-wrapper {
+        display: block;
+        align-items: center;      
+        justify-content: space-between; 
+        flex-grow: 1;              
+        padding-left: 10px;
+    }
+}
     </style>
     <script type="text/javascript">
         // 1. منطق الـ Stepper (5 خطوات مع علامة الصح)
@@ -841,22 +856,21 @@
         function nextStep(step) {
             var container = document.querySelector('.step-content[data-step="' + step + '"]');
 
-            // 1. تحقق DevExpress للحقول النصية
             if (typeof ASPxClientEdit !== 'undefined' && !ASPxClientEdit.ValidateEditorsInContainer(container)) return;
 
-            // 2. (جديد) التحقق من الصور الإلزامية
-            if (!validateImagesForStep(step)) {
-                alert('⚠️ يرجى رفع جميع الصور المطلوبة لهذه الخطوة قبل المتابعة!');
-                return; // إيقاف العملية وعدم الانتقال
+            var imageErrorMsg = validateImagesForStep(step);
+            if (imageErrorMsg !== null) {
+                document.getElementById('lblValidationError').innerText = imageErrorMsg;
+                ValidationPopup.Show();
+                return; 
             }
 
-            // 3. تحقق مخصص (الأرقام المكررة الخ)
             if (hasCustomErrors(step)) {
-                alert('⚠️ يرجى تصحيح البيانات المكررة (باللون الأحمر) قبل المتابعة!');
+                document.getElementById('lblValidationError').innerText = 'يرجى تصحيح البيانات المكررة (المشار إليها باللون الأحمر) قبل المتابعة!';
+                ValidationPopup.Show();
                 return;
             }
 
-            // التنقل (باقي الكود كما هو...)
             document.querySelector('.step-content[data-step="' + step + '"]').classList.remove('active');
             var nextStepNum = step + 1;
             currentStep = nextStepNum;
@@ -864,7 +878,6 @@
 
             updateProgressBar(nextStepNum);
 
-            // تعبئة المراجعة
             if (nextStepNum === 5) {
                 populateReviewData();
             }
@@ -893,7 +906,6 @@
             return false;
         }
 
-        // 2. منطق معاينة الصور (محسّن 100%)
         function onPreviewImage(s, e, previewId) {
             try {
                 var input = s.GetFileInputElement(0);
@@ -1002,7 +1014,7 @@
                 if (typeof ASPxLabel3 !== 'undefined') ASPxLabel3.SetText('');
             }
             var input = Vehieclenumber.GetInputElement();
-            input.placeholder = (country === 'الأردن') ? 'مثال: 12-34567' : 'مثال: AB1234';
+            input.placeholder = (country === 'الأردن') ? 'مثال: 432444-12' : 'مثال: AB1234';
         }
 
         function formatVehicleNumber(value, country) {
@@ -1041,52 +1053,60 @@
             }
         };
         function hasImage(uploadControlName, previewId) {
-            // 1. التحقق هل قام المستخدم باختيار ملف جديد الآن
             var uploadControl = ASPxClientControl.GetControlCollection().GetByName(uploadControlName);
             if (uploadControl && uploadControl.GetText() !== "") return true;
 
-            // 2. التحقق هل هناك صورة ظاهرة في المعاينة (مهم في حالة التعديل أو إذا تم اختيار الصورة سابقاً)
             var previewDiv = document.getElementById(previewId);
             if (previewDiv && previewDiv.querySelector('img') && previewDiv.querySelector('img').src.length > 10) return true;
 
             return false;
         }
         function validateImagesForStep(step) {
-            var isValid = true;
-
+            
             if (step === 1) {
                 // التحقق من الصورة الشخصية
-                if (!hasImage('userPic', 'preview_userPic')) isValid = false;
+                if (!hasImage('userPic', 'preview_userPic')) 
+                    return "عذراً، يرجى رفع الصورة الشخصية للمتابعة.";
             }
             else if (step === 2) {
                 // التحقق حسب نوع الوثيقة المختار
                 var docType = documentType.GetValue();
 
                 if (docType == "1") { // هوية
-                    if (!hasImage('idFrontPic', 'preview_idFront') || !hasImage('idBackPic', 'preview_idBack')) isValid = false;
+                    if (!hasImage('idFrontPic', 'preview_idFront')) 
+                        return "يرجى رفع صورة الهوية (الوجه الأمامي).";
+                    
+                    if (!hasImage('idBackPic', 'preview_idBack')) 
+                        return "يرجى رفع صورة الهوية (الوجه الخلفي).";
                 }
                 else if (docType == "2") { // جواز سفر
-                    if (!hasImage('passportPic', 'preview_passport')) isValid = false;
+                    if (!hasImage('passportPic', 'preview_passport')) 
+                        return "يرجى رفع صورة جواز السفر.";
                 }
                 else if (docType == "3") { // إقامة
-                    if (!hasImage('residencePic', 'preview_residence')) isValid = false;
+                    if (!hasImage('residencePic', 'preview_residence')) 
+                        return "يرجى رفع صورة الإقامة.";
                 }
                 else {
-                    // لم يتم اختيار نوع وثيقة (سيتم كشفه عبر التحقق العادي، لكن نعتبره خطأ هنا أيضاً)
-                    isValid = false;
+                    // لم يتم اختيار نوع وثيقة
+                    return "يرجى اختيار نوع الوثيقة أولاً.";
                 }
             }
             else if (step === 3) {
                 // رخصة القيادة
-                if (!hasImage('licensePic', 'preview_license')) isValid = false;
+                if (!hasImage('licensePic', 'preview_license')) 
+                    return "يرجى رفع صورة رخصة القيادة.";
             }
             else if (step === 4) {
                 // رخصة المركبة + صورة المركبة
-                if (!hasImage('carLicensePic', 'preview_carLicense')) isValid = false;
-                if (!hasImage('carPic', 'preview_car')) isValid = false;
+                if (!hasImage('carLicensePic', 'preview_carLicense')) 
+                    return "يرجى رفع صورة رخصة المركبة (الاقتناء).";
+                
+                if (!hasImage('carPic', 'preview_car')) 
+                    return "يرجى رفع صورة المركبة.";
             }
 
-            return isValid;
+            return null; // null تعني أنه لا توجد أخطاء
         }
     </script>
     <main>
@@ -1258,6 +1278,8 @@
                                                          phoneCallback.PerformCallback(phone); 
                                                         }
                                                     }" />
+                                                  <HelpTextStyle Font-Names="Arabic Typesetting">
+                            </HelpTextStyle>
                                                   <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="userGroupRegister" ErrorDisplayMode="Text" ErrorTextPosition="Bottom">
                             <ErrorFrameStyle Font-Size="0.8em">
                             </ErrorFrameStyle>
@@ -1556,7 +1578,7 @@
                     </div>
 
                     <div style="margin-bottom: 20px;">
-                        <label>نوع المركبة</label>
+                        <label>صنف المركبة</label>
                         <dx:ASPxComboBox ID="carKind" runat="server" ClientInstanceName="carKind" Width="100%" Height="45px">
                             <Items>
                                 <dx:ListEditItem Text="سيارة" Value="سيارة" />
@@ -1565,9 +1587,8 @@
                              <ValidationSettings RequiredField-IsRequired="true" Display="Dynamic" />
                         </dx:ASPxComboBox>
                     </div>
-
                     <div style="margin-bottom: 20px;">
-                        <label>موديل السيارة</label>
+                        <label>نوع المركبة</label>
                         <dx:ASPxTextBox ID="carmarka" runat="server" ClientInstanceName="carmarka" Width="100%" Height="45px"></dx:ASPxTextBox>
                     </div>
 
@@ -1624,7 +1645,6 @@
                         </dx:ASPxCallback>
                     </div>
 
-                    <%-- الجزء الثاني: رقم الشصي (كما هو لم يتغير) --%>
                     <div style="flex:1;">
                         <label>رقم الشصي</label>
                         <dx:ASPxTextBox ID="vehieclevinn" runat="server" Width="100%" Height="45px">
@@ -1735,26 +1755,23 @@
                 </div>
                 <div class="form-navigation">
                     <button type="button" class="btn-nav btn-prev" onclick="prevStep(5)">→ مراجعة وتعديل</button>
-      
-                    <dx:ASPxButton ID="btnSubmit" runat="server" ClientInstanceName="btnSubmit" Text="إرسال الطلب الآن" 
-                        Width="60%" Height="55px" OnClick="btnSubmit_Click" CausesValidation="False">
-                        <ClientSideEvents Click="function(s,e){ 
-                            if(confirm('هل أنت متأكد من صحة كافة البيانات؟')){
-                                 //
-                            }else{
-                                e.processOnServer = false;
-                            }
-                        }" />
+                <dx:ASPxButton ID="btnSubmit" runat="server" ClientInstanceName="btnSubmit" 
+                    Text="إرسال الطلب الآن" Width="60%" Height="55px" 
+                    AutoPostBack="false" CausesValidation="False">
+    
+                    <ClientSideEvents Click="function(s,e){ 
+                        finalpopup.Show(); 
+                    }" />
+                </dx:ASPxButton>
+                </div>
+            </div> 
+
+                <div class="form-navigation edit-mode-nav" style="display: none;">
+                    <dx:ASPxButton ID="btnUpdate" runat="server" ClientInstanceName="btnUpdate" 
+                        Text="💾 حفظ كافة التغييرات" 
+                        Width="300px" Height="50px" OnClick="btnSubmit_Update" CausesValidation="False">
                     </dx:ASPxButton>
                 </div>
-</div> 
-
-<div class="form-navigation edit-mode-nav" style="display: none;">
-    <dx:ASPxButton ID="btnUpdate" runat="server" ClientInstanceName="btnUpdate" 
-        Text="💾 حفظ كافة التغييرات" 
-        Width="300px" Height="50px" OnClick="btnSubmit_Update" CausesValidation="False">
-    </dx:ASPxButton>
-</div>
 
         </div>
         <dx:ASPxPopupControl ID="popupSuccess" runat="server" ClientInstanceName="popupSuccess"
@@ -1774,5 +1791,51 @@
                 </dx:PopupControlContentControl>
             </ContentCollection>
         </dx:ASPxPopupControl>
+             <dx:ASPxPopupControl ID="ValidationPopup" runat="server" ClientInstanceName="ValidationPopup"
+                    HeaderText="تنبيه: نقص في البيانات" ShowOnPageLoad="false" CloseAction="CloseButton" ShowCloseButton="true"
+                    Width="400px" Modal="true" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter">
+                    <HeaderStyle BackColor="#ea1f29" ForeColor="White" Font-Bold="true" />
+                    <ContentCollection>
+                        <dx:PopupControlContentControl>
+                            <div style="text-align:center; padding:15px;">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 40px; color: #ea1f29; margin-bottom: 15px;"></i>
+                
+                                <div id="lblValidationError" style="font-size: 16px; font-weight: bold; color: #333; margin-bottom: 20px;">
+                                    </div>
+
+                                <dx:ASPxButton ID="btnErrorClose" runat="server" AutoPostBack="false" Text="حسناً"
+                                    RenderMode="Button" Width="150px" BackColor="#ea1f29" ForeColor="White">
+                                    <ClientSideEvents Click="function(s, e) { ValidationPopup.Hide(); }" />
+                                    <HoverStyle BackColor="#c91b24"></HoverStyle>
+                                </dx:ASPxButton>
+                            </div>
+                        </dx:PopupControlContentControl>
+                    </ContentCollection>
+                </dx:ASPxPopupControl>
+                <dx:ASPxPopupControl ID="ASPxPopupControl1" runat="server" ClientInstanceName="finalpopup"
+                    HeaderText="هل انت متأكد من بياناتك قبل الأرسال؟" ShowOnPageLoad="false" CloseAction="CloseButton" ShowCloseButton="true"
+                    Width="400px" Modal="true" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter">
+                    <HeaderStyle BackColor="#ea1f29" ForeColor="White" Font-Bold="true" />
+                    <ContentCollection>
+                        <dx:PopupControlContentControl>
+                            <div style="text-align:center; padding:15px;">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 40px; color: #ea1f29; margin-bottom: 15px;"></i>
+                                <div style="margin-bottom: 20px; font-size: 18px; font-weight: bold; color: #333;">
+                                    هل أنت متأكد من صحة البيانات وتريد إرسال الطلب؟
+                                </div>
+                                <dx:ASPxButton ID="ASPxButton1" runat="server" 
+                                    AutoPostBack="true" 
+                                    Text="حسناً"
+                                    OnClick="btnSubmit_Click"
+                                    RenderMode="Button" Width="150px"
+                                    BackColor="#ea1f29" ForeColor="White">
+                                    <ClientSideEvents Click="function(s,e){
+                                            finalpopup.Hide();
+                                        }" />
+                                </dx:ASPxButton>
+                            </div>
+                        </dx:PopupControlContentControl>
+                    </ContentCollection>
+                </dx:ASPxPopupControl>
     </main>
 </asp:Content>

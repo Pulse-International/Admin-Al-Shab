@@ -95,11 +95,11 @@ namespace ShabAdmin
 
             if (userplatform == "ANDROID")
             {
-                storeUrl = "https://play.google.com/store/apps/details?id=com.yourcompany.shabclick";
+                storeUrl = "https://play.google.com/store/apps/details?id=com.alshaeb.alshaeb";
             }
             else  
             {
-                storeUrl = "https://apps.apple.com/jo/app/shab-click/id123456789";
+                storeUrl = "https://apps.apple.com/us/app/alshaeb-click/id6752823758";
             }
             //else
             //{

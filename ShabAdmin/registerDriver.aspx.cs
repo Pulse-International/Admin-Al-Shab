@@ -200,7 +200,7 @@ namespace ShabAdmin
             }
         }
 
-        public void btnSubmit_Update(object sender, EventArgs e)
+        public async void btnSubmit_Update(object sender, EventArgs e)
         {
             string idvalue = Request.QueryString["id"];
             string encryptedId = MainHelper.Decrypt_Me(idvalue, true);
@@ -316,13 +316,13 @@ namespace ShabAdmin
                     popupSuccess.ShowOnPageLoad = true;
                     lblPopupMessage.ForeColor = System.Drawing.Color.Green;
                 }
-                MainHelper.SendSms(phone, "تم تحديث بياناتك مؤخرا");
+                await MainHelper.SendSms(phone, "تم تحديث بياناتك مؤخرا");
             }
             // إعادة تحميل البيانات لعرض التعديلات الجديدة
             LoadDriverData(encryptedId);
         }
 
-        public  void btnSubmit_Click(object sender, EventArgs e)
+        public async void btnSubmit_Click(object sender, EventArgs e)
         {
             string firstname = txtFirstName.Text;
             string lastname = txtLastName.Text;
@@ -425,7 +425,7 @@ namespace ShabAdmin
                     popupSuccess.ShowOnPageLoad = true;
                     lblPopupMessage.ForeColor = System.Drawing.Color.Green;
                 }
-                 MainHelper.SendSms(phonen, "تم تسجيل طلبك بنجاح، الطلب قيد المراجعة");
+                await MainHelper.SendSms(phonen, "تم تسجيل طلبك بنجاح، الطلب قيد المراجعة");
             }
         }
 

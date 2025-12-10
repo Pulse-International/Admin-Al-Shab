@@ -14,9 +14,11 @@
         .dxeBase_Moderno {
             font-family: 'Cairo', sans-serif;
         }
-        #MainContent_txtPhone_EC{
+
+        #MainContent_txtPhone_EC {
             font-family: 'Cairo', sans-serif;
         }
+
         .auth-buttons {
             display: none !important;
         }
@@ -27,7 +29,7 @@
 
         .new-stepper-container {
             background: linear-gradient(180deg, #fff5f5 0%, #ffffff 100%);
-/*            padding: 30px 20px 40px 20px;*/
+            /*            padding: 30px 20px 40px 20px;*/
             direction: rtl;
             border-bottom: 1px solid #eee;
             margin-bottom: 6px;
@@ -350,6 +352,13 @@
             margin-top: 30px;
         }
 
+        .form-update {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
         .btn-nav {
             flex: 1;
             padding: 15px;
@@ -395,16 +404,16 @@
             font-size: 16px !important;
             font-weight: bold !important;
             border-radius: 50px !important;
-            padding: 12px 35px !important; 
-            box-shadow: 0 10px 25px rgba(234, 31, 41, 0.4) !important; 
+            padding: 12px 35px !important;
+            box-shadow: 0 10px 25px rgba(234, 31, 41, 0.4) !important;
             border: none !important;
-            width: auto !important; 
+            /*            width: auto !important; */
             min-width: 200px;
             transition: all 0.3s ease;
         }
 
             #MainContent_btnUpdate:hover {
-                transform: translateY(-5px); 
+                transform: translateY(-5px);
                 box-shadow: 0 15px 30px rgba(234, 31, 41, 0.6) !important;
             }
         /* حركة الظهور */
@@ -522,10 +531,10 @@
         }
 
         .driver-header-main {
-                display: flex;
-                align-items: center;
-                gap: 15px;
-                justify-content:center;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
         }
 
         .driver-profile-pic {
@@ -547,7 +556,7 @@
             font-weight: 700;
             margin-bottom: 10px;
             color: white;
-            margin-left:20px;
+            margin-left: 20px;
         }
 
         .driver-fullname {
@@ -697,11 +706,11 @@
         }
         /* --- تصميم الزر العائم (Floating Capsule) --- */
         .edit-mode-nav {
-            position: fixed;
-            bottom: 30px; /* مسافة من الأسفل */
-            left: 30px; /* مسافة من اليسار (للغة العربية) */
-            width: auto !important; /* العرض حسب المحتوى */
-            background: transparent; /* بدون خلفية للشريط */
+            /*            position: fixed;*/
+            bottom: 30px;
+            left: 30px;
+            /*            width: auto !important; */
+            background: transparent;
             padding: 0;
             box-shadow: none;
             z-index: 1000;
@@ -711,40 +720,46 @@
 
         @media (max-width: 900px) {
             .edit-sidebar {
-                /* إخفاء شريط السكرول للشكل الجمالي */
-                scrollbar-width: none; /* Firefox */
-                -ms-overflow-style: none; /* IE 10+ */
-                position:static !important;
-                display:block !important;
-                margin-bottom:11px;
-            }
-            .dxpcLite_Moderno, .dxdpLite_Moderno{
-                width:auto !important;
-            }
-            .edit-mode-nav{
-                position:static;
-                margin:20px auto;
-            }
-            .bts{
-                    padding: 10px 67px !important; 
-                    margin:0px 5px;
-            }
-            .btn-next {
-                margin:0px 5px;
-            }
-            .main-card.edit-layout{
-                gap:0px !important;
-            }
-            .driver-fullname{
-                font-size:16px;
-            }
-            .main-card{
-                padding:17px 0px;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                position: static !important;
+                display: block !important;
+                margin-bottom: 11px;
             }
 
-                .edit-sidebar::-webkit-scrollbar {
-                    display: none; /* Chrome/Safari */
-                }
+            .dxpcLite_Moderno, .dxdpLite_Moderno {
+                width: auto !important;
+            }
+
+            .edit-mode-nav {
+                position: static;
+                margin: 20px auto;
+            }
+
+            .bts {
+                padding: 10px 67px !important;
+                margin: 0px 5px;
+            }
+
+            .btn-next {
+                margin: 0px 5px;
+            }
+
+            .main-card.edit-layout {
+                gap: 0px !important;
+            }
+
+            .driver-fullname {
+                font-size: 16px;
+            }
+
+            .main-card {
+                padding: 17px 0px;
+            }
+
+            .edit-sidebar::-webkit-scrollbar {
+                display: none; /* Chrome/Safari */
+            }
 
             .sidebar-item {
                 min-width: 120px; /* عرض أدنى للأزرار في الموبايل */
@@ -773,64 +788,68 @@
                 justify-content: center;
             }
         }
-        .bts{
-            display:flex;
+
+        .bts {
+            display: flex;
             padding: 6px 34%;
-            gap:12px;
+            gap: 12px;
         }
-    .edit-profile-header {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background-color: #fff;
-        border: 2px solid #ffcc00;
-        padding: 5px 15px;
-        border-radius: 10px;
-        cursor: pointer;
-        white-space: nowrap; 
-    }
 
-.edit-profile-header:hover {
-    transform: translateY(-3px); /* حركة خفيفة عند المرور */
-}
+        .edit-profile-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #fff;
+            border: 2px solid #ffcc00;
+            padding: 5px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
 
-.edit-profile-header i {
-    font-size: 22px;
-    color: #ea1f29;
-}
+            .edit-profile-header:hover {
+                transform: translateY(-3px); /* حركة خفيفة عند المرور */
+            }
 
-.edit-profile-header .header-text {
-    display: flex;
-    flex-direction: column;
-}
+            .edit-profile-header i {
+                font-size: 22px;
+                color: #ea1f29;
+            }
 
-.edit-profile-header .main-title {
-    font-size: 18px;
-    font-weight: 800;
-    line-height: 1.2;
-}
+            .edit-profile-header .header-text {
+                display: flex;
+                flex-direction: column;
+            }
 
-.edit-profile-header .sub-title {
-    font-size: 12px;
-    color: #666;
-    font-weight: 600;
-}
-.info-and-badge-wrapper {
-        display: flex;
-        align-items: center;      
-        justify-content: space-between; 
-        flex-grow: 1;              
-        padding-left: 10px;
-    }
-@media (max-width:900px){
-    .info-and-badge-wrapper {
-        display: block;
-        align-items: center;      
-        justify-content: space-between; 
-        flex-grow: 1;              
-        padding-left: 10px;
-    }
-}
+            .edit-profile-header .main-title {
+                font-size: 18px;
+                font-weight: 800;
+                line-height: 1.2;
+            }
+
+            .edit-profile-header .sub-title {
+                font-size: 12px;
+                color: #666;
+                font-weight: 600;
+            }
+
+        .info-and-badge-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-grow: 1;
+            padding-left: 10px;
+        }
+
+        @media (max-width:900px) {
+            .info-and-badge-wrapper {
+                display: block;
+                align-items: center;
+                justify-content: space-between;
+                flex-grow: 1;
+                padding-left: 10px;
+            }
+        }
     </style>
     <script type="text/javascript">
         // 1. منطق الـ Stepper (5 خطوات مع علامة الصح)
@@ -869,7 +888,7 @@
             if (imageErrorMsg !== null) {
                 document.getElementById('lblValidationError').innerText = imageErrorMsg;
                 ValidationPopup.Show();
-                return; 
+                return;
             }
 
             if (hasCustomErrors(step)) {
@@ -1069,10 +1088,10 @@
             return false;
         }
         function validateImagesForStep(step) {
-            
+
             if (step === 1) {
                 // التحقق من الصورة الشخصية
-                if (!hasImage('userPic', 'preview_userPic')) 
+                if (!hasImage('userPic', 'preview_userPic'))
                     return "عذراً، يرجى رفع الصورة الشخصية للمتابعة.";
             }
             else if (step === 2) {
@@ -1080,18 +1099,18 @@
                 var docType = documentType.GetValue();
 
                 if (docType == "1") { // هوية
-                    if (!hasImage('idFrontPic', 'preview_idFront')) 
+                    if (!hasImage('idFrontPic', 'preview_idFront'))
                         return "يرجى رفع صورة الهوية (الوجه الأمامي).";
-                    
-                    if (!hasImage('idBackPic', 'preview_idBack')) 
+
+                    if (!hasImage('idBackPic', 'preview_idBack'))
                         return "يرجى رفع صورة الهوية (الوجه الخلفي).";
                 }
                 else if (docType == "2") { // جواز سفر
-                    if (!hasImage('passportPic', 'preview_passport')) 
+                    if (!hasImage('passportPic', 'preview_passport'))
                         return "يرجى رفع صورة جواز السفر.";
                 }
                 else if (docType == "3") { // إقامة
-                    if (!hasImage('residencePic', 'preview_residence')) 
+                    if (!hasImage('residencePic', 'preview_residence'))
                         return "يرجى رفع صورة الإقامة.";
                 }
                 else {
@@ -1101,15 +1120,15 @@
             }
             else if (step === 3) {
                 // رخصة القيادة
-                if (!hasImage('licensePic', 'preview_license')) 
+                if (!hasImage('licensePic', 'preview_license'))
                     return "يرجى رفع صورة رخصة القيادة.";
             }
             else if (step === 4) {
                 // رخصة المركبة + صورة المركبة
-                if (!hasImage('carLicensePic', 'preview_carLicense')) 
+                if (!hasImage('carLicensePic', 'preview_carLicense'))
                     return "يرجى رفع صورة رخصة المركبة (الاقتناء).";
-                
-                if (!hasImage('carPic', 'preview_car')) 
+
+                if (!hasImage('carPic', 'preview_car'))
                     return "يرجى رفع صورة المركبة.";
             }
 
@@ -1794,15 +1813,13 @@
                 </dx:ASPxButton>
                 </div>
             </div> 
-
-                <div class="form-navigation edit-mode-nav" style="display: none;">
-                    <dx:ASPxButton ID="btnUpdate" runat="server" ClientInstanceName="btnUpdate" 
-                        Text="💾 حفظ كافة التغييرات" 
-                        Width="300px" Height="50px" OnClick="btnSubmit_Update" CausesValidation="False">
-                    </dx:ASPxButton>
-                </div>
-
         </div>
+            <div class="form-update edit-mode-nav" style="display: none; clear: both; text-align: center; margin-top: 20px;">
+                <dx:ASPxButton ID="btnUpdate" runat="server" ClientInstanceName="btnUpdate" 
+                    Text="💾 حفظ كافة التغييرات" 
+                    Width="42%" Height="50px" OnClick="btnSubmit_Update" CausesValidation="False">
+                </dx:ASPxButton>
+            </div>
         <dx:ASPxPopupControl ID="popupSuccess" runat="server" ClientInstanceName="popupSuccess"
             HeaderText="نجاح العملية" ShowOnPageLoad="false" CloseAction="CloseButton" ShowCloseButton="true"
             Width="350px" Height="180px" Modal="true" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter">

@@ -323,13 +323,13 @@
                             تم إعداد حسابك بنجاح.
                             <br />
                             <br />
-                            سيتم تحويلك إلى التطبيق على الفور للبدء.
+                            سيتم تحويلك إلى موقع االشعب على الفور للبدء.
                         </p>
                         <div style="font-weight: bold; color: #ea1f29; font-size: 18px; font-family: 'Cairo', sans-serif;">
                             جاري النقل خلال <span id="lblCountDown" clientidmode="Static" runat="server">5</span> ثوانٍ...
                         </div>
 
-                        <a id="lnkRedirect" clientidmode="Static" runat="server" href="#" style="display: block; margin-top: 15px; color: #999; text-decoration: underline; font-size: 12px;">اضغط هنا إذا لم يتم تحويلك تلقائياً</a>
+                        <a id="lnkRedirect" clientidmode="Static" runat="server" href="https://alshaeb.com/?v=d41d8cd98f00#app" style="display: block; margin-top: 15px; color: #999; text-decoration: underline; font-size: 12px;">اضغط هنا إذا لم يتم تحويلك تلقائياً</a>
                     </div>
                 </dx:PopupControlContentControl>
             </ContentCollection>

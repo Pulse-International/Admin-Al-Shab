@@ -934,14 +934,16 @@ WHERE o.id = @orderId";
                             newRealTax = 0;
 
                         string updateOrderSql = @"
-        UPDATE Orders
-        SET refundedAmount   = @refundedAmount,
-            realTotalAmount  = @realTotalAmount,
-            realTax          = @realTax,
-            l_orderStatus    = @status,
-            l_refundType     = 3,
-            refundedUser     = @username
-        WHERE id = @orderId";
+                        UPDATE Orders
+                        SET refundedAmount   = @refundedAmount,
+                            realTotalAmount  = @realTotalAmount,
+                            realTax          = @realTax,
+                            l_orderStatus    = @status,
+                            l_refundType     = 3,
+                            refundedUser     = @username,
+                            refundedDate       = GETDATE()
+                        WHERE id = @orderId";
+
 
                         string user = MainHelper.M_Check(Request.Cookies["M_Username"]?.Value);
 
@@ -1202,13 +1204,15 @@ WHERE o.id = @orderId";
                         string newStatus = (newRefundedAmount >= totalAmount) ? "5" : "6";
 
                         string updateOrderSql = @"
-                    UPDATE Orders
-                    SET refundedAmount = @refundedAmount,
-                        realTotalAmount = @realTotalAmount,
-                        realTax = @realTax,
-                        l_orderStatus = @status,
-                        l_refundType  = 2
-                    WHERE id = @orderId";
+                        UPDATE Orders
+                        SET refundedAmount   = @refundedAmount,
+                            realTotalAmount  = @realTotalAmount,
+                            realTax          = @realTax,
+                            l_orderStatus    = @status,
+                            l_refundType     = 2,
+                            refundedDate     = GETDATE()
+                        WHERE id = @orderId";
+
 
                         using (var cmd = new SqlCommand(updateOrderSql, conn, tx))
                         {

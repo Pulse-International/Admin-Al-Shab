@@ -216,6 +216,12 @@
                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                     </dx:GridViewDataComboBoxColumn>
 
+                    <dx:GridViewDataDateColumn FieldName="refundedDate" Caption="التاريخ">
+                        <PropertiesDateEdit DisplayFormatString="yyyy/MM/dd hh:mm tt">
+                        </PropertiesDateEdit>
+                        <CellStyle HorizontalAlign="Center" VerticalAlign="Middle"  />
+                    </dx:GridViewDataDateColumn>
+
                     <dx:GridViewDataColumn Caption="المنتجات">
                         <DataItemTemplate>
                             <a href="javascript:void(0);" onclick="ShowOrderProducts(<%# Eval("id") %>)"
@@ -463,13 +469,14 @@ WHERE c.orderId = @orderId">
     o.realTax,
     o.realTotalAmount,
     o.refundedUser,
+    o.refundedDate,
     o.l_orderStatus
 FROM orders o
 LEFT JOIN [usersApp] u ON o.username = u.username
 JOIN [companies] c ON o.companyId = c.id
 LEFT JOIN countries co ON c.countryID = co.id
 WHERE o.l_orderStatus = 5 OR o.l_orderStatus = 6
-ORDER BY o.id DESC;
+ORDER BY o.refundedDate DESC;
 
     "></asp:SqlDataSource>
 

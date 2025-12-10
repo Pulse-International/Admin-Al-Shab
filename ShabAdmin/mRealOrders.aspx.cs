@@ -659,14 +659,16 @@ namespace ShabAdmin
                             string user = MainHelper.M_Check(Request.Cookies["M_Username"]?.Value);
 
                             string updateOrderSql = @"
-                        UPDATE orders
-                        SET l_orderStatus = 9,
-                            rejectNote = @note,
-                            l_refundType = 3,
-                            refundedAmount = @refundedAmount,
-                            refundedUser = @refundedUser
-                        WHERE id = @id
-                    ";
+                                UPDATE orders
+                                SET l_orderStatus   = 9,
+                                    rejectNote      = @note,
+                                    l_refundType    = 3,
+                                    refundedAmount  = @refundedAmount,
+                                    refundedUser    = @refundedUser,
+                                    refundedDate    = GETDATE()
+                                WHERE id = @id
+                            ";
+
 
                             using (SqlCommand cmd = new SqlCommand(updateOrderSql, conn, tx))
                             {

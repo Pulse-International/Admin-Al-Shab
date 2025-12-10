@@ -53,6 +53,7 @@ namespace ShabAdmin
                             c.[companyName], 
                             b.[latitude], 
                             b.[longitude], 
+                            b.[zone],
                             b.[phone], 
                             b.[extensionNumber],
                             b.[isMain]
@@ -92,6 +93,7 @@ namespace ShabAdmin
                             c.[companyName], 
                             b.[latitude], 
                             b.[longitude], 
+                            b.[zone],
                             b.[phone], 
                             b.[extensionNumber],
                             b.[isMain]

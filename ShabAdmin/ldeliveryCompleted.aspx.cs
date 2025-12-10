@@ -66,6 +66,7 @@ namespace ShabAdmin
             string encryptedId = MainHelper.Decrypt_Me(idvalue, true);
             string firstinput = txtPassword.Text;
             string confirmpass = txtConfirm.Text;
+            bool isactivee = true;
             HashSalt hashed = MainHelper.HashPassword(firstinput);
             if (firstinput != confirmpass)
             {
@@ -78,33 +79,40 @@ namespace ShabAdmin
                 string connectionString = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
-                    string query = @"update usersDelivery set password = @hashed,storedSalt=@hashedd
+                    string query = @"update usersDelivery set password = @hashed,storedSalt=@hashedd,isactive=@isactivee
                                     where id = @encryptedId";
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@hashed",hashed.Hash);
                         cmd.Parameters.Add(new SqlParameter("@hashedd", Convert.FromBase64String(hashed.Salt)));
+                        cmd.Parameters.AddWithValue("@isactivee", isactivee);
                         cmd.Parameters.AddWithValue("@encryptedId", encryptedId);
                         conn.Open();
                         cmd.ExecuteNonQuery();
                     }
                 }
-                await MainHelper.SendSms(phone, "تم تعيين كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول إلى تطبيق الشعب كليك");
             }
 
             string storeUrl = "";
+            string applink = "";
             if (userplatform == "ANDROID")
             {
-                storeUrl = "https://play.google.com/store/apps/details?id=com.alshaeb.alshaeb";
+                applink = "https://www.alshaeb.net/?i=A";
+                storeUrl = "https://alshaeb.com/?v=d41d8cd98f00#app";
+                await MainHelper.SendSms(phone, $"مبروك تم اكمال الطلب بنجاح اضغط هنا لدخول التطبيق\n{applink}");
             }
-            else  
+            else if(userplatform == "IOS") 
             {
-                storeUrl = "https://apps.apple.com/us/app/alshaeb-click/id6752823758";
+                applink = "https://www.alshaeb.net/?i=I";
+                storeUrl = "https://alshaeb.com/?v=d41d8cd98f00#app";
+                await MainHelper.SendSms(phone, $"مبروك تم اكمال الطلب بنجاح اضغط هنا لدخول التطبيق\n{applink}");
             }
-            //else
-            //{
-            //    storeUrl = "https://www.google.com";
-            //}
+            else
+            {
+                storeUrl = "https://alshaeb.com/?v=d41d8cd98f00#app";
+                applink = "https://www.alshaeb.net/?i=I";
+                await MainHelper.SendSms(phone, $"مبروك تم اكمال الطلب بنجاح اضغط هنا لدخول التطبيق\n{applink}");
+            }
 
             string script = $"setTimeout(function() {{ ShowRedirectPopup('{storeUrl}'); }}, 100);";
 

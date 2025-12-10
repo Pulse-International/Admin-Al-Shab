@@ -233,6 +233,26 @@
                             </a>
                         </DataItemTemplate>
                     </dx:GridViewDataTextColumn>
+
+                    <dx:GridViewDataTextColumn Caption="مدى الطلب" FieldName="zone">
+                        <DataItemTemplate>
+                            <%# Eval("zone") %> كيلو   
+                        </DataItemTemplate>
+                        <EditItemTemplate>
+                            <dx:ASPxSpinEdit ID="txtZone" runat="server" Font-Size="Large" Font-Bold="true"
+                                Text='<%# Bind("zone") %>'
+                                Width="100%">
+                                <ValidationSettings RequiredField-IsRequired="true"
+                                    SetFocusOnError="True"
+                                    ErrorText="حقل مطلوب"
+                                    Display="Dynamic">
+                                    <RequiredField IsRequired="True"></RequiredField>
+                                </ValidationSettings>
+                            </dx:ASPxSpinEdit>
+                        </EditItemTemplate>
+                        <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                    </dx:GridViewDataTextColumn>
+
                     <dx:GridViewDataTextColumn Caption="الهاتف" FieldName="phone">
                         <PropertiesTextEdit>
                             <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
@@ -317,18 +337,20 @@
                         b.[cityId],
                         b.[latitude], 
                         b.[longitude], 
+                        b.[zone],
                         b.[phone], 
                         b.[extensionNumber],
                         b.[isMain]
                     FROM branches b
                     LEFT JOIN companies c ON b.companyId = c.id
 "
-                InsertCommand="INSERT INTO [branches] ([name], [l_branchStatus], [latitude], [longitude], [phone], [extensionNumber], [isMain], [countryId], [companyId], [cityId],[userDate]) VALUES (@name , @l_branchStatus, @latitude, @longitude, @phone, @extensionNumber,@isMain ,@countryId,@companyId,@cityId,getdate());"
+                InsertCommand="INSERT INTO [branches] ([name], [l_branchStatus], [latitude], [longitude], [zone], [phone], [extensionNumber], [isMain], [countryId], [companyId], [cityId],[userDate]) VALUES (@name , @l_branchStatus, @latitude, @longitude, @zone, @phone, @extensionNumber,@isMain ,@countryId,@companyId,@cityId,getdate());"
                 UpdateCommand="UPDATE [branches]
                     SET [name]        = @name,
                         l_branchStatus = @l_branchStatus,
                         [latitude]    = @latitude,
                         [longitude]   = @longitude,
+                        [zone] =    @zone,
                         [phone]       = @phone,
                         [extensionNumber] = @extensionNumber,
                         [isMain] = @isMain,
@@ -344,6 +366,7 @@
                     <asp:Parameter Name="l_branchStatus" Type="String" />
                     <asp:Parameter Name="latitude" Type="String" />
                     <asp:Parameter Name="longitude" Type="String" />
+                    <asp:Parameter Name="zone" Type="String" />
                     <asp:Parameter Name="phone" Type="String" />
                     <asp:Parameter Name="extensionNumber" Type="String" />
                     <asp:Parameter Name="isMain" Type="String" />
@@ -356,6 +379,7 @@
                     <asp:Parameter Name="l_branchStatus" Type="String" />
                     <asp:Parameter Name="latitude" Type="String" />
                     <asp:Parameter Name="longitude" Type="String" />
+                    <asp:Parameter Name="zone" Type="String" />
                     <asp:Parameter Name="phone" Type="String" />
                     <asp:Parameter Name="extensionNumber" Type="String" />
                     <asp:Parameter Name="isMain" Type="String" />

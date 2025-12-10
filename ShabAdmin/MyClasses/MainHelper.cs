@@ -108,8 +108,6 @@ public class MainHelper
     {
         try
         {
-            cipherString = cipherString.Replace(' ', '+');
-
             byte[] keyArray;
             byte[] toEncryptArray = Convert.FromBase64String(cipherString);
 
@@ -124,7 +122,6 @@ public class MainHelper
             }
             else
                 keyArray = UTF8Encoding.UTF8.GetBytes(key);
-
             TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider();
             tdes.Key = keyArray;
             tdes.Mode = CipherMode.ECB;

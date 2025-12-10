@@ -238,6 +238,7 @@ namespace ShabAdmin
             string carPicPath = SaveUploadedFile(ASPxUploadControl1, "car");
             string passportt = SaveUploadedFile(passport, "passport");
             string residentt = SaveUploadedFile(resident, "resident");
+            int is_updatedd = 1;
 
             string connectionString = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connectionString))
@@ -247,7 +248,7 @@ namespace ShabAdmin
                     lastName = COALESCE(NULLIF(@lastname, ''), lastName),
                     email = COALESCE(NULLIF(@email, ''), email),
                     username = COALESCE(NULLIF(@phone, ''), username),
-                    
+                    isUpdated = COALESCE(NULLIF(@is_updatedd, ''), isUpdated),
                     l_gender = COALESCE(@genderr, l_gender),
                     l_documentType = COALESCE(@documenttype, l_documentType),
                     countryId = COALESCE(NULLIF(@country, ''), countryId),
@@ -275,18 +276,18 @@ namespace ShabAdmin
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    // تمرير القيم مع معالجة الـ NULL
                     cmd.Parameters.AddWithValue("@encryptedId", encryptedId);
 
                     cmd.Parameters.AddWithValue("@firstname", (object)firstname ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@lastname", (object)lastname ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@email", (object)email ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@phone", (object)phone ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@is_updatedd", (object)is_updatedd ?? DBNull.Value);
 
                     cmd.Parameters.AddWithValue("@genderr", (object)genderr ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@documenttype", (object)documenttype ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@country", (object)country ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@userPlatformm", (object)userPlatformm ?? DBNull.Value); // ✅ الآن يقبل Null
+                    cmd.Parameters.AddWithValue("@userPlatformm", (object)userPlatformm ?? DBNull.Value); 
                     cmd.Parameters.AddWithValue("@carkind", (object)carkind ?? DBNull.Value);
 
                     cmd.Parameters.AddWithValue("@nerbynamee", (object)nerbynamee ?? DBNull.Value);
@@ -296,8 +297,6 @@ namespace ShabAdmin
                     cmd.Parameters.AddWithValue("@carNumber", (object)carNumber ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@vinCar", (object)vinCar ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@ismobilee", ismobilee);
-
-                    // الصور (تمرر null إذا لم ترفع جديد، و COALESCE في SQL يحفظ القديم)
                     cmd.Parameters.AddWithValue("@userPicPath", (object)userPicPath ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@frontPicPath", (object)frontPicPath ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@backPicPath", (object)backPicPath ?? DBNull.Value);

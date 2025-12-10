@@ -66,6 +66,7 @@ namespace ShabAdmin
             string encryptedId = MainHelper.Decrypt_Me(idvalue, true);
             string firstinput = txtPassword.Text;
             string confirmpass = txtConfirm.Text;
+            bool isactivee = true;
             HashSalt hashed = MainHelper.HashPassword(firstinput);
             if (firstinput != confirmpass)
             {
@@ -78,12 +79,13 @@ namespace ShabAdmin
                 string connectionString = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
-                    string query = @"update usersDelivery set password = @hashed,storedSalt=@hashedd
+                    string query = @"update usersDelivery set password = @hashed,storedSalt=@hashedd,isactive=@isactivee
                                     where id = @encryptedId";
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@hashed",hashed.Hash);
                         cmd.Parameters.Add(new SqlParameter("@hashedd", Convert.FromBase64String(hashed.Salt)));
+                        cmd.Parameters.AddWithValue("@isactivee", isactivee);
                         cmd.Parameters.AddWithValue("@encryptedId", encryptedId);
                         conn.Open();
                         cmd.ExecuteNonQuery();

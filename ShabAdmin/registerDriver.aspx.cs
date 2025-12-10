@@ -45,7 +45,6 @@ namespace ShabAdmin
                     nextbutton.Visible = false;
                     beforeAndAfter.Visible = false;
 
-                    // --- التعديلات لوضع التحديث (Server Side Logic) ---
                     EditModeSidebar.Visible = true;
                     stepperContainer.Visible = false;
                     mainCardPanel.Attributes["class"] += " edit-layout";
@@ -221,7 +220,7 @@ namespace ShabAdmin
             string carkindStr = carKind.Value?.ToString();
             string carkind = (carkindStr == "سيارة" || carkindStr == "1") ? "1" : "0";
 
-            string userPlatformm = systemKind.Value?.ToString(); // ✅ الحل لمشكلتك هنا
+            string userPlatformm = systemKind.Value?.ToString();
 
             int? genderr = null;
             if (gender.Value != null && int.TryParse(gender.Value.ToString(), out int g)) genderr = g;
@@ -243,7 +242,6 @@ namespace ShabAdmin
             string connectionString = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                // جملة التحديث الذكية: تستخدم COALESCE لتبقي القيمة القديمة إذا كانت الجديدة NULL
                 string query = @"UPDATE usersDelivery SET 
                     firstName = COALESCE(NULLIF(@firstname, ''), firstName),
                     lastName = COALESCE(NULLIF(@lastname, ''), lastName),
@@ -316,7 +314,7 @@ namespace ShabAdmin
                     popupSuccess.ShowOnPageLoad = true;
                     lblPopupMessage.ForeColor = System.Drawing.Color.Green;
                 }
-                await MainHelper.SendSms(phone, "تم تحديث بياناتك مؤخرا");
+                await MainHelper.SendSms(phone, "شكرا تم تحديث بياناتك بنجاح ,طلبك قيد المراجعة");
             }
             // إعادة تحميل البيانات لعرض التعديلات الجديدة
             LoadDriverData(encryptedId);
@@ -348,20 +346,9 @@ namespace ShabAdmin
             string carmarkaa = carmarka.Text;
             string nerbynumberr = nerbynumber.Text;
             string nerbynamee = nerbyname.Text;
-            string phones = txtPhone.Text.Replace("00962","0");
+            string phones = txtPhone.Text.Replace("00962", "0");
             string phonen = phones;
 
-            if (!userPic.HasFile) { lblMessage.Text = "❌ يرجى رفع الصورة الشخصية"; lblMessage.ForeColor = System.Drawing.Color.Red; return; }
-            if (documenttype == 1)
-            {
-                if (!ASPxUploadControl5.HasFile || !ASPxUploadControl4.HasFile)
-                {
-                    lblMessage.Text = "❌ يرجى رفع صور الهوية"; lblMessage.ForeColor = System.Drawing.Color.Red; return;
-                }
-            }
-            if (!ASPxUploadControl3.HasFile) { lblMessage.Text = "❌ يرجى رفع صورة الرخصة"; lblMessage.ForeColor = System.Drawing.Color.Red; return; }
-            if (!ASPxUploadControl2.HasFile) { lblMessage.Text = "❌ يرجى رفع صورة رخصة السيارة"; lblMessage.ForeColor = System.Drawing.Color.Red; return; }
-            if (!ASPxUploadControl1.HasFile) { lblMessage.Text = "❌ يرجى رفع صورة السيارة"; lblMessage.ForeColor = System.Drawing.Color.Red; return; }
 
             if (IsemailExists(email)) { lblMessage.Text = "❌ هذا الايميل مسجل مسبقاً!"; lblMessage.ForeColor = System.Drawing.Color.Red; return; }
             if (IsPhoneExists(txtPhone.Text)) { lblMessage.Text = "❌ هذا الرقم مسجل مسبقاً!"; lblMessage.ForeColor = System.Drawing.Color.Red; return; }
@@ -446,10 +433,21 @@ namespace ShabAdmin
             e.Result = IsemailExists(e.Parameter) ? "exists" : "available";
         }
 
-        private bool IsVehicleNoExists(string val) { return CheckExists("vehicleNo", val); }
-        private bool iDocumentExists(string val) { return CheckExists("documentNo", val); }
-        private bool IsemailExists(string val) { return CheckExists("email", val); }
-        private bool IsPhoneExists(string val) { return CheckExists("username", val); }
+        private bool IsVehicleNoExists(string val) 
+        {
+            return CheckExists("vehicleNo", val);
+        }
+        private bool iDocumentExists(string val) { 
+            return CheckExists("documentNo", val);
+        }
+        private bool IsemailExists(string val)
+        { 
+            return CheckExists("email", val);
+        }
+        private bool IsPhoneExists(string val)
+        {
+            return CheckExists("username", val);
+        }
 
         private bool CheckExists(string column, string value)
         {
@@ -457,7 +455,7 @@ namespace ShabAdmin
             string connection = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connection))
             {
-                if(column == "username")
+                if (column == "username")
                 {
                     value = value.Replace("00962", "0");
                 }
@@ -473,15 +471,28 @@ namespace ShabAdmin
 
         private string SaveUploadedFile(ASPxUploadControl uploadControl, string prefix)
         {
-            if (!uploadControl.HasFile) return null;
-            var file = uploadControl.UploadedFiles[0];
-            string uploadFolder = Server.MapPath("~/assets/uploads/delivery-users/");
-            if (!Directory.Exists(uploadFolder)) Directory.CreateDirectory(uploadFolder);
-            string extension = Path.GetExtension(file.FileName);
-            string uniqueFileName = prefix + "_" + Guid.NewGuid().ToString() + extension;
-            string fullPath = Path.Combine(uploadFolder, uniqueFileName);
-            file.SaveAs(fullPath);
-            return "/assets/uploads/delivery-users/" + uniqueFileName;
+            if (uploadControl.UploadedFiles[0].ContentLength == 0)
+            {
+                return null;
+            }
+            try
+            {
+                string fileName = prefix + "_" + Guid.NewGuid() + ".jpg";
+                string folder = Server.MapPath("~/assets/uploads/delivery-users/");
+
+                if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+
+                using (var img = System.Drawing.Image.FromStream(uploadControl.UploadedFiles[0].FileContent))
+                {
+                    MainHelper.CompressAndSaveImage(img, Path.Combine(folder, fileName), 800, 500, 65L);
+                }
+
+                return "/assets/uploads/delivery-users/" + fileName;
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/lSite.Master"
+﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/lSite.Master" Async="true"
     CodeBehind="registerDriver.aspx.cs"
     Inherits="ShabAdmin.lDriverRegisteration" %>
 
@@ -578,7 +578,7 @@
             background: transparent !important;
             box-shadow: none !important;
             padding: 0 !important;
-            max-width: 1330px !important;
+            max-width: 1228px !important;
         }
 
         .edit-sidebar {
@@ -717,6 +717,13 @@
                 position:static !important;
                 display:block !important;
                 margin-bottom:11px;
+            }
+            .dxpcLite_Moderno, .dxdpLite_Moderno{
+                width:auto !important;
+            }
+            .edit-mode-nav{
+                position:static;
+                margin:20px auto;
             }
             .bts{
                     padding: 10px 67px !important; 
@@ -1842,15 +1849,17 @@
                         <dx:PopupControlContentControl>
                             <div style="text-align:center; padding:15px;">
                                 <i class="fas fa-exclamation-triangle" style="font-size: 40px; color: #ea1f29; margin-bottom: 15px;"></i>
-                                <div style="margin-bottom: 20px; font-size: 18px; font-weight: bold; color: #333;">
-                                    هل أنت متأكد من صحة البيانات وتريد إرسال الطلب؟
+                                <div style="margin-bottom: 20px; font-size: 23px;color:black; font-weight: bold;line-height:27px">
+                                    هل أنت متأكد من صحة البيانات 
+                                    <br />
+                                    وتريد إرسال الطلب؟
                                 </div>
                                 <dx:ASPxButton ID="ASPxButton1" runat="server" 
                                     AutoPostBack="true" 
                                     Text="حسناً"
                                     OnClick="btnSubmit_Click"
                                     RenderMode="Button" Width="150px"
-                                    BackColor="#ea1f29" ForeColor="White">
+                                    BackColor="#ea1f29" ForeColor="black">
                                     <ClientSideEvents Click="function(s,e){
                                             finalpopup.Hide();
                                         }" />

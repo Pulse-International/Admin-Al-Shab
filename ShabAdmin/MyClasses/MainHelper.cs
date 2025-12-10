@@ -108,6 +108,8 @@ public class MainHelper
     {
         try
         {
+            cipherString = cipherString.Replace(' ', '+');
+
             byte[] keyArray;
             byte[] toEncryptArray = Convert.FromBase64String(cipherString);
 

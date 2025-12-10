@@ -48,6 +48,7 @@ namespace ShabAdmin
                 o.realTax,
                 o.realTotalAmount,
                 o.refundedUser,
+                o.refundedDate,
                 o.l_orderStatus
             FROM orders o
             LEFT JOIN [usersApp] u ON o.username = u.username
@@ -56,7 +57,7 @@ namespace ShabAdmin
             WHERE (o.l_orderStatus = 5 OR o.l_orderStatus = 6)
               AND o.companyId = @companyId 
               AND o.countryId = @countryId
-            ORDER BY o.id DESC";
+            ORDER BY o.refundedDate DESC";
 
                 dsCompanies.SelectParameters.Add("companyId", companyId.ToString());
                 dsCompanies.SelectCommand = "SELECT id, companyName FROM companies WHERE id = @companyId";
@@ -82,6 +83,7 @@ namespace ShabAdmin
                 o.realTax,
                 o.realTotalAmount,
                 o.refundedUser,
+                o.refundedDate,
                 o.l_orderStatus
             FROM orders o
             LEFT JOIN [usersApp] u ON o.username = u.username
@@ -89,7 +91,7 @@ namespace ShabAdmin
             LEFT JOIN countries co ON c.countryID = co.id
             WHERE o.countryId = @countryId 
               AND (o.l_orderStatus = 5 OR o.l_orderStatus = 6)
-            ORDER BY o.id DESC";
+            ORDER BY o.refundedDate DESC";
 
                 dsCompanies.SelectParameters.Add("countryId", countryId.ToString());
                 dsCompanies.SelectCommand = "SELECT id, companyName FROM companies WHERE countryID = @countryId";
@@ -113,13 +115,14 @@ namespace ShabAdmin
                 o.realTax,
                 o.realTotalAmount,
                 o.refundedUser,
+                o.refundedDate,
                 o.l_orderStatus
             FROM orders o
             LEFT JOIN [usersApp] u ON o.username = u.username
             JOIN [companies] c ON o.companyId = c.id
             LEFT JOIN countries co ON c.countryID = co.id
             WHERE (o.l_orderStatus = 5 OR o.l_orderStatus = 6)
-            ORDER BY o.id DESC";
+            ORDER BY o.refundedDate DESC";
 
                 dsCompanies.SelectCommand = "SELECT id, companyName FROM companies WHERE id <> 1000";
             }

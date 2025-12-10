@@ -104,7 +104,13 @@
                 spinRefundQty.SetEnabled(true);
 
                 var btn = document.getElementById("btnConfirmRefund");
-                if (btn) btn.disabled = true; // ✅ تعطيل زر التأكيد عند الفتح
+                if (btn) {
+                    btn.disabled = true;
+                    btn.style.background = "linear-gradient(90deg, #b0b0b0, #9e9e9e)";
+                    btn.style.opacity = "0.7";
+                    btn.style.cursor = "not-allowed";
+                    btn.style.boxShadow = "none";
+                }
 
                 var txtWallet = document.getElementById("maxRefundText");
                 if (txtWallet) {
@@ -189,15 +195,33 @@
                 popupRefund.Show();
             }
 
-            // ✅ تفعيل وتعطيل زر التأكيد حسب القيمة
             function OnSpinRefundChanged() {
                 var val = spinRefundQty.GetValue();
                 var btn = document.getElementById("btnConfirmRefund");
 
                 if (btn) {
-                    btn.disabled = (!val || val <= 0);
+                    if (!val || val <= 0) {
+                        btn.disabled = true;
+                        btn.style.background = "linear-gradient(90deg, #b0b0b0, #9e9e9e)"; // 🩶 رمادي
+                        btn.style.opacity = "0.7";
+                        btn.style.cursor = "not-allowed";
+                        btn.style.boxShadow = "none";
+                    } else {
+                        btn.disabled = false;
+                        btn.style.background = "linear-gradient(90deg, #e53935, #d32f2f)"; // ❤️ أحمر
+                        btn.style.opacity = "1";
+                        btn.style.cursor = "pointer";
+                        btn.style.boxShadow = "0 3px 6px rgba(0,0,0,0.15)";
+                    }
+                }
+
+                var chkCard = document.getElementById("chkMaxRefund");
+                if (chkCard) {
+                    chkCard.checked = false;
                 }
             }
+
+
 
 
 
@@ -255,6 +279,15 @@
                 var chk = document.getElementById("chkMaxRefund");
                 if (chk && chk.checked) {
                     spinRefundQty.SetValue(spinRefundQty.GetMaxValue());
+                    var btn = document.getElementById("btnConfirmRefund");
+
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.style.background = "linear-gradient(90deg, #e53935, #d32f2f)"; // ❤️ أحمر
+                        btn.style.opacity = "1";
+                        btn.style.cursor = "pointer";
+                        btn.style.boxShadow = "0 3px 6px rgba(0,0,0,0.15)";
+                    }
                 } else {
                     spinRefundQty.SetValue(1);
                 }
@@ -491,7 +524,7 @@
              && Convert.ToInt32(Eval("l_paymentMethodId2")) > 0)
             ? Eval("paymentMethod1") + "<br/>+<br/>" + Eval("paymentMethod2")
             : Eval("paymentMethod1")
-        %>
+                            %>
                         </DataItemTemplate>
 
                         <EditFormSettings Visible="False" />
@@ -705,7 +738,11 @@
             ShowCloseButton="true"
             Modal="true"
             Font-Names="Cairo" Font-Size="14px">
-
+            <ClientSideEvents Shown="function(s,e){ 
+             var chkCard = document.getElementById('chkMaxRefund');
+             if (chkCard) {
+                chkCard.checked = false;
+             }}" />
             <ContentCollection>
                 <dx:PopupControlContentControl runat="server">
 

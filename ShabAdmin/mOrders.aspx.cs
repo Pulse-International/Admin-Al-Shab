@@ -934,14 +934,16 @@ WHERE o.id = @orderId";
                             newRealTax = 0;
 
                         string updateOrderSql = @"
-        UPDATE Orders
-        SET refundedAmount   = @refundedAmount,
-            realTotalAmount  = @realTotalAmount,
-            realTax          = @realTax,
-            l_orderStatus    = @status,
-            l_refundType     = 3,
-            refundedUser     = @username
-        WHERE id = @orderId";
+                        UPDATE Orders
+                        SET refundedAmount   = @refundedAmount,
+                            realTotalAmount  = @realTotalAmount,
+                            realTax          = @realTax,
+                            l_orderStatus    = @status,
+                            l_refundType     = 3,
+                            refundedUser     = @username,
+                            refundedDate       = GETDATE()
+                        WHERE id = @orderId";
+
 
                         string user = MainHelper.M_Check(Request.Cookies["M_Username"]?.Value);
 
@@ -1013,7 +1015,7 @@ WHERE o.id = @orderId";
                     SELECT o.username, o.totalAmount, o.refundedAmount, 
                            o.realTotalAmount, o.realTax, pa.transactionRef AS paymentTR,
                            o.VerifiedTransactionRef, o.l_refundType,
-                           o.paymentMethodId, o.paymentMethodId2
+                           o.l_paymentMethodId, o.l_paymentMethodId2
                     FROM Orders o
                     LEFT JOIN [payments] pa ON o.id = pa.orderId
                     WHERE o.id = @orderId";
@@ -1039,8 +1041,8 @@ WHERE o.id = @orderId";
                                 refundedAmount = r["refundedAmount"] == DBNull.Value ? 0m : Convert.ToDecimal(r["refundedAmount"]);
                                 transactionRef = r["paymentTR"]?.ToString() ?? "";
                                 refundType = r["l_refundType"] == DBNull.Value ? 0 : Convert.ToInt32(r["l_refundType"]);
-                                paymentMethod1 = r["paymentMethodId"] == DBNull.Value ? 0 : Convert.ToInt32(r["paymentMethodId"]);
-                                paymentMethod2 = r["paymentMethodId2"] == DBNull.Value ? 0 : Convert.ToInt32(r["paymentMethodId2"]);
+                                paymentMethod1 = r["l_paymentMethodId"] == DBNull.Value ? 0 : Convert.ToInt32(r["l_paymentMethodId"]);
+                                paymentMethod2 = r["l_paymentMethodId2"] == DBNull.Value ? 0 : Convert.ToInt32(r["l_paymentMethodId2"]);
                             }
                         }
 
@@ -1202,13 +1204,15 @@ WHERE o.id = @orderId";
                         string newStatus = (newRefundedAmount >= totalAmount) ? "5" : "6";
 
                         string updateOrderSql = @"
-                    UPDATE Orders
-                    SET refundedAmount = @refundedAmount,
-                        realTotalAmount = @realTotalAmount,
-                        realTax = @realTax,
-                        l_orderStatus = @status,
-                        l_refundType  = 2
-                    WHERE id = @orderId";
+                        UPDATE Orders
+                        SET refundedAmount   = @refundedAmount,
+                            realTotalAmount  = @realTotalAmount,
+                            realTax          = @realTax,
+                            l_orderStatus    = @status,
+                            l_refundType     = 2,
+                            refundedDate     = GETDATE()
+                        WHERE id = @orderId";
+
 
                         using (var cmd = new SqlCommand(updateOrderSql, conn, tx))
                         {

@@ -78,11 +78,12 @@ namespace ShabAdmin
                 string connectionString = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
-                    string query = @"update usersDelivery set password = @hashed 
+                    string query = @"update usersDelivery set password = @hashed,storedSalt=@hashedd
                                     where id = @encryptedId";
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@hashed",hashed.Hash);
+                        cmd.Parameters.Add(new SqlParameter("@hashedd", Convert.FromBase64String(hashed.Salt)));
                         cmd.Parameters.AddWithValue("@encryptedId", encryptedId);
                         conn.Open();
                         cmd.ExecuteNonQuery();

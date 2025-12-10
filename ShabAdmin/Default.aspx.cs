@@ -32,20 +32,25 @@ namespace ShabAdmin
 
         private void RedirectShortLink(string code)
         {
+            if (code == "I")
+            {
+                Response.Redirect("https://apps.apple.com/us/app/alshaeb-click/id6752823758", true);
+                return;
+            }
+            if (code == "A")
+            {
+                Response.Redirect("https://play.google.com/store/apps/details?id=com.alshaeb.alshaeb", true);
+                return;
+            }
             string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
-
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 conn.Open();
-
                 string sql = "SELECT link FROM shortlinks WHERE code = @code";
-
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@code", code);
-
                     object result = cmd.ExecuteScalar();
-
                     if (result != null)
                     {
                         string originalLink = result.ToString();
@@ -55,6 +60,7 @@ namespace ShabAdmin
                 }
             }
         }
+
         private void LoadDashboardData()
         {
             int countryId = GetCountryIdFromCookieOrDefault();

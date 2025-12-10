@@ -18,10 +18,43 @@ namespace ShabAdmin
         {
             if (!IsPostBack)
             {
+                string code = Request.QueryString["i"];
+
+                if (!string.IsNullOrEmpty(code))
+                {
+                    RedirectShortLink(code);
+                    return; 
+                }
+
                 LoadDashboardData();
             }
         }
 
+        private void RedirectShortLink(string code)
+        {
+            string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                conn.Open();
+
+                string sql = "SELECT link FROM shortlinks WHERE code = @code";
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@code", code);
+
+                    object result = cmd.ExecuteScalar();
+
+                    if (result != null)
+                    {
+                        string originalLink = result.ToString();
+                        Response.Redirect(originalLink, true);
+                    }
+                    return;
+                }
+            }
+        }
         private void LoadDashboardData()
         {
             int countryId = GetCountryIdFromCookieOrDefault();

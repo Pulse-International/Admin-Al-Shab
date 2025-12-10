@@ -76,9 +76,9 @@ public class MainHelper
         {
             byte[] keyArray;
             byte[] toEncryptArray = UTF8Encoding.UTF8.GetBytes(toEncrypt);
-
             System.Configuration.AppSettingsReader settingsReader = new AppSettingsReader();
             string key = (string)settingsReader.GetValue("SecurityKey", typeof(String));
+
             if (useHashing)
             {
                 MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
@@ -92,11 +92,19 @@ public class MainHelper
             tdes.Key = keyArray;
             tdes.Mode = CipherMode.ECB;
             tdes.Padding = PaddingMode.PKCS7;
-
             ICryptoTransform cTransform = tdes.CreateEncryptor();
             byte[] resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
             tdes.Clear();
-            return Convert.ToBase64String(resultArray, 0, resultArray.Length);
+
+            // Convert to Base64 and replace problematic characters
+            string base64String = Convert.ToBase64String(resultArray, 0, resultArray.Length);
+
+            // Replace URL-unsafe characters
+            base64String = base64String.Replace("+", "-")
+                                       .Replace("/", "_")
+                                       .Replace("=", ""); // Also remove padding
+
+            return base64String;
         }
         catch
         {
@@ -108,6 +116,16 @@ public class MainHelper
     {
         try
         {
+            // Reverse the URL-safe encoding
+            cipherString = cipherString.Replace("-", "+").Replace("_", "/");
+
+            // Add padding if needed
+            int mod4 = cipherString.Length % 4;
+            if (mod4 > 0)
+            {
+                cipherString += new string('=', 4 - mod4);
+            }
+
             byte[] keyArray;
             byte[] toEncryptArray = Convert.FromBase64String(cipherString);
 
@@ -122,6 +140,7 @@ public class MainHelper
             }
             else
                 keyArray = UTF8Encoding.UTF8.GetBytes(key);
+
             TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider();
             tdes.Key = keyArray;
             tdes.Mode = CipherMode.ECB;
@@ -138,6 +157,7 @@ public class MainHelper
             return "-";
         }
     }
+
     public class HashSalt
     {
         public string Hash { get; set; }

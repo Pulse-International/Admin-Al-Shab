@@ -801,32 +801,31 @@ namespace ShabAdmin
                 {
                     case "approve":
                         cmd = new SqlCommand(
-                            "UPDATE usersDelivery SET l_deliveryStatusId=3,isActive=1 WHERE id=@id", conn);
+                            "UPDATE usersDelivery SET l_deliveryStatusId = 3, isActive = 1 WHERE id = @id", conn);
 
-                        // توليد الرابط المشفر
+                        // الرابط الطويل
                         string encryptedUserId = MainHelper.Encrypt_Me(userId.ToString(), true);
                         string longUrl = $"{baseUrl}/ldeliveryCompleted?id={encryptedUserId}";
                         string smsMessage = $"مبروك! تمت الموافقة اضغط الرابط لإكمال العملية: {longUrl}";
 
-                        // إرسال SMS مع اختصار الرابط
+                        // توليد واستخدام الرابط المختصر من قاعدة البيانات
                         Task.Run(async () =>
                         {
                             try
                             {
-                                string shortUrl = longUrl;
-                                using (var client = new WebClient())
-                                {
-                                    shortUrl = await client.DownloadStringTaskAsync($"https://is.gd/create.php?format=simple&url={longUrl}");
-                                }
-                                string shortMessage = $"تمت الموافقة عليك! اضغط الرابط لإكمال الطلب: {shortUrl}";
+                                string shortCode = SaveShortLink(longUrl);
+
+                                string shortUrl = $"https://alshaeb.net/?i={shortCode}";
+                                string shortMessage = $"تمت الموافقة! اضغط الرابط لإكمال الطلب: {shortUrl}";
+
                                 await MainHelper.SendSms(userNumber, shortMessage);
                             }
                             catch
                             {
-                                // إذا فشل الاختصار، نرسل الرابط الطويل
                                 await MainHelper.SendSms(userNumber, smsMessage);
                             }
                         });
+
                         break;
                     case "reject":
                         cmd = new SqlCommand(
@@ -843,18 +842,17 @@ namespace ShabAdmin
 
                         string encryptedUserId1 = MainHelper.Encrypt_Me(userId.ToString(), true);
                         string longUrl1 = $"{baseUrl}/registerDriver?id={encryptedUserId1}";
-                        string smsMessage1 = $"طلبك غير مكتمل اضغط الرابط لاستكمال الطلب: {longUrl1}";
+                        string smsMessage1 = $"طلبك غير مكتمل، اضغط الرابط لاستكمال الطلب: {longUrl1}";
 
                         Task.Run(async () =>
                         {
                             try
                             {
-                                string shortUrl1 = longUrl1;
-                                using (var client = new WebClient())
-                                {
-                                    shortUrl1 = await client.DownloadStringTaskAsync($"https://is.gd/create.php?format=simple&url={longUrl1}");
-                                }
-                                string shortMessage1 = $"طلبك غير مكتمل اضغط الرابط لاستكمال الطلب: {shortUrl1}";
+                                string shortCode = SaveShortLink(longUrl1);
+
+                                string shortUrl1 = $"https://alshaeb.net/?i={shortCode}";
+                                string shortMessage1 = $"طلبك غير مكتمل، اضغط الرابط لاستكمال الطلب: {shortUrl1}";
+
                                 await MainHelper.SendSms(userNumber, shortMessage1);
                             }
                             catch
@@ -862,7 +860,9 @@ namespace ShabAdmin
                                 await MainHelper.SendSms(userNumber, smsMessage1);
                             }
                         });
+
                         break;
+
                 }
 
                 cmd.Parameters.AddWithValue("@id", userId);
@@ -990,6 +990,38 @@ namespace ShabAdmin
             return html;
         }
 
+        private static string GenerateShortCode(int length = 6)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var random = new Random();
+
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        private string SaveShortLink(string originalLink)
+        {
+            string code = GenerateShortCode(5);
+
+            string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                conn.Open();
+
+                string sql = @"INSERT INTO shortlinks (code, link, userDate)
+                       VALUES (@code, @link, GETDATE())";
+
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@code", code);
+                    cmd.Parameters.AddWithValue("@link", originalLink);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            return code;
+        }
 
     }
 }

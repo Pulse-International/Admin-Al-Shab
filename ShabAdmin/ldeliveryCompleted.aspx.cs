@@ -28,7 +28,7 @@ namespace ShabAdmin
                 if (!string.IsNullOrEmpty(encryptedId))
                 {
 
-                    realId = Decrypt_Me(encryptedId);
+                    realId = MainHelper.Decrypt_Me(encryptedId,true);
                 }
                 LoadDriverData(realId);
             }
@@ -58,12 +58,12 @@ namespace ShabAdmin
                 }
             }
         }
-        public void btnSubmit_change(object sender, EventArgs e)
+        public async void btnSubmit_change(object sender, EventArgs e)
         {
             string userplatform = Session["userplatform"].ToString(); 
             string phone = Session["phone"].ToString();
             string idvalue = Request.QueryString["id"];
-            string encryptedId = Decrypt_Me(idvalue);
+            string encryptedId = MainHelper.Decrypt_Me(idvalue, true);
             string firstinput = txtPassword.Text;
             string confirmpass = txtConfirm.Text;
             HashSalt hashed = MainHelper.HashPassword(firstinput);
@@ -88,11 +88,10 @@ namespace ShabAdmin
                         cmd.ExecuteNonQuery();
                     }
                 }
-                MainHelper.SendSms(phone, "تم تعيين كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول إلى تطبيق الشعب كليك");
+                await MainHelper.SendSms(phone, "تم تعيين كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول إلى تطبيق الشعب كليك");
             }
 
             string storeUrl = "";
-
             if (userplatform == "ANDROID")
             {
                 storeUrl = "https://play.google.com/store/apps/details?id=com.alshaeb.alshaeb";
@@ -109,53 +108,6 @@ namespace ShabAdmin
             string script = $"setTimeout(function() {{ ShowRedirectPopup('{storeUrl}'); }}, 100);";
 
             ClientScript.RegisterStartupScript(this.GetType(), "RedirectScript", script, true);
-        }
-        private static string Decrypt_Me(string cipherString)
-        {
-            try
-            {
-                // اطبع القيمة قبل أي تعديل لمعرفة أين الخطأ
-                System.Diagnostics.Debug.WriteLine("cipherString BEFORE ANY FIX = [" + cipherString + "]");
-
-                // تأمين القيمة
-                cipherString = (cipherString ?? "").Trim();
-
-                // أولاً: فك الـ URL (لأنه يحوّل + إلى %2B وخلافه)
-                cipherString = HttpUtility.UrlDecode(cipherString);
-
-                // ثانياً: إصلاح المسافات التي استبدلت مكان +
-                cipherString = cipherString.Replace(' ', '+');
-
-                // اطبع بعد الإصلاح
-                System.Diagnostics.Debug.WriteLine("cipherString AFTER FIX = [" + cipherString + "]");
-
-                // الآن فك Base64
-                byte[] data = Convert.FromBase64String(cipherString);
-
-                // جلب المفتاح من Web.config
-                string key = ConfigurationManager.AppSettings["SecurityKey"];
-
-                // فك التشفير TripleDES
-                using (var md5 = MD5.Create())
-                using (var tdes = new TripleDESCryptoServiceProvider())
-                {
-                    tdes.Key = md5.ComputeHash(Encoding.UTF8.GetBytes(key));
-                    tdes.Mode = CipherMode.ECB;
-                    tdes.Padding = PaddingMode.PKCS7;
-
-                    using (var decryptor = tdes.CreateDecryptor())
-                    {
-                        byte[] result = decryptor.TransformFinalBlock(data, 0, data.Length);
-                        return Encoding.UTF8.GetString(result);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                // اطبع الخطأ لنعرف السبب الحقيقي
-                System.Diagnostics.Debug.WriteLine("DECRYPT ERROR: " + ex.Message);
-                return "-";
-            }
         }
     }
 }

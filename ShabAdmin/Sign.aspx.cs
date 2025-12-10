@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web.UI;
 
@@ -9,13 +11,48 @@ namespace ShabAdmin
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            //DB_Login.InsertParameters["username"].DefaultValue = "mohammad";
-            //DB_Login.InsertParameters["password"].DefaultValue = MainHelper.Encrypt_User("power");
-            //DB_Login.InsertParameters["isActive"].DefaultValue = "1";
-            //DB_Login.Insert();
-            Response.Cookies["M_Username"].Value = string.Empty;
+            if (!IsPostBack)
+            {
+                string code = Request.QueryString["i"];
+
+                if (!string.IsNullOrEmpty(code))
+                {
+                    if (code == "I")
+                    {
+                        Response.Redirect("https://apps.apple.com/us/app/alshaeb-click/id6752823758", true);
+                        return;
+                    }
+                    if (code == "A")
+                    {
+                        Response.Redirect("https://play.google.com/store/apps/details?id=com.alshaeb.alshaeb", true);
+                        return;
+                    }
+                    string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
+                    using (SqlConnection conn = new SqlConnection(connStr))
+                    {
+                        conn.Open();
+                        string sql = "SELECT link FROM shortlinks WHERE code = @code";
+                        using (SqlCommand cmd = new SqlCommand(sql, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@code", code);
+                            object result = cmd.ExecuteScalar();
+                            if (result != null)
+                            {
+                                string originalLink = result.ToString();
+                                Response.Redirect(originalLink, true);
+                            }
+                            return;
+                        }
+                    }
+                }
+            }
+                //DB_Login.InsertParameters["username"].DefaultValue = "mohammad";
+                //DB_Login.InsertParameters["password"].DefaultValue = MainHelper.Encrypt_User("power");
+                //DB_Login.InsertParameters["isActive"].DefaultValue = "1";
+                //DB_Login.Insert();
+                Response.Cookies["M_Username"].Value = string.Empty;
             Response.Cookies["M_Username"].Expires = DateTime.Now.AddDays(-1);
-        }       
+        }
 
         protected void btnLogin_Click(object sender, EventArgs e)
         {            

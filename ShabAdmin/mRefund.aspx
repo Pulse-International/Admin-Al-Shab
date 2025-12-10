@@ -124,7 +124,7 @@
                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                     </dx:GridViewDataComboBoxColumn>
 
-                    <dx:GridViewDataColumn Caption="اسم المرجع" FieldName="refundedUser">
+                    <dx:GridViewDataColumn Caption="اسم المُرجع" FieldName="refundedUser">
                         <EditFormSettings Visible="False" />
                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
                         </CellStyle>

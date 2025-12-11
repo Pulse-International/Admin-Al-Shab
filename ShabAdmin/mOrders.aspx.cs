@@ -900,6 +900,8 @@ WHERE o.id = @orderId";
                                 amount = Convert.ToDecimal(val);
                         }
 
+                        requestedRefund = Math.Truncate(requestedRefund * 100) / 100;
+
                         int earnedPoints = Convert.ToInt32(requestedRefund * 100);
 
                         if (earnedPoints > 0)
@@ -1175,6 +1177,8 @@ WHERE o.id = @orderId";
                         // ==============================
                         //   خصم النقاط المكتسبة (amount * 100)
                         // ==============================
+                        requestedRefund = Math.Truncate(requestedRefund * 100) / 100;
+
                         int earnedPoints = Convert.ToInt32(requestedRefund * 100);
 
                         if (earnedPoints > 0)

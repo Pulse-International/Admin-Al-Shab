@@ -771,6 +771,7 @@ namespace ShabAdmin
                                     amount = Convert.ToDecimal(val);
                             }
 
+                            amount = Math.Truncate(amount * 100) / 100;
                             int earnedPoints = Convert.ToInt32(amount * 100);
 
                             if (earnedPoints > 0)

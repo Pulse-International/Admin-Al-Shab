@@ -144,7 +144,6 @@ namespace ShabAdmin
                                 unorderr.InnerHtml += $"<li>{s}</li>";
                             }
                         }
-
                         // تحميل نوع المركبة
                         if (rdr["l_vehicleType"] != DBNull.Value)
                         {
@@ -467,7 +466,6 @@ namespace ShabAdmin
                 }
             }
         }
-
         private string SaveUploadedFile(ASPxUploadControl uploadControl, string prefix)
         {
             if (uploadControl.UploadedFiles[0].ContentLength == 0)

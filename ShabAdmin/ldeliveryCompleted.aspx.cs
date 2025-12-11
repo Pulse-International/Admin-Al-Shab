@@ -101,19 +101,12 @@ namespace ShabAdmin
                 storeUrl = "https://alshaeb.com/?v=d41d8cd98f00#app";
                 await MainHelper.SendSms(phone, $"مبروك تم اكمال الطلب بنجاح اضغط هنا لدخول التطبيق\n{applink}");
             }
-            else if(userplatform == "IOS") 
+            else 
             {
                 applink = "https://www.alshaeb.net/?i=I";
                 storeUrl = "https://alshaeb.com/?v=d41d8cd98f00#app";
                 await MainHelper.SendSms(phone, $"مبروك تم اكمال الطلب بنجاح اضغط هنا لدخول التطبيق\n{applink}");
             }
-            else
-            {
-                storeUrl = "https://alshaeb.com/?v=d41d8cd98f00#app";
-                applink = "https://www.alshaeb.net/?i=I";
-                await MainHelper.SendSms(phone, $"مبروك تم اكمال الطلب بنجاح اضغط هنا لدخول التطبيق\n{applink}");
-            }
-
             string script = $"setTimeout(function() {{ ShowRedirectPopup('{storeUrl}'); }}, 100);";
 
             ClientScript.RegisterStartupScript(this.GetType(), "RedirectScript", script, true);

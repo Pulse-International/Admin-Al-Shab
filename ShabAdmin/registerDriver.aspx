@@ -852,7 +852,6 @@
         }
     </style>
     <script type="text/javascript">
-        // 1. منطق الـ Stepper (5 خطوات مع علامة الصح)
         var currentStep = 1;
         var totalSteps = 5;
 
@@ -977,6 +976,7 @@
                 safeSetText('rev_carModel', carmarka.GetText());
                 safeSetText('rev_plate', Vehieclenumber.GetText());
 
+
                 copyImageToReview('preview_userPic', 'rev_img_user');
                 copyImageToReview('preview_idFront', 'rev_img_idFront');
                 copyImageToReview('preview_idBack', 'rev_img_idBack');
@@ -1051,22 +1051,17 @@
             return value.replace(/[^A-Za-z0-9]/g, '');
         }
 
-        // --- دالة التبديل بين التبويبات في وضع التعديل ---
         function switchEditTab(stepNumber, element) {
-            // إزالة كلاس active من جميع القوائم
             var items = document.querySelectorAll('.sidebar-item');
             items.forEach(function (item) { item.classList.remove('active'); });
 
-            // إضافة active للعنصر المضغوط
             if (element) { element.classList.add('active'); }
 
-            // إخفاء جميع المحتويات
             var contents = document.querySelectorAll('.step-content');
             contents.forEach(function (content) {
                 content.style.display = 'none'; // إخفاء إجباري
             });
 
-            // إظهار المحتوى المطلوب
             var targetContent = document.querySelector('.step-content[data-step="' + stepNumber + '"]');
             if (targetContent) {
                 targetContent.style.display = 'block';
@@ -1090,41 +1085,36 @@
         function validateImagesForStep(step) {
 
             if (step === 1) {
-                // التحقق من الصورة الشخصية
                 if (!hasImage('userPic', 'preview_userPic'))
                     return "عذراً، يرجى رفع الصورة الشخصية للمتابعة.";
             }
             else if (step === 2) {
-                // التحقق حسب نوع الوثيقة المختار
                 var docType = documentType.GetValue();
 
-                if (docType == "1") { // هوية
+                if (docType == "1") { 
                     if (!hasImage('idFrontPic', 'preview_idFront'))
                         return "يرجى رفع صورة الهوية (الوجه الأمامي).";
 
                     if (!hasImage('idBackPic', 'preview_idBack'))
                         return "يرجى رفع صورة الهوية (الوجه الخلفي).";
                 }
-                else if (docType == "2") { // جواز سفر
+                else if (docType == "2") { 
                     if (!hasImage('passportPic', 'preview_passport'))
                         return "يرجى رفع صورة جواز السفر.";
                 }
-                else if (docType == "3") { // إقامة
+                else if (docType == "3") { 
                     if (!hasImage('residencePic', 'preview_residence'))
                         return "يرجى رفع صورة الإقامة.";
                 }
                 else {
-                    // لم يتم اختيار نوع وثيقة
                     return "يرجى اختيار نوع الوثيقة أولاً.";
                 }
             }
             else if (step === 3) {
-                // رخصة القيادة
                 if (!hasImage('licensePic', 'preview_license'))
                     return "يرجى رفع صورة رخصة القيادة.";
             }
             else if (step === 4) {
-                // رخصة المركبة + صورة المركبة
                 if (!hasImage('carLicensePic', 'preview_carLicense'))
                     return "يرجى رفع صورة رخصة المركبة (الاقتناء).";
 
@@ -1132,7 +1122,7 @@
                     return "يرجى رفع صورة المركبة.";
             }
 
-            return null; // null تعني أنه لا توجد أخطاء
+            return null;
         }
     </script>
     <main>
@@ -1390,12 +1380,13 @@
                     <div style="display:flex; gap:15px; margin-bottom: 20px;">
                         <div style="flex:1;">
                             <label>الجنس</label>
-                            <dx:ASPxComboBox runat="server" ID="gender" Width="100%" Height="45px">
+                            <dx:ASPxComboBox runat="server" ID="gender" ClientInstanceName="genderrr" Width="100%" Height="45px">
                                 <Items>
                                     <dx:ListEditItem Text="ذكر" Value="1" />
                                     <dx:ListEditItem Text="انثى" Value="2" />
                                 </Items>
-                                <ValidationSettings SetFocusOnError="True">
+                                <ValidationSettings SetFocusOnError="True" Display="Dynamic">
+                                    <RequiredField IsRequired="True" />
                                 </ValidationSettings>
                             </dx:ASPxComboBox>
                         </div>
@@ -1406,7 +1397,8 @@
                                     <dx:ListEditItem Text="IOS" Value="IOS" />
                                     <dx:ListEditItem Text="Android" Value="ANDROID" />
                                 </Items>
-                                <ValidationSettings SetFocusOnError="True">
+                                <ValidationSettings SetFocusOnError="True" Display="Dynamic">
+                                    <RequiredField IsRequired="True" />
                                 </ValidationSettings>
                             </dx:ASPxComboBox>
                         </div>
@@ -1444,12 +1436,11 @@
                             <label>رقم هاتف القريب</label>
                             <dx:ASPxTextBox ID="nerbynumber" runat="server" Width="100%" Height="45px">
                                 <ValidationSettings RequiredField-IsRequired="true" Display="Dynamic" SetFocusOnError="True" >
-                                    <RegularExpression ValidationExpression="^(?=.{10,})[0-9]*$" ErrorText="الأدخال ارقام فقط"/>
+                                    <RegularExpression ValidationExpression="^(?=.{10,})[0-9]*$" ErrorText="الأدخال 10 ارقام"/>
                                     <RequiredField IsRequired="True"></RequiredField>
                                 </ValidationSettings>
                                 <ClientSideEvents
                                           KeyPress="function(s, e){
-                                            // منع كتابة أي شيء غير الأرقام
                                             if(e.htmlEvent.key.length === 1 && !/[0-9]/.test(e.htmlEvent.key)){
                                                 e.htmlEvent.preventDefault();
                                             }

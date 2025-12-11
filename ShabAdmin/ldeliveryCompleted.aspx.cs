@@ -9,6 +9,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Services.Description;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -95,15 +96,18 @@ namespace ShabAdmin
 
             string storeUrl = "";
             string applink = "";
+            string baseUrl = WebConfigurationManager.AppSettings["SourceURL"];
+
             if (userplatform == "ANDROID")
             {
-                applink = "https://www.alshaeb.net/?i=A";
+
+                applink = $"{baseUrl}/?i=A";
                 storeUrl = "https://alshaeb.com/?v=d41d8cd98f00#app";
                 await MainHelper.SendSms(phone, $"مبروك تم اكمال الطلب بنجاح اضغط هنا لدخول التطبيق\n{applink}");
             }
             else 
             {
-                applink = "https://www.alshaeb.net/?i=I";
+                applink = $"{baseUrl}/?i=I";
                 storeUrl = "https://alshaeb.com/?v=d41d8cd98f00#app";
                 await MainHelper.SendSms(phone, $"مبروك تم اكمال الطلب بنجاح اضغط هنا لدخول التطبيق\n{applink}");
             }

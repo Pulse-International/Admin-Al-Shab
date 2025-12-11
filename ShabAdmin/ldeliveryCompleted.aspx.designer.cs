@@ -60,13 +60,13 @@ namespace ShabAdmin
         protected global::System.Web.UI.HtmlControls.HtmlImage driverProfilePic;
 
         /// <summary>
-        /// lastheader control.
+        /// lblGreeting control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxLabel lastheader;
+        protected global::DevExpress.Web.ASPxLabel lblGreeting;
 
         /// <summary>
         /// nameatheader control.
@@ -76,6 +76,15 @@ namespace ShabAdmin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxLabel nameatheader;
+
+        /// <summary>
+        /// lastheader control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxLabel lastheader;
 
         /// <summary>
         /// txtPassword control.

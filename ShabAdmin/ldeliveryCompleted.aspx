@@ -250,6 +250,29 @@
         .redflagg{
             color:red;
         }
+        .driver-header-wrapper,
+    .driver-header-wrapper * {
+        font-family: 'Cairo', sans-serif !important;
+        color:white !important;
+        font-size:28px !important;
+    }
+
+    .driver-header-wrapper {
+        direction: rtl;
+        text-align: right;
+    }
+
+    .driver-greeting-text {
+        font-size: 16px;
+        color: #333; 
+        text-align: start;
+    }
+
+    .driver-fullname {
+        font-weight: 700; /* جعل الاسم عريضاً */
+        color: #000;
+        unicode-bidi: plaintext;
+    }
     </style>
 
     <script>
@@ -267,6 +290,28 @@
                 icon.classList.add("fa-eye");
             }
         }
+        document.addEventListener("DOMContentLoaded", function () {
+            // 1. إمساك الحاوية التي وضعنا فيها الأسماء
+            var container = document.getElementById("namesContainer");
+
+            if (container) {
+                // 2. قراءة النص الموجود داخلها (الاسم الأول + العائلة)
+                var fullText = container.innerText || container.textContent;
+
+                // 3. فحص هل يحتوي النص على حروف عربية؟
+                var hasArabic = /[\u0600-\u06FF]/.test(fullText);
+
+                // 4. تطبيق الاتجاه بناءً على النتيجة
+                if (hasArabic) {
+                    container.style.direction = "rtl";
+                    container.style.textAlign = "right";
+                } else {
+                    // إذا كان إنجليزي
+                    container.style.direction = "ltr";
+                    container.style.textAlign = "left";
+                }
+            }
+        });
 
 
         function onSaveClick(s, e) {
@@ -334,18 +379,23 @@
                 </dx:PopupControlContentControl>
             </ContentCollection>
         </dx:ASPxPopupControl>
-        <div class="driver-header-wrapper" runat="server" id="userinfo">
-            <div class="driver-header-main">
-                <img src="" alt="صورة السائق" class="driver-profile-pic" id="driverProfilePic" runat="server">
-                <div class="driver-details-section">
-                    <div class="driver-greeting-text">
-                        مرحباً، 
-                        <dx:ASPxLabel CssClass="driver-fullname" runat="server" ID="lastheader"></dx:ASPxLabel>
-                        <dx:ASPxLabel CssClass="driver-fullname" runat="server" ID="nameatheader"></dx:ASPxLabel>
+            <div class="driver-header-wrapper" runat="server" id="userinfo" dir="auto">
+                <div class="driver-header-main">
+        
+                    <img src="" alt="Driver Pic" class="driver-profile-pic" id="driverProfilePic" runat="server" />
+        
+                    <div class="driver-details-section">
+                        <div class="driver-greeting-text">
+                            <dx:ASPxLabel runat="server" ID="lblGreeting" Text="مرحباً، "></dx:ASPxLabel>
+                            <span id="namesContainer" class="names-wrapper" style="display: inline-block;">
+                                <dx:ASPxLabel CssClass="driver-fullname" runat="server" ID="nameatheader"></dx:ASPxLabel>
+                                <dx:ASPxLabel CssClass="driver-fullname" runat="server" ID="lastheader"></dx:ASPxLabel>
+                            </span>
+                        </div>
                     </div>
+
                 </div>
             </div>
-        </div>
             <div class="password-card">
         <div class="icon-circle">
             <i class="fas fa-lock"></i>

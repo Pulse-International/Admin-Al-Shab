@@ -31,6 +31,7 @@ namespace ShabAdmin
 
                     realId = MainHelper.Decrypt_Me(encryptedId,true);
                 }
+                checkeExistPass(realId);
                 LoadDriverData(realId);
             }
         }
@@ -55,6 +56,38 @@ namespace ShabAdmin
                         driverProfilePic.Src = rdr["userPicture"].ToString();
                         Session["phone"] = rdr["username"].ToString();
                         Session["userplatform"] = rdr["userPlatform"];
+                    }
+                }
+            }
+        }
+        public void checkeExistPass(string id)
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                //int integerid = Convert.ToInt32(id);
+                string query = @"select * from usersDelivery where id = @integerid";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@integerid", id);
+
+                    conn.Open();
+                    SqlDataReader rdr = cmd.ExecuteReader();
+
+                    if (rdr.Read())
+                    {
+                        string passowrd = rdr["password"].ToString();
+                        string devicesystem = rdr["userPlatform"].ToString();
+                        if (passowrd != null && devicesystem == "IOS")
+                        {
+                            string linkapp = "https://apps.apple.com/us/app/alshaeb-click/id6752823758";
+                            Response.Redirect(linkapp,true);
+                        }
+                        else if (passowrd != null && devicesystem == "ANDROID")
+                        {
+                            string linkapp = "https://play.google.com/store/apps/details?id=com.alshaeb.alshaeb";
+                            Response.Redirect(linkapp,true);
+                        }
                     }
                 }
             }

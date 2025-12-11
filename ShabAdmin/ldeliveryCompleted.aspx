@@ -393,7 +393,6 @@
                             </span>
                         </div>
                     </div>
-
                 </div>
             </div>
             <div class="password-card">

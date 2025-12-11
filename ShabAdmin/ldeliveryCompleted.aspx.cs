@@ -78,12 +78,12 @@ namespace ShabAdmin
                     {
                         string passowrd = rdr["password"].ToString();
                         string devicesystem = rdr["userPlatform"].ToString();
-                        if (passowrd != null && devicesystem == "IOS")
+                        if (!string.IsNullOrEmpty(passowrd) && devicesystem == "IOS")
                         {
                             string linkapp = "https://apps.apple.com/us/app/alshaeb-click/id6752823758";
                             Response.Redirect(linkapp,true);
                         }
-                        else if (passowrd != null && devicesystem == "ANDROID")
+                        else if (!string.IsNullOrEmpty(passowrd) && devicesystem == "ANDROID")
                         {
                             string linkapp = "https://play.google.com/store/apps/details?id=com.alshaeb.alshaeb";
                             Response.Redirect(linkapp,true);

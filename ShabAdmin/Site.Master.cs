@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -23,6 +25,37 @@ namespace ShabAdmin
         public string isActive9 = string.Empty;
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Request.QueryString["i"] != null)
+            {
+                if (Request.QueryString["i"].ToString() == "I")
+                {
+                    Response.Redirect("https://apps.apple.com/us/app/alshaeb-click/id6752823758", true);
+                    return;
+                }
+                if (Request.QueryString["i"].ToString() == "A")
+                {
+                    Response.Redirect("https://play.google.com/store/apps/details?id=com.alshaeb.alshaeb", true);
+                    return;
+                }
+                string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+                    string sql = "SELECT link FROM shortlinks WHERE code = @code";
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@code", Request.QueryString["i"].ToString());
+                        object result = cmd.ExecuteScalar();
+                        if (result != null)
+                        {
+                            string originalLink = result.ToString();
+                            Response.Redirect(originalLink, true);
+                        }
+                        return;
+                    }
+                }
+            }
+
             if (!Request.Url.AbsolutePath.Equals("/Default", StringComparison.OrdinalIgnoreCase))
             {
                 cmbCountries.Visible = false;
@@ -42,7 +75,7 @@ namespace ShabAdmin
                     dt = dv.ToTable();
                     foreach (DataRow dr in dt.Rows)
                     {
-                        mainFullName.Text = " أهلا " +  dr["userFullName"].ToString();
+                        mainFullName.Text = " أهلا " + dr["userFullName"].ToString();
                     }
                 }
                 else
@@ -152,6 +185,5 @@ namespace ShabAdmin
             }
 
         }
-
     }
 }

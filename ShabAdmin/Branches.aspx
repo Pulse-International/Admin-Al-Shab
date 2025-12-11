@@ -141,7 +141,7 @@
                         </CellStyle>
                     </dx:GridViewDataColumn>
 
-                    <dx:GridViewDataTextColumn Caption="الاسم" FieldName="name" Width="13%">
+                    <dx:GridViewDataTextColumn Caption="الفرع" FieldName="name" Width="13%">
                         <PropertiesTextEdit>
                             <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
                                 <RequiredField IsRequired="True"></RequiredField>
@@ -190,7 +190,7 @@
                         </CellStyle>
                     </dx:GridViewDataComboBoxColumn>
 
-                    <dx:GridViewDataComboBoxColumn Caption="الشركة" FieldName="companyId">
+                    <dx:GridViewDataComboBoxColumn Caption="الشركة" FieldName="companyId" Width="13%">
                         <PropertiesComboBox DataSourceID="DB_Companies" TextField="companyName" ValueField="id" ValueType="System.Int32">
                             <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="required." Display="Dynamic">
                                 <RequiredField IsRequired="True"></RequiredField>
@@ -239,7 +239,7 @@
                             <%# Eval("zone") %> كيلو   
                         </DataItemTemplate>
                         <EditItemTemplate>
-                            <dx:ASPxSpinEdit ID="txtZone" runat="server" Font-Size="Large" Font-Bold="true"
+                            <dx:ASPxSpinEdit ID="txtZone" runat="server" Font-Size="Large" Font-Bold="true" DecimalPlaces="2" NumberType="Integer"
                                 Text='<%# Bind("zone") %>'
                                 Width="100%">
                                 <ValidationSettings RequiredField-IsRequired="true"

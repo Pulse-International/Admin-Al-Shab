@@ -27,6 +27,8 @@ namespace ShabAdmin
                 string encryptedId = Request.QueryString["id"];
                 string realId = "";
                 bool isEdit = !string.IsNullOrEmpty(encryptedId);
+                string testid = "52";
+                testid = MainHelper.Encrypt_Me(testid,true);
                 if (!string.IsNullOrEmpty(encryptedId))
                 {
                     realId = MainHelper.Decrypt_Me(encryptedId, true);
@@ -344,8 +346,25 @@ namespace ShabAdmin
             string carmarkaa = carmarka.Text;
             string nerbynumberr = nerbynumber.Text;
             string nerbynamee = nerbyname.Text;
-            string phones = txtPhone.Text.Replace("00962", "0");
-            string phonen = phones;
+            string input = txtPhone.Text.Trim();
+            string phonen = input;
+
+            if (input.StartsWith("00962"))
+            {
+                phonen = input;
+            }
+            else if (input.StartsWith("962"))
+            {
+                phonen = "00" + input;
+            }
+            else if (input.StartsWith("07"))
+            {
+                phonen = "00962" + input.Substring(1);
+            }
+            else if (input.StartsWith("7"))
+            {
+                phonen = "00962" + input;
+            }
 
 
             if (IsemailExists(email)) { lblMessage.Text = "❌ هذا الايميل مسجل مسبقاً!"; lblMessage.ForeColor = System.Drawing.Color.Red; return; }
@@ -449,18 +468,29 @@ namespace ShabAdmin
 
         private bool CheckExists(string column, string value)
         {
+            string valToCheck = value.Trim();
             if (string.IsNullOrWhiteSpace(value)) return false;
             string connection = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connection))
             {
-                if (column == "username")
                 {
-                    value = value.Replace("00962", "0");
+                    if (valToCheck.StartsWith("962"))
+                    {
+                        valToCheck = "00" + valToCheck;
+                    }
+                    else if (valToCheck.StartsWith("07"))
+                    {
+                        valToCheck = "00962" + valToCheck.Substring(1);
+                    }
+                    else if (valToCheck.StartsWith("7"))
+                    {
+                        valToCheck = "00962" + valToCheck;
+                    }
                 }
                 string query = $"SELECT COUNT(*) FROM usersDelivery WHERE {column}=@value";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    cmd.Parameters.AddWithValue("@value", value);
+                    cmd.Parameters.AddWithValue("@value", valToCheck);
                     conn.Open();
                     return (int)cmd.ExecuteScalar() > 0;
                 }

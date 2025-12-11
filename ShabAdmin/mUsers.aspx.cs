@@ -815,7 +815,7 @@ namespace ShabAdmin
                             {
                                 string shortCode = SaveShortLink(longUrl);
 
-                                string shortUrl = $"https://alshaeb.net/?i={shortCode}";
+                                string shortUrl = $"{baseUrl}/?i={shortCode}";
                                 string shortMessage = $"تمت الموافقة! اضغط الرابط لإكمال الطلب: {shortUrl}";
 
                                 await MainHelper.SendSms(userNumber, shortMessage);
@@ -850,7 +850,7 @@ namespace ShabAdmin
                             {
                                 string shortCode = SaveShortLink(longUrl1);
 
-                                string shortUrl1 = $"https://alshaeb.net/?i={shortCode}";
+                                string shortUrl1 = $"{baseUrl}/?i={shortCode}";
                                 string shortMessage1 = $"طلبك غير مكتمل، اضغط الرابط لاستكمال الطلب: {shortUrl1}";
 
                                 await MainHelper.SendSms(userNumber, shortMessage1);

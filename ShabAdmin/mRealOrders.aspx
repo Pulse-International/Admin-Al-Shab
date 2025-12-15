@@ -1157,7 +1157,7 @@
                                         <img
                                             id="defaultThumbImg"
                                             src='<%# GetFirstImagePath(Eval("PID")) %>?v=<%# DateTime.Now.Ticks %>'
-                                            style="width: 7em; border: 1px solid #c8c8c8; border-radius: 5px; cursor: pointer;"
+                                            style="width: 6em; border: 1px solid #c8c8c8; border-radius: 5px; cursor: pointer;"
                                             onclick="setTimeout(function () {onImageClick()}, 300);" />
                                     </div>
                                 </DataItemTemplate>

@@ -16,6 +16,7 @@ using System.Net.NetworkInformation;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Xml;
 
 namespace ShabAdmin
 {
@@ -731,78 +732,7 @@ namespace ShabAdmin
             dsOrders.SelectParameters.Add("dateFrom", TypeCode.DateTime, dateFrom.ToString("yyyy-MM-dd"));
             dsOrders.SelectParameters.Add("dateTo", TypeCode.DateTime, dateTo.AddDays(1).ToString("yyyy-MM-dd"));
         }
-        protected void GridPayments_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
-        {
-            GridPayments.DataBind();
-        }
-        protected void GridPayments_BeforePerformDataSelect(object sender, EventArgs e)
-        {
-            var (countryId, companyId) = GetUserPrivileges();
 
-            DateTime defaultFromDate = new DateTime(2025, 1, 1);
-            DateTime defaultToDate = DateTime.Now;
-
-            dsPayments.SelectParameters.Clear();
-
-            int sessionCountryId = Convert.ToInt32(CountryList5?.Value ?? 0);
-            int sessionCompanyId = Convert.ToInt32(CompanyList5?.Value ?? 0);
-
-            DateTime dateFrom = (DateFrom5 != null && DateFrom5.Date >= SqlDateTime.MinValue.Value)
-                ? DateFrom5.Date
-                : defaultFromDate;
-
-            DateTime dateTo = (DateTo5 != null && DateTo5.Date >= SqlDateTime.MinValue.Value)
-                ? DateTo5.Date
-                : defaultToDate;
-
-            if (dateFrom > dateTo)
-                dateFrom = dateTo.AddDays(-1);
-
-            int finalCountryId = (countryId != 1000)
-                ? (sessionCountryId != 0 ? sessionCountryId : countryId)
-                : sessionCountryId;
-
-            int finalCompanyId = (companyId != 1000)
-                ? (sessionCompanyId != 0 ? sessionCompanyId : companyId)
-                : sessionCompanyId;
-
-            dsPayments.SelectCommand = @"
-            SELECT 
-                p.[id],
-                p.[username],
-                ISNULL(u.[firstName],'') + ' ' + ISNULL(u.[lastName],'') AS fullName,
-                o.[companyId],
-                c.[countryID] AS countryId,
-                co.[countryName] AS countryName,
-                c.[companyName] AS companyName,
-                p.[amount],
-                p.[currency],
-                p.[creditId],
-                p.[orderId],
-                p.[type],
-                p.[status],
-                p.[message],
-                p.[transactionRef],
-                p.[isLive],
-                p.[XMLResult],
-                p.[userDate]
-            FROM [payments] p
-            LEFT JOIN Orders o ON p.orderId = o.id
-            LEFT JOIN companies c ON o.companyId = c.id
-            LEFT JOIN countries co ON c.countryID = co.id
-            LEFT JOIN usersApp u ON p.username = u.username
-            WHERE
-                (co.id = @countryId OR @countryId = 0)
-                AND (c.id = @companyId OR @companyId = 0)
-                AND p.userDate BETWEEN @dateFrom AND @dateTo
-            ORDER BY p.id DESC
-        ";
-
-            dsPayments.SelectParameters.Add("countryId", finalCountryId.ToString());
-            dsPayments.SelectParameters.Add("companyId", finalCompanyId.ToString());
-            dsPayments.SelectParameters.Add("dateFrom", TypeCode.DateTime, dateFrom.ToString("yyyy-MM-dd"));
-            dsPayments.SelectParameters.Add("dateTo", TypeCode.DateTime, dateTo.AddDays(1).ToString("yyyy-MM-dd"));
-        }
 
 
         protected string GetCurrency(object countryIdObj)
@@ -1161,39 +1091,163 @@ namespace ShabAdmin
             db_Branches.SelectParameters["FromDate4"].DefaultValue = dateFrom.ToString("yyyy-MM-dd");
             db_Branches.SelectParameters["ToDate4"].DefaultValue = dateTo.AddDays(1).ToString("yyyy-MM-dd");
         }
-
-        protected void callbackXML_Callback(object sender, CallbackEventArgsBase e)
+        protected void GridPayments_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
         {
-            string xmlId = e.Parameter;
-            string xmlData = "";
-
-            using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
-            {
-                conn.Open();
-                using (var cmd = new SqlCommand("SELECT XMLResult FROM payments WHERE id=@id", conn))
-                {
-                    cmd.Parameters.AddWithValue("@id", xmlId);
-                    xmlData = cmd.ExecuteScalar()?.ToString() ?? "لا يوجد بيانات XML";
-                }
-            }
-
-            try
-            {
-                var doc = new System.Xml.XmlDocument();
-                doc.LoadXml(xmlData);
-                using (var sw = new System.IO.StringWriter())
-                using (var xw = new System.Xml.XmlTextWriter(sw) { Formatting = System.Xml.Formatting.Indented })
-                {
-                    doc.WriteContentTo(xw);
-                    xw.Flush();
-                    xmlContent.Value = sw.ToString(); // textarea CodeMirror
-                }
-                callbackXML.JSProperties["cp_refreshEditor"] = true;
-            }
-            catch
-            {
-                xmlContent.Value = xmlData; // XML غير صالح
-            }
+            GridPayments.DataBind();
         }
+
+        protected void GridPayments_BeforePerformDataSelect(object sender, EventArgs e)
+        {
+            var (countryId, companyId) = GetUserPrivileges();
+
+            DateTime defaultFromDate = new DateTime(2025, 1, 1);
+            DateTime defaultToDate = DateTime.Now;
+
+            dsPayments.SelectParameters.Clear();
+
+            int sessionCountryId = Convert.ToInt32(CountryList5?.Value ?? 0);
+            int sessionCompanyId = Convert.ToInt32(CompanyList5?.Value ?? 0);
+
+            DateTime dateFrom = (DateFrom5 != null && DateFrom5.Date >= SqlDateTime.MinValue.Value)
+                ? DateFrom5.Date
+                : defaultFromDate;
+
+            DateTime dateTo = (DateTo5 != null && DateTo5.Date >= SqlDateTime.MinValue.Value)
+                ? DateTo5.Date
+                : defaultToDate;
+
+            if (dateFrom > dateTo)
+                dateFrom = dateTo.AddDays(-1);
+
+            int finalCountryId = (countryId != 1000)
+                ? (sessionCountryId != 0 ? sessionCountryId : countryId)
+                : sessionCountryId;
+
+            int finalCompanyId = (companyId != 1000)
+                ? (sessionCompanyId != 0 ? sessionCompanyId : companyId)
+                : sessionCompanyId;
+
+            dsPayments.SelectCommand = @"
+    SELECT 
+        p.id,
+        p.username,
+        ISNULL(u.firstName,'') + ' ' + ISNULL(u.lastName,'') AS fullName,
+        o.companyId,
+        c.countryID AS countryId,
+        co.countryName AS countryName,
+        c.companyName AS companyName,
+        p.amount,
+        p.currency,
+        p.creditId,
+        p.orderId,
+        p.type,
+        p.status,
+        p.message,
+        p.transactionRef,
+        p.isLive,
+        p.XMLResult,
+        p.userDate
+    FROM payments p
+    LEFT JOIN Orders o ON p.orderId = o.id
+    LEFT JOIN companies c ON o.companyId = c.id
+    LEFT JOIN countries co ON c.countryID = co.id
+    LEFT JOIN usersApp u ON p.username = u.username
+    WHERE
+        (co.id = @countryId OR @countryId = 0)
+        AND (c.id = @companyId OR @companyId = 0)
+        AND p.userDate BETWEEN @dateFrom AND @dateTo
+    ORDER BY p.id DESC
+";
+
+            dsPayments.SelectParameters.Add("countryId", finalCountryId.ToString());
+            dsPayments.SelectParameters.Add("companyId", finalCompanyId.ToString());
+            dsPayments.SelectParameters.Add("dateFrom", TypeCode.DateTime, dateFrom.ToString("yyyy-MM-dd"));
+            dsPayments.SelectParameters.Add("dateTo", TypeCode.DateTime, dateTo.AddDays(1).ToString("yyyy-MM-dd"));
+        }
+
+        protected string RenderXmlLink(object xmlObj)
+        {
+            var xml = xmlObj as string;
+
+            if (string.IsNullOrEmpty(xml))
+                return "<span style='color:#999; font-family:Cairo;'>لا يوجد</span>";
+
+            // تهريب ' عشان ما تكسر الـ HTML attribute
+            var safeXml = xml.Replace("'", "\\'");
+
+            return "<a href=\"javascript:void(0);\" " +
+                   $"data-xml='{safeXml}' " +
+                   "onclick=\"ShowXML(this)\" " +
+                   "style=\"color:#337ab7; text-decoration:underline; font-family:Cairo;\">" +
+                   "عرض</a>";
+        }
+
+
+        protected void GridCredits_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            GridCredits.DataBind();
+        }
+
+        protected void GridCredits_BeforePerformDataSelect(object sender, EventArgs e)
+        {
+            var (countryId, companyId) = GetUserPrivileges();
+
+            DateTime defaultFromDate = new DateTime(2025, 1, 1);
+            DateTime defaultToDate = DateTime.Now;
+
+            dsCredits.SelectParameters.Clear();
+
+            int sessionCountryId = Convert.ToInt32(CountryList6?.Value ?? 0);
+
+            DateTime dateFrom = (DateFrom6 != null && DateFrom6.Date >= SqlDateTime.MinValue.Value)
+                ? DateFrom6.Date
+                : defaultFromDate;
+
+            DateTime dateTo = (DateTo6 != null && DateTo6.Date >= SqlDateTime.MinValue.Value)
+                ? DateTo6.Date
+                : defaultToDate;
+
+            if (dateFrom > dateTo)
+                dateFrom = dateTo.AddDays(-1);
+
+            int finalCountryId = (countryId != 1000)
+                ? (sessionCountryId != 0 ? sessionCountryId : countryId)
+                : sessionCountryId;
+
+            dsCredits.SelectCommand = @"
+    SELECT 
+        uc.id,
+        uc.username,
+        co.id AS countryId,
+        co.countryName,
+        uc.amount,
+        uc.currency,
+        uc.l_creditType,
+        uc.cardHolder,
+        uc.creaditFirst6No,
+        uc.creditLast4No,
+        uc.creditMonth,
+        uc.creditYear,
+        uc.isDefault,
+        uc.creditTransactionRef,
+        uc.isLive,
+        uc.XMLResult,
+        uc.userDate
+    FROM usersCredits uc
+    LEFT JOIN countries co ON co.countryCode = uc.countryCode
+    WHERE
+        (co.id = @countryId OR @countryId = 0)
+        AND uc.userDate BETWEEN @dateFrom AND @dateTo
+    ORDER BY uc.id DESC
+";
+
+            dsCredits.SelectParameters.Add("countryId", finalCountryId.ToString());
+            dsCredits.SelectParameters.Add("dateFrom", TypeCode.DateTime, dateFrom.ToString("yyyy-MM-dd"));
+            dsCredits.SelectParameters.Add("dateTo", TypeCode.DateTime, dateTo.AddDays(1).ToString("yyyy-MM-dd"));
+        }
+
+        
+
+
     }
 }

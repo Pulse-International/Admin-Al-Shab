@@ -424,7 +424,9 @@
                                                 ValueField="id"
                                                 TextField="description"
                                                 ValueType="System.Int32">
-                                                <ValidationSettings RequiredField-IsRequired="True" ErrorText="يجب تحديد حالة الطلب" />
+                                                <ValidationSettings RequiredField-IsRequired="True" ErrorText="يجب تحديد حالة الطلب" >
+<RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
                                             </PropertiesComboBox>
                                             <DataItemTemplate>
                                                 <%# GetOrderStatusLottie(Eval("l_orderStatus").ToString()) %>
@@ -666,6 +668,8 @@
                                     Border-BorderColor="#b7b7b7"
                                     PopupAnimationType="Fade">
 
+<HeaderStyle Font-Names="Cairo" Font-Size="18px"></HeaderStyle>
+
                                     <ContentCollection>
                                         <dx:PopupControlContentControl>
 
@@ -694,6 +698,8 @@
 
                                         </dx:PopupControlContentControl>
                                     </ContentCollection>
+
+<Border BorderColor="#B7B7B7" BorderStyle="Solid" BorderWidth="2px"></Border>
                                 </dx:ASPxPopupControl>
 
 
@@ -701,6 +707,9 @@
                                 <dx:ASPxCallbackPanel ID="callbackApprove" runat="server"
                                     ClientInstanceName="callbackApprove"
                                     OnCallback="callbackApprove_Callback">
+                                    <PanelCollection>
+<dx:PanelContent runat="server"></dx:PanelContent>
+</PanelCollection>
                                 </dx:ASPxCallbackPanel>
 
 
@@ -792,6 +801,8 @@
                                 Border-BorderColor="#b7b7b7"
                                 PopupAnimationType="Fade">
 
+<HeaderStyle Font-Names="Cairo" Font-Size="18px"></HeaderStyle>
+
                                 <ContentCollection>
                                     <dx:PopupControlContentControl>
                                         <div style="font-family: Cairo; font-size: 15px; margin-bottom: 8px; color: #444;">
@@ -824,6 +835,8 @@
                                         </div>
                                     </dx:PopupControlContentControl>
                                 </ContentCollection>
+
+<Border BorderColor="#B7B7B7" BorderStyle="Solid" BorderWidth="2px"></Border>
                             </dx:ASPxPopupControl>
 
                             <dx:ASPxPopupControl ID="popupAddress1" runat="server" ClientInstanceName="popupAddress1"

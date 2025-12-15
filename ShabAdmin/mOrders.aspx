@@ -911,7 +911,12 @@
             Width="1100px" HeaderText="المنتجات في الطلب"
             PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter"
             Modal="true" Font-Names="Cairo">
-            <ClientSideEvents Shown="function(s,e){ s.UpdatePosition(); }" />
+            <ClientSideEvents Shown="function(s,e){ 
+             setTimeout ( 
+                      function() { 
+                         s.UpdatePosition();
+                     },1000);                     
+             }" />
             <ContentCollection>
                 <dx:PopupControlContentControl>
 
@@ -922,6 +927,9 @@
                         Width="100%" AutoGenerateColumns="False"
                         Font-Names="Cairo" Font-Size="1em" RightToLeft="True"
                         EnablePagingCallbackAnimation="True">
+
+                        <SettingsPager PageSize="5">
+                        </SettingsPager>
 
                         <Settings ShowFooter="True" ShowFilterRow="True" ShowFilterRowMenu="False" ShowHeaderFilterButton="False" AutoFilterCondition="Contains" />
                         <SettingsLoadingPanel Text="يرجى الانتظار..." Mode="ShowAsPopup" />
@@ -1212,9 +1220,3 @@
             </dx:PopupControlContentControl>
         </ContentCollection>
     </dx:ASPxPopupControl>
-
-
-
-
-
-</asp:Content>

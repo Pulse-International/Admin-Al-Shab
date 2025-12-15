@@ -1076,7 +1076,12 @@
             Width="900px" HeaderText="المنتجات في الطلب"
             PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter"
             Modal="true" Font-Names="Cairo">
-            <ClientSideEvents Shown="function(s,e){ s.UpdatePosition(); }" />
+            <ClientSideEvents Shown="function(s,e){ 
+                setTimeout ( 
+                         function() { 
+                            s.UpdatePosition();
+                        },1000);                     
+                }" />
             <ContentCollection>
                 <dx:PopupControlContentControl>
 
@@ -1087,11 +1092,19 @@
                         Font-Names="Cairo" Font-Size="0.9em" RightToLeft="True"
                         EnablePagingCallbackAnimation="True">
 
+                        <SettingsPager PageSize="5">
+                        </SettingsPager>
+
                         <Settings ShowFooter="True" ShowFilterRow="True" ShowFilterRowMenu="False" ShowHeaderFilterButton="False" AutoFilterCondition="Contains" />
                         <SettingsLoadingPanel Text="يرجى الانتظار..." Mode="ShowAsPopup" />
                         <SettingsText SearchPanelEditorNullText="ابحث في المنتجات..." EmptyDataRow="لا يوجد منتجات مرتبطة بهذا الطلب." />
 
                         <SettingsExport EnableClientSideExportAPI="true" ExcelExportMode="WYSIWYG" PaperKind="A4" RightToLeft="True" />
+
+<SettingsPopup>
+<FilterControl AutoUpdatePosition="False"></FilterControl>
+</SettingsPopup>
+
                         <SettingsSearchPanel CustomEditorID="tbToolbarSearchProducts" />
 
                         <Toolbars>

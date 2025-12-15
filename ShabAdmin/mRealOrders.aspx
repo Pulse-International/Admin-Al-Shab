@@ -1101,9 +1101,9 @@
 
                         <SettingsExport EnableClientSideExportAPI="true" ExcelExportMode="WYSIWYG" PaperKind="A4" RightToLeft="True" />
 
-<SettingsPopup>
-<FilterControl AutoUpdatePosition="False"></FilterControl>
-</SettingsPopup>
+                        <SettingsPopup>
+                            <FilterControl AutoUpdatePosition="False"></FilterControl>
+                        </SettingsPopup>
 
                         <SettingsSearchPanel CustomEditorID="tbToolbarSearchProducts" />
 

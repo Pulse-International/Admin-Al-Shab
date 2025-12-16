@@ -363,6 +363,8 @@
             Height="650px"
             Modal="true"
             ShowCloseButton="false"
+            CloseAction="None"
+            EnableCloseOnOutsideClick="false"
             PopupHorizontalAlign="WindowCenter"
             PopupVerticalAlign="WindowCenter"
             AllowDragging="true"
@@ -391,6 +393,7 @@
             </ContentCollection>
 
         </dx:ASPxPopupControl>
+
 
         <dx:ASPxPageControl ID="pageTab" runat="server" CssClass="divSTARProviders" ActiveTabIndex="0" ClientInstanceName="pageTab" Theme="Material" Width="100%" EnableCallbackAnimation="True">
             <ClientSideEvents ActiveTabChanged="onTabChanged" />
@@ -1329,7 +1332,7 @@ ORDER BY o.id DESC">
 
 
 
-                        </script>
+                            </script>
 
 
                         </dx:ContentControl>

@@ -664,6 +664,8 @@ namespace ShabAdmin
             DeleteUploadedFile(e.Values["idFrontPicture"]?.ToString());
             DeleteUploadedFile(e.Values["idBackPicture"]?.ToString());
             DeleteUploadedFile(e.Values["licensePicture"]?.ToString());
+            DeleteUploadedFile(e.Values["passportPicture"]?.ToString());
+            DeleteUploadedFile(e.Values["residencePicture"]?.ToString());
         }
         private void DeleteUploadedFile(string filePath)
         {

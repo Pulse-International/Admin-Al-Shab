@@ -210,6 +210,7 @@
     <Content Include="assets\js\plugins\perfect-scrollbar.min.js" />
     <Content Include="assets\js\plugins\smooth-scrollbar.min.js" />
     <Content Include="assets\js\plugins\world.js" />
+    <Content Include="Landing.aspx" />
     <Content Include="ldeliveryCompleted.aspx" />
     <Content Include="GetApp.aspx" />
     <Content Include="registerDriver.aspx" />
@@ -469,6 +470,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Landing.aspx.cs">
+      <DependentUpon>Landing.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Landing.aspx.designer.cs">
+      <DependentUpon>Landing.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ldeliveryCompleted.aspx.cs">
       <DependentUpon>ldeliveryCompleted.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

@@ -601,22 +601,7 @@ namespace ShabAdmin
             e.Cancel = true;
             GridDeliveryUsers.CancelEdit();
             GridDeliveryUsers.DataBind();
-        }
-
-        void DeleteOldFileIfChanged(string fileCheck, string fileOld)
-        {
-            if (fileCheck == "1")
-            {
-                int pos = fileOld.LastIndexOf("/");
-                if (pos > -1)
-                {
-                    string fileToDelete = fileOld.Substring(pos + 1);
-                    string[] fileList = Directory.GetFiles(Server.MapPath("~/assets/uploads/delivery-users"), fileToDelete);
-                    foreach (string file in fileList)
-                        System.IO.File.Delete(file);
-                }
-            }
-        }
+        }       
 
         string fileName = string.Empty;
         int checkError = 0;
@@ -672,7 +657,6 @@ namespace ShabAdmin
             if (string.IsNullOrWhiteSpace(filePath))
                 return;
 
-
             int pos = filePath.LastIndexOf("/");
             if (pos < 0) return;
 
@@ -682,7 +666,6 @@ namespace ShabAdmin
             {
                 File.Delete(file);
             }
-
         }
 
         protected void GridDeliveryUsers_HtmlDataCellPrepared(object sender, ASPxGridViewTableDataCellEventArgs e)

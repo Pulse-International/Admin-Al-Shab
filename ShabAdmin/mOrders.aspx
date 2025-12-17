@@ -911,7 +911,12 @@
             Width="1100px" HeaderText="المنتجات في الطلب"
             PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter"
             Modal="true" Font-Names="Cairo">
-            <ClientSideEvents Shown="function(s,e){ s.UpdatePosition(); }" />
+            <ClientSideEvents Shown="function(s,e){ 
+             setTimeout ( 
+                      function() { 
+                         s.UpdatePosition();
+                     },1000);                     
+             }" />
             <ContentCollection>
                 <dx:PopupControlContentControl>
 
@@ -922,6 +927,9 @@
                         Width="100%" AutoGenerateColumns="False"
                         Font-Names="Cairo" Font-Size="1em" RightToLeft="True"
                         EnablePagingCallbackAnimation="True">
+
+                        <SettingsPager PageSize="5">
+                        </SettingsPager>
 
                         <Settings ShowFooter="True" ShowFilterRow="True" ShowFilterRowMenu="False" ShowHeaderFilterButton="False" AutoFilterCondition="Contains" />
                         <SettingsLoadingPanel Text="يرجى الانتظار..." Mode="ShowAsPopup" />
@@ -972,7 +980,7 @@
                                         <img
                                             id="defaultThumbImg"
                                             src='<%# GetFirstImagePath(Eval("PID")) %>?v=<%# DateTime.Now.Ticks %>'
-                                            style="width: 7em; border: 1px solid #c8c8c8; border-radius: 5px; cursor: pointer;"
+                                            style="width: 6em; border: 1px solid #c8c8c8; border-radius: 5px; cursor: pointer;"
                                             onclick="setTimeout(function () {onImageClick()}, 300);" />
                                     </div>
                                 </DataItemTemplate>
@@ -1212,9 +1220,5 @@
             </dx:PopupControlContentControl>
         </ContentCollection>
     </dx:ASPxPopupControl>
-
-
-
-
 
 </asp:Content>

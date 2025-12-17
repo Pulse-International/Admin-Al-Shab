@@ -424,7 +424,9 @@
                                                 ValueField="id"
                                                 TextField="description"
                                                 ValueType="System.Int32">
-                                                <ValidationSettings RequiredField-IsRequired="True" ErrorText="يجب تحديد حالة الطلب" />
+                                                <ValidationSettings RequiredField-IsRequired="True" ErrorText="يجب تحديد حالة الطلب" >
+<RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
                                             </PropertiesComboBox>
                                             <DataItemTemplate>
                                                 <%# GetOrderStatusLottie(Eval("l_orderStatus").ToString()) %>
@@ -666,6 +668,8 @@
                                     Border-BorderColor="#b7b7b7"
                                     PopupAnimationType="Fade">
 
+<HeaderStyle Font-Names="Cairo" Font-Size="18px"></HeaderStyle>
+
                                     <ContentCollection>
                                         <dx:PopupControlContentControl>
 
@@ -694,6 +698,8 @@
 
                                         </dx:PopupControlContentControl>
                                     </ContentCollection>
+
+<Border BorderColor="#B7B7B7" BorderStyle="Solid" BorderWidth="2px"></Border>
                                 </dx:ASPxPopupControl>
 
 
@@ -701,6 +707,9 @@
                                 <dx:ASPxCallbackPanel ID="callbackApprove" runat="server"
                                     ClientInstanceName="callbackApprove"
                                     OnCallback="callbackApprove_Callback">
+                                    <PanelCollection>
+<dx:PanelContent runat="server"></dx:PanelContent>
+</PanelCollection>
                                 </dx:ASPxCallbackPanel>
 
 
@@ -792,6 +801,8 @@
                                 Border-BorderColor="#b7b7b7"
                                 PopupAnimationType="Fade">
 
+<HeaderStyle Font-Names="Cairo" Font-Size="18px"></HeaderStyle>
+
                                 <ContentCollection>
                                     <dx:PopupControlContentControl>
                                         <div style="font-family: Cairo; font-size: 15px; margin-bottom: 8px; color: #444;">
@@ -824,6 +835,8 @@
                                         </div>
                                     </dx:PopupControlContentControl>
                                 </ContentCollection>
+
+<Border BorderColor="#B7B7B7" BorderStyle="Solid" BorderWidth="2px"></Border>
                             </dx:ASPxPopupControl>
 
                             <dx:ASPxPopupControl ID="popupAddress1" runat="server" ClientInstanceName="popupAddress1"
@@ -1076,7 +1089,12 @@
             Width="900px" HeaderText="المنتجات في الطلب"
             PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter"
             Modal="true" Font-Names="Cairo">
-            <ClientSideEvents Shown="function(s,e){ s.UpdatePosition(); }" />
+            <ClientSideEvents Shown="function(s,e){ 
+                setTimeout ( 
+                         function() { 
+                            s.UpdatePosition();
+                        },1000);                     
+                }" />
             <ContentCollection>
                 <dx:PopupControlContentControl>
 
@@ -1087,11 +1105,19 @@
                         Font-Names="Cairo" Font-Size="0.9em" RightToLeft="True"
                         EnablePagingCallbackAnimation="True">
 
+                        <SettingsPager PageSize="5">
+                        </SettingsPager>
+
                         <Settings ShowFooter="True" ShowFilterRow="True" ShowFilterRowMenu="False" ShowHeaderFilterButton="False" AutoFilterCondition="Contains" />
                         <SettingsLoadingPanel Text="يرجى الانتظار..." Mode="ShowAsPopup" />
                         <SettingsText SearchPanelEditorNullText="ابحث في المنتجات..." EmptyDataRow="لا يوجد منتجات مرتبطة بهذا الطلب." />
 
                         <SettingsExport EnableClientSideExportAPI="true" ExcelExportMode="WYSIWYG" PaperKind="A4" RightToLeft="True" />
+
+                        <SettingsPopup>
+                            <FilterControl AutoUpdatePosition="False"></FilterControl>
+                        </SettingsPopup>
+
                         <SettingsSearchPanel CustomEditorID="tbToolbarSearchProducts" />
 
                         <Toolbars>
@@ -1131,7 +1157,7 @@
                                         <img
                                             id="defaultThumbImg"
                                             src='<%# GetFirstImagePath(Eval("PID")) %>?v=<%# DateTime.Now.Ticks %>'
-                                            style="width: 7em; border: 1px solid #c8c8c8; border-radius: 5px; cursor: pointer;"
+                                            style="width: 6em; border: 1px solid #c8c8c8; border-radius: 5px; cursor: pointer;"
                                             onclick="setTimeout(function () {onImageClick()}, 300);" />
                                     </div>
                                 </DataItemTemplate>

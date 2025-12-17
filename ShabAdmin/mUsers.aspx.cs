@@ -601,22 +601,7 @@ namespace ShabAdmin
             e.Cancel = true;
             GridDeliveryUsers.CancelEdit();
             GridDeliveryUsers.DataBind();
-        }
-
-        void DeleteOldFileIfChanged(string fileCheck, string fileOld)
-        {
-            if (fileCheck == "1")
-            {
-                int pos = fileOld.LastIndexOf("/");
-                if (pos > -1)
-                {
-                    string fileToDelete = fileOld.Substring(pos + 1);
-                    string[] fileList = Directory.GetFiles(Server.MapPath("~/assets/uploads/delivery-users"), fileToDelete);
-                    foreach (string file in fileList)
-                        System.IO.File.Delete(file);
-                }
-            }
-        }
+        }       
 
         string fileName = string.Empty;
         int checkError = 0;
@@ -664,12 +649,13 @@ namespace ShabAdmin
             DeleteUploadedFile(e.Values["idFrontPicture"]?.ToString());
             DeleteUploadedFile(e.Values["idBackPicture"]?.ToString());
             DeleteUploadedFile(e.Values["licensePicture"]?.ToString());
+            DeleteUploadedFile(e.Values["passportPicture"]?.ToString());
+            DeleteUploadedFile(e.Values["residencePicture"]?.ToString());
         }
         private void DeleteUploadedFile(string filePath)
         {
             if (string.IsNullOrWhiteSpace(filePath))
                 return;
-
 
             int pos = filePath.LastIndexOf("/");
             if (pos < 0) return;
@@ -680,7 +666,6 @@ namespace ShabAdmin
             {
                 File.Delete(file);
             }
-
         }
 
         protected void GridDeliveryUsers_HtmlDataCellPrepared(object sender, ASPxGridViewTableDataCellEventArgs e)
@@ -779,98 +764,120 @@ namespace ShabAdmin
             int userId = int.Parse(parts[1]);
             string note = parts.Length > 2 ? parts[2] : "";
 
-            using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
+            using (SqlConnection conn = new SqlConnection(
+                ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
             {
                 conn.Open();
 
-                // ======== جلب رقم الهاتف للمستخدم ========
+                // ========= جلب رقم الهاتف + isMobile =========
                 string userNumber = "";
-                using (SqlCommand getUserCmd = new SqlCommand("SELECT username FROM usersDelivery WHERE id=@id", conn))
+                bool isMobile = false;
+
+                using (SqlCommand getUserCmd = new SqlCommand(
+                    "SELECT username, isMobile FROM usersDelivery WHERE id=@id", conn))
                 {
                     getUserCmd.Parameters.AddWithValue("@id", userId);
-                    object result = getUserCmd.ExecuteScalar();
-                    if (result != null)
-                        userNumber = result.ToString();
+
+                    using (SqlDataReader reader = getUserCmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            userNumber = reader["username"].ToString();
+                            isMobile = reader["isMobile"] != DBNull.Value &&
+                                       Convert.ToBoolean(reader["isMobile"]);
+                        }
+                    }
                 }
 
                 string baseUrl = WebConfigurationManager.AppSettings["SourceURL"];
-
                 SqlCommand cmd = null;
+                string longUrl = "";   // 👈 الرابط النهائي (ويب أو Deep Link)
+                string smsText = "";
 
                 switch (action)
                 {
+                    // ================== APPROVE ==================
                     case "approve":
-                        cmd = new SqlCommand(
-                            "UPDATE usersDelivery SET l_deliveryStatusId = 3, isActive = 1 WHERE id = @id", conn);
 
-                        // الرابط الطويل
+                        cmd = new SqlCommand(
+                            "UPDATE usersDelivery SET l_deliveryStatusId = 3, isActive = 1 WHERE id = @id",
+                            conn);
+
                         string encryptedUserId = MainHelper.Encrypt_Me(userId.ToString(), true);
-                        string longUrl = $"{baseUrl}/ldeliveryCompleted?id={encryptedUserId}";
-                        string smsMessage = $"مبروك! تمت الموافقة اضغط الرابط لإكمال العملية: {longUrl}";
 
-                        // توليد واستخدام الرابط المختصر من قاعدة البيانات
-                        Task.Run(async () =>
-                        {
-                            try
-                            {
-                                string shortCode = SaveShortLink(longUrl);
+                        longUrl = isMobile
+                            ? $"alshaebdriver://app/reset-password?countryCode=00962&phone={userNumber}"
+                            : $"{baseUrl}/ldeliveryCompleted?id={encryptedUserId}";
 
-                                string shortUrl = $"{baseUrl}/?i={shortCode}";
-                                string shortMessage = $"تمت الموافقة! اضغط الرابط لإكمال الطلب: {shortUrl}";
-
-                                await MainHelper.SendSms(userNumber, shortMessage);
-                            }
-                            catch
-                            {
-                                await MainHelper.SendSms(userNumber, smsMessage);
-                            }
-                        });
-
+                        smsText = "مبروك! تمت الموافقة، اضغط لاستكمال العملية:";
                         break;
+
+                    // ================== REJECT ==================
                     case "reject":
+
                         cmd = new SqlCommand(
-                            "UPDATE usersDelivery SET l_deliveryStatusId=4,isActive=0, rejectNote=@note WHERE id=@id", conn);
+                            "UPDATE usersDelivery SET l_deliveryStatusId = 4, isActive = 0, rejectNote = @note WHERE id = @id",
+                            conn);
+
                         cmd.Parameters.AddWithValue("@note", note);
-                        SendSmsBackground(userNumber, "مرفوضة يمعلم");
+
+                        longUrl = $"{baseUrl}/contact"; // أو أي صفحة بدك
+                        smsText = "تم رفض الطلب، للاستفسار:";
                         break;
 
+                    // ================== INCOMPLETE ==================
                     case "incomplete":
+
                         cmd = new SqlCommand(
-                            "UPDATE usersDelivery SET l_deliveryStatusId=@status, isUpdated=0, incompleteNote=@note WHERE id=@id", conn);
+                            @"UPDATE usersDelivery 
+                      SET l_deliveryStatusId = @status,
+                          isUpdated = 0,
+                          incompleteNote = @note
+                      WHERE id = @id",
+                            conn);
+
                         cmd.Parameters.AddWithValue("@status", 2);
                         cmd.Parameters.AddWithValue("@note", note);
 
                         string encryptedUserId1 = MainHelper.Encrypt_Me(userId.ToString(), true);
-                        string longUrl1 = $"{baseUrl}/registerDriver?id={encryptedUserId1}";
-                        string smsMessage1 = $"طلبك غير مكتمل، اضغط الرابط لاستكمال الطلب: {longUrl1}";
 
-                        Task.Run(async () =>
-                        {
-                            try
-                            {
-                                string shortCode = SaveShortLink(longUrl1);
+                        longUrl = isMobile
+                            ? $"alshaebdriver://app/driver-registration-update/?id={userId}"
+                            : $"{baseUrl}/registerDriver?id={encryptedUserId1}";
 
-                                string shortUrl1 = $"{baseUrl}/?i={shortCode}";
-                                string shortMessage1 = $"طلبك غير مكتمل، اضغط الرابط لاستكمال الطلب: {shortUrl1}";
-
-                                await MainHelper.SendSms(userNumber, shortMessage1);
-                            }
-                            catch
-                            {
-                                await MainHelper.SendSms(userNumber, smsMessage1);
-                            }
-                        });
-
+                        smsText = "طلبك غير مكتمل، اضغط لاستكمال الطلب:";
                         break;
-
                 }
 
+                // ========= إرسال SMS (Short URL دائمًا) =========
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        string shortCode = SaveShortLink(longUrl);
+                        string shortUrl = $"{baseUrl}/?i={shortCode}";
+
+                        await MainHelper.SendSms(
+                            userNumber,
+                            $"{smsText} {shortUrl}");
+                    }
+                    catch
+                    {
+                        // fallback → long url
+                        await MainHelper.SendSms(
+                            userNumber,
+                            $"{smsText} {longUrl}");
+                    }
+                });
+
+                // ========= تنفيذ التحديث =========
                 cmd.Parameters.AddWithValue("@id", userId);
                 cmd.ExecuteNonQuery();
             }
 
             GridDeliveryUsers.DataBind();
         }
+
 
 
         protected void GridDeliveryUsers_HtmlRowPrepared(object sender, ASPxGridViewTableRowEventArgs e)

@@ -331,6 +331,20 @@
                     popupXML.Show();
                 }
             }
+            function closeXMLPopup() {
+                clearXML();
+                popupXML.Hide();
+            }
+
+            function clearXML() {
+                var txt = document.getElementById('<%= xmlContent.ClientID %>');
+                if (txt) txt.value = "";
+                if (window.editor) {
+                    try { window.editor.toTextArea(); } catch { }
+                    window.editor = null;
+                }
+            }
+
 
         </script>
 
@@ -342,6 +356,45 @@
         <div class="w-100 text-center my-4">
             <h2 class="pageTitle d-inline-block" style="font-family: Cairo">التقارير</h2>
         </div>
+        <dx:ASPxPopupControl ID="popupXML" runat="server"
+            ClientInstanceName="popupXML"
+            HeaderText="عرض XML"
+            Width="950px"
+            Height="650px"
+            Modal="true"
+            ShowCloseButton="false"
+            CloseAction="None"
+            EnableCloseOnOutsideClick="false"
+            PopupHorizontalAlign="WindowCenter"
+            PopupVerticalAlign="WindowCenter"
+            AllowDragging="true"
+            CssClass="xmlPopup">
+
+            <ClientSideEvents
+                Shown="function(s,e){ setTimeout(function(){ s.UpdatePosition(); }, 50); }"
+                Closing="function(s,e){ clearXML(); }" />
+
+            <ContentCollection>
+                <dx:PopupControlContentControl runat="server" Style="height: 100%;">
+
+                    <textarea id="xmlContent" runat="server"
+                        style="width: 100%; height: calc(100% - 70px); background: #1e1e1e; color: #fff; font-family: 'Fira Code'; font-size: 15px; padding: 10px; border: none; outline: none; resize: none;">
+            </textarea>
+
+                    <div style="width: 100%; text-align: center; padding: 10px 0; background: #141414;">
+                        <button type="button" onclick="closeXMLPopup()"
+                            style="background: #b10000; color: #fff; padding: 8px 22px; border: none; border-radius: 6px; font-family: Cairo; font-size: 15px; cursor: pointer;">
+                            إغلاق
+               
+                        </button>
+                    </div>
+
+                </dx:PopupControlContentControl>
+            </ContentCollection>
+
+        </dx:ASPxPopupControl>
+
+
         <dx:ASPxPageControl ID="pageTab" runat="server" CssClass="divSTARProviders" ActiveTabIndex="0" ClientInstanceName="pageTab" Theme="Material" Width="100%" EnableCallbackAnimation="True">
             <ClientSideEvents ActiveTabChanged="onTabChanged" />
             <TabPages>
@@ -1044,13 +1097,10 @@ ORDER BY o.id DESC">
 
                                         <dx:GridViewDataColumn Caption="XML">
                                             <DataItemTemplate>
-                                                <%# !string.IsNullOrEmpty(Eval("XMLResult")?.ToString()) 
-                                                ? $"<a href='javascript:void(0);' data-xml-id='{Eval("id")}' onclick='ShowXML(this)' style='color: #337ab7; text-decoration: underline; font-family:Cairo;'>عرض</a>"
-                                                : "<span style='color:#999; font-family:Cairo;'>لا يوجد</span>" %>
+                                                <%# RenderXmlLink(Eval("XMLResult")) %>
                                             </DataItemTemplate>
                                             <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                                         </dx:GridViewDataColumn>
-
 
 
                                         <dx:GridViewDataDateColumn FieldName="userDate" Caption="التاريخ">
@@ -1136,122 +1186,444 @@ ORDER BY o.id DESC">
                                 </asp:SqlDataSource>
                             </div>
 
-                            <dx:ASPxPopupControl ID="popupXML" runat="server"
-                                ClientInstanceName="popupXML"
-                                HeaderText="عرض XML"
-                                PopupHorizontalAlign="WindowCenter"
-                                PopupVerticalAlign="WindowCenter"
-                                Width="850px"
-                                Height="480px"
-                                ShowCloseButton="true"
-                                Modal="true"
-                                Font-Names="Cairo" Font-Size="14px">
-
-                                <ClientSideEvents
-                                    CloseUp="function(s,e){
-            resetXMLViewer();
-        }" />
-
-                                <ContentCollection>
-                                    <dx:PopupControlContentControl runat="server">
-                                        <dx:ASPxCallbackPanel ID="callbackXML" runat="server" ClientInstanceName="callbackXML" OnCallback="callbackXML_Callback">
-                                            <PanelCollection>
-                                                <dx:PanelContent runat="server"
-                                                    Style="padding: 10px; background: #1e1e1e; height: 100%; box-sizing: border-box;">
-                                                    <textarea id="xmlContent" runat="server"
-                                                        style="width: 100%; height: 550px; font-family: 'Cairo', monospace; text-align: left;"></textarea>
-                                                </dx:PanelContent>
-                                            </PanelCollection>
-                                        </dx:ASPxCallbackPanel>
-                                    </dx:PopupControlContentControl>
-                                </ContentCollection>
-                            </dx:ASPxPopupControl>
 
 
-                            <!-- CodeMirror CSS & JS -->
-                            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/codemirror.min.css">
-                            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/theme/dracula.min.css">
-                            <!-- ثيم داكن جميل -->
-                            <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/codemirror.min.js"></script>
-                            <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/mode/xml/xml.min.js"></script>
+
+
+                            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+                            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+
+                            <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+                            <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/xml/xml.min.js"></script>
+                            <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/matchbrackets.min.js"></script>
+                            <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/closetag.min.js"></script>
 
                             <style>
-                                /* تحسين مظهر CodeMirror */
                                 .CodeMirror {
+                                    text-align: left !important;
+                                }
+
+                                    .CodeMirror pre {
+                                        text-align: left !important;
+                                    }
+
+                                .xmlPopup .dxpc-content,
+                                .xmlPopup .dxpc-mainDiv,
+                                .xmlPopup .dxpc-contentWrapper {
                                     height: 100% !important;
-                                    width: 100% !important;
-                                    font-size: 16px;
-                                    direction: ltr; /* لمحاذاة النص لليسار */
-                                    text-align: left;
-                                    border-radius: 8px;
-                                    overflow: auto;
+                                }
+
+                                .xmlPopup .dxpc-content {
+                                    padding: 0 !important;
+                                }
+
+                                #callbackXML,
+                                #callbackXML .dxpnlControl,
+                                #callbackXML .dxpnlContent {
+                                    height: 100% !important;
+                                }
+
+                                .xmlPopup textarea,
+                                .xmlPopup .CodeMirror {
+                                    height: 100% !important;
+                                }
+
+                                .CodeMirror-scroll {
+                                    height: 100% !important;
                                 }
                             </style>
-
                             <script>
-                                function initCodeMirror() {
-                                    if (!window.editor) {
-                                        window.editor = CodeMirror.fromTextArea(document.getElementById('<%= xmlContent.ClientID %>'), {
-                                            mode: "application/xml",
-                                            lineNumbers: true,
-                                            readOnly: true,
-                                            theme: "dracula", // ثيم داكن جميل
-                                            lineWrapping: true,
-                                            matchBrackets: true, // تمييز الأقواس
-                                            autoCloseTags: true
-                                        });
-                                    } else {
-                                        window.editor.refresh();
-                                    }
-                                }
-                                function resetXMLViewer() {
-                                    // مسح محتوى الـtextarea
-                                    document.getElementById('<%= xmlContent.ClientID %>').value = '';
+                                function ShowXML(el) {
+                                    var xml = el.getAttribute("data-xml") || "لا يوجد XML";
 
-                                    // مسح محتوى CodeMirror إذا تم تهيئته
-                                    if (window.editor) {
-                                        window.editor.setValue('');
-                                        window.editor.refresh();
-                                    }
+                                    popupXML.Show();
 
-                                    // إعادة تعيين أي علامات مخصصة للـCallback
-                                    callbackXML.cp_refreshEditor = null;
-                                }
-                                callbackXML.EndCallback.AddHandler(function (s, e) {
-                                    if (s.cp_refreshEditor) {
+                                    setTimeout(function () {
+
                                         var textarea = document.getElementById('<%= xmlContent.ClientID %>');
-                                        if (textarea) {
-                                            // إذا كان هناك محرر سابق، نعيده إلى textarea الأصلي
-                                            if (window.editor) {
-                                                try {
-                                                    window.editor.toTextArea();
-                                                } catch { }
-                                                window.editor = null;
-                                            }
+                                        var pretty = formatXml(xml);
+                                        textarea.value = pretty;
 
-                                            // إنشاء محرر جديد مرتبط بالـtextarea الحالي في DOM
-                                            window.editor = CodeMirror.fromTextArea(textarea, {
-                                                mode: "application/xml",
-                                                lineNumbers: true,
-                                                readOnly: true,
-                                                theme: "dracula",
-                                                lineWrapping: true,
-                                                matchBrackets: true,
-                                                autoCloseTags: true
-                                            });
-
-                                            // تعيين القيمة
-                                            window.editor.setValue(textarea.value);
+                                        if (window.editor) {
+                                            try { window.editor.toTextArea(); } catch { }
+                                            window.editor = null;
                                         }
 
-                                        s.cp_refreshEditor = null;
+                                        window.editor = CodeMirror.fromTextArea(textarea, {
+                                            mode: "application/xml",
+                                            theme: "dracula",
+                                            lineNumbers: true,
+                                            readOnly: true,
+                                            lineWrapping: true
+                                        });
+
+                                        window.editor.setValue(pretty);
+
+                                    }, 50);
+                                }
+
+
+                                function formatXml(xml) {
+                                    var formatted = '';
+                                    var reg = /(>)(<)(\/*)/g;
+                                    xml = xml.replace(reg, '$1\r\n$2$3');
+                                    var pad = 0;
+
+                                    xml.split('\r\n').forEach(function (node) {
+                                        var indent = 0;
+
+                                        if (node.match(/.+<\/\w[^>]*>$/)) {
+                                            indent = 0;
+                                        } else if (node.match(/^<\/\w/)) {
+                                            if (pad !== 0) pad--;
+                                        } else if (node.match(/^<\w([^>]*[^\/])?>.*$/)) {
+                                            indent = 1;
+                                        }
+
+                                        var padding = new Array(pad + 1).join('    ');
+                                        formatted += padding + node + '\r\n';
+                                        pad += indent;
+                                    });
+
+                                    return formatted;
+                                }
+
+
+                                function resetXMLViewer(textareaId, cbPanel) {
+
+                                    // إفراغ textarea
+                                    var textarea = document.getElementById(textareaId);
+                                    if (textarea) textarea.value = "";
+
+                                    // حذف CodeMirror إذا كان موجود
+                                    if (window.editor) {
+                                        try { window.editor.toTextArea(); } catch { }
+                                        window.editor = null;
                                     }
-                                });
+
+                                    // تنظيف JSProperties
+                                    if (cbPanel) cbPanel.cp_refreshEditor = null;
+
+
+                                }
+
+
+
+                                function initializeEditor(textareaId) {
+                                    var textarea = document.getElementById(textareaId);
+
+                                    if (window.editor) {
+                                        try { window.editor.toTextArea(); } catch { }
+                                        window.editor = null;
+                                    }
+
+                                    window.editor = CodeMirror.fromTextArea(textarea, {
+                                        mode: "application/xml",
+                                        theme: "dracula",
+                                        lineNumbers: true,
+                                        readOnly: true,
+                                        lineWrapping: true,
+                                        matchBrackets: true,
+                                        autoCloseTags: true
+                                    });
+
+                                    window.editor.setValue(textarea.value);
+                                }
+
 
 
                             </script>
 
 
+                        </dx:ContentControl>
+                    </ContentCollection>
+                </dx:TabPage>
+                <dx:TabPage Text="البطاقات الائتمانية" TabStyle-Font-Bold="true" TabStyle-Font-Names="cairo" TabStyle-Font-Size="X-Large">
+                    <TabStyle Font-Bold="True" Font-Names="cairo" Font-Size="X-Large"></TabStyle>
+                    <ContentCollection>
+                        <dx:ContentControl runat="server">
+                            <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
+
+                                <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: center; padding-top: 25px;">
+
+                                    <dx:ASPxComboBox
+                                        ID="CountryList6"
+                                        runat="server"
+                                        Font-Names="Cairo"
+                                        Width="240px"
+                                        TextField="countryName"
+                                        ValueField="id"
+                                        DataSourceID="dsCountries"
+                                        NullText="اختر الدولة"
+                                        Font-Bold="True"
+                                        Font-Size="Medium"
+                                        ClientInstanceName="cmbCountry6">
+                                        <%--<ClientSideEvents SelectedIndexChanged="function(s,e){ cbpCompany5.PerformCallback(s.GetValue()); }" />--%>
+                                    </dx:ASPxComboBox>
+
+
+                                </div>
+
+                                <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: center; margin-top: 15px;">
+
+                                    <dx:ASPxDateEdit
+                                        ID="DateFrom6"
+                                        runat="server"
+                                        Width="200px"
+                                        NullText="من تاريخ"
+                                        Font-Names="Cairo"
+                                        Font-Bold="True"
+                                        Font-Size="Medium"
+                                        ClientInstanceName="dateFrom6"
+                                        EditFormat="Date"
+                                        DisplayFormatString="yyyy-MM-dd">
+                                        <ClientSideEvents ValueChanged="function(s, e) {
+                                            var fromDate = s.GetDate();
+                                            if (fromDate) {
+                                                dateTo6.SetMinDate(fromDate);
+                                            }
+                                        }" />
+                                    </dx:ASPxDateEdit>
+
+                                    <dx:ASPxDateEdit
+                                        ID="DateTo6"
+                                        runat="server"
+                                        Width="200px"
+                                        NullText="إلى تاريخ"
+                                        Font-Names="Cairo"
+                                        Font-Bold="True"
+                                        Font-Size="Medium"
+                                        ClientInstanceName="dateTo6"
+                                        EditFormat="Date"
+                                        DisplayFormatString="yyyy-MM-dd">
+                                    </dx:ASPxDateEdit>
+
+
+                                    <dx:ASPxButton
+                                        ID="btnSearch6"
+                                        runat="server"
+                                        Text="بحث"
+                                        AutoPostBack="False"
+                                        Width="140px"
+                                        Font-Names="Cairo"
+                                        Font-Size="Medium"
+                                        CssClass="rounded-xl"
+                                        Font-Bold="true"
+                                        ClientInstanceName="btnSearch6"
+                                        Theme="Moderno">
+                                        <Image Url="~/assets/img/search.png" />
+                                        <ClientSideEvents Click="function(s,e){
+                                            GridCredits.PerformCallback();
+                                        }" />
+                                    </dx:ASPxButton>
+
+                                    <dx:ASPxButton
+                                        ID="btnReset6"
+                                        runat="server"
+                                        Text="مسح"
+                                        AutoPostBack="False"
+                                        Width="140px"
+                                        Font-Names="Cairo"
+                                        Font-Size="Medium"
+                                        CssClass="rounded-xl"
+                                        ClientInstanceName="btnReset6"
+                                        Theme="Moderno">
+                                        <Image Url="~/assets/img/reset.png" />
+                                        <ClientSideEvents Click="function(s,e){
+                                            cmbCountry6.SetValue(null);
+                                            dateFrom6.SetValue(null);
+                                            dateTo6.SetValue(null);
+
+                                            GridCredits.PerformCallback('Cancel');
+                                        }" />
+                                    </dx:ASPxButton>
+                                </div>
+
+                                <dx:ASPxGridView ID="GridCredits" runat="server" DataSourceID="dsCredits" KeyFieldName="id" ClientInstanceName="GridCredits" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Bold="True"
+                                    Font-Size="0.77em" RightToLeft="True" OnCustomCallback="GridCredits_CustomCallback" OnBeforePerformDataSelect="GridCredits_BeforePerformDataSelect">
+                                    <Settings ShowFooter="True" ShowFilterRow="True" />
+
+                                    <Styles>
+                                        <PagerBottomPanel Font-Names="Cairo" Font-Size="Large" Font-Bold="true"></PagerBottomPanel>
+                                    </Styles>
+
+
+                                    <ClientSideEvents RowClick="function(s, e) {OnRowClick(e);}" />
+                                    <SettingsAdaptivity AdaptivityMode="HideDataCells">
+                                    </SettingsAdaptivity>
+                                    <Settings ShowFilterRow="True" ShowFilterRowMenu="False" ShowHeaderFilterButton="False" AutoFilterCondition="Contains" />
+
+                                    <SettingsCommandButton>
+                                        <NewButton Text="جديد">
+                                        </NewButton>
+                                        <UpdateButton Text=" حفظ ">
+                                            <Image Url="~/assets/img/save.png" SpriteProperties-Left="50">
+                                                <SpriteProperties Left="50px"></SpriteProperties>
+                                            </Image>
+                                        </UpdateButton>
+                                        <CancelButton Text=" الغاء ">
+                                            <Image Url="~/assets/img/cancel.png">
+                                            </Image>
+                                        </CancelButton>
+                                    </SettingsCommandButton>
+
+                                    <SettingsPopup>
+                                        <FilterControl AutoUpdatePosition="False"></FilterControl>
+                                    </SettingsPopup>
+
+                                    <SettingsSearchPanel CustomEditorID="tbToolbarSearch6" />
+
+                                    <SettingsExport EnableClientSideExportAPI="true" ExcelExportMode="WYSIWYG" PaperKind="A4" RightToLeft="True" />
+                                    <SettingsLoadingPanel Text="Please Wait &amp;hellip;" Mode="ShowAsPopup" />
+                                    <SettingsText SearchPanelEditorNullText="ابحث في الجدول..." EmptyDataRow="لا يوجد" />
+                                    <Columns>
+
+                                        <dx:GridViewDataTextColumn FieldName="id" Caption="الرقم">
+                                            <CellStyle HorizontalAlign="Center" />
+                                            <EditFormSettings Visible="False" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn FieldName="username" Caption="المستخدم">
+                                            <DataItemTemplate>
+                                                <div style="text-align: center; font-family: Cairo;">
+                                                    <div style="font-weight: bold;"><%# Eval("username") %></div>
+                                                </div>
+                                            </DataItemTemplate>
+                                            <CellStyle HorizontalAlign="Center" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn FieldName="countryName" Caption="الدولة">
+                                            <CellStyle HorizontalAlign="Center" />
+                                            <EditFormSettings Visible="False" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn FieldName="amount" Caption="المبلغ">
+                                            <DataItemTemplate>
+                                                <%# Eval("amount") + " " + Eval("currency") %>
+                                            </DataItemTemplate>
+                                            <CellStyle HorizontalAlign="Center" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn FieldName="l_creditType" Caption="نوع العملية">
+                                            <CellStyle HorizontalAlign="Center" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn FieldName="cardHolder" Caption="حامل البطاقة">
+                                            <CellStyle HorizontalAlign="Center" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn FieldName="creaditFirst6No" Caption="أول 6 أرقام">
+                                            <CellStyle HorizontalAlign="Center" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn FieldName="creditLast4No" Caption="آخر 4 أرقام">
+                                            <CellStyle HorizontalAlign="Center" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn FieldName="creditMonth" Caption="شهر الانتهاء">
+                                            <CellStyle HorizontalAlign="Center" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn FieldName="creditYear" Caption="سنة الانتهاء">
+                                            <CellStyle HorizontalAlign="Center" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn FieldName="isDefault" Caption="افتراضي؟">
+                                            <CellStyle HorizontalAlign="Center" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn FieldName="creditTransactionRef" Caption="رقم الحركة">
+                                            <CellStyle HorizontalAlign="Center" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataTextColumn FieldName="isLive" Caption="Live?">
+                                            <CellStyle HorizontalAlign="Center" />
+                                        </dx:GridViewDataTextColumn>
+
+                                        <dx:GridViewDataColumn Caption="XML">
+                                            <DataItemTemplate>
+                                                <%# RenderXmlLink(Eval("XMLResult")) %>
+                                            </DataItemTemplate>
+                                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
+                                        </dx:GridViewDataColumn>
+
+
+                                        <dx:GridViewDataDateColumn FieldName="userDate" Caption="التاريخ">
+                                            <PropertiesDateEdit DisplayFormatString="yyyy/MM/dd hh:mm tt" />
+                                            <CellStyle HorizontalAlign="Center" />
+                                            <EditFormSettings Visible="False" />
+                                        </dx:GridViewDataDateColumn>
+                                    </Columns>
+                                    <Toolbars>
+                                        <dx:GridViewToolbar ItemAlign="left">
+                                            <SettingsAdaptivity Enabled="true" EnableCollapseRootItemsToIcons="true" />
+                                            <Items>
+                                                <dx:GridViewToolbarItem Command="Refresh" BeginGroup="true" AdaptivePriority="1" Text="تحديث الجدول" />
+                                                <dx:GridViewToolbarItem Command="ExportToXlsx" BeginGroup="true" />
+                                                <dx:GridViewToolbarItem Command="ExportToPdf" />
+
+                                                <dx:GridViewToolbarItem Alignment="Right" Name="toolbarItemSearch" BeginGroup="true" AdaptivePriority="2">
+                                                    <Template>
+                                                        <dx:ASPxButtonEdit ID="tbToolbarSearch6" runat="server" NullText="البحث..." Width="140" Font-Names="cairo" />
+                                                    </Template>
+                                                </dx:GridViewToolbarItem>
+
+                                            </Items>
+                                        </dx:GridViewToolbar>
+                                    </Toolbars>
+                                    <TotalSummary>
+                                        <dx:ASPxSummaryItem FieldName="id" SummaryType="Count" DisplayFormat="العدد = {0}" />
+                                    </TotalSummary>
+                                    <Styles>
+                                        <AlternatingRow BackColor="#F0F0F0">
+                                        </AlternatingRow>
+                                        <Footer Font-Names="cairo">
+                                        </Footer>
+                                    </Styles>
+                                    <Paddings Padding="2em" />
+
+                                </dx:ASPxGridView>
+
+
+
+                                <asp:SqlDataSource
+                                    ID="dsCredits"
+                                    runat="server"
+                                    ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
+                                    SelectCommand="
+                                    SELECT 
+                                        uc.id,
+                                        uc.username,
+                                        uc.countryCode,
+                                        uc.amount,
+                                        uc.currency,
+                                        uc.l_creditType,
+                                        uc.cardHolder,
+                                        uc.creaditFirst6No,
+                                        uc.creditLast4No,
+                                        uc.creditMonth,
+                                        uc.creditYear,
+                                        uc.isDefault,
+                                        uc.creditTransactionRef,
+                                        uc.isLive,
+                                        uc.XMLResult,
+                                        uc.userDate
+                                    FROM usersCredits uc
+                                    LEFT JOIN countries co ON co.countryCode = uc.countryCode
+                                    WHERE
+                                        (co.id = @countryId OR @countryId = 0)
+                                        AND uc.userDate BETWEEN @dateFrom AND @dateTo
+                                    ORDER BY uc.id DESC
+                                    ">
+                                    <SelectParameters>
+                                        <asp:Parameter Name="countryId6" DefaultValue="0" />
+                                        <asp:Parameter Name="dateFrom6" Type="DateTime" />
+                                        <asp:Parameter Name="dateTo6" Type="DateTime" />
+                                    </SelectParameters>
+                                </asp:SqlDataSource>
+
+
+                            </div>
                         </dx:ContentControl>
                     </ContentCollection>
                 </dx:TabPage>

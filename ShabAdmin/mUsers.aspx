@@ -1553,6 +1553,63 @@
                                             <EditFormSettings Visible="True" />
 
                                         </dx:GridViewDataColumn>
+                                        <dx:GridViewDataColumn Caption="الصورة الشخصية" Visible="false" FieldName="passportPicture">
+                                            <CellStyle VerticalAlign="Middle">
+                                            </CellStyle>
+                                            <EditItemTemplate>
+                                                <div style="text-align: center; width: 90%">
+                                                    <img id="PersonalImage"
+                                                        src='<%# (Eval("passportPicture") != null && Eval("passportPicture").ToString().Length > 1 ? Eval("passportPicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
+                                                        style="width: 15em; border: 1px solid #c8c8c8; border-radius: 5px;" />
+                                                    <dx:ASPxUploadControl ID="poorImageUpload" runat="server" ClientInstanceName="poorImageUpload"
+                                                        FileUploadMode="OnPageLoad" Font-Names="Cairo" Font-Size="1em"
+                                                        OnFileUploadComplete="ImageUpload_FileUploadComplete"
+                                                        ShowProgressPanel="True" UploadMode="Auto" Width="100%" AutoStartUpload="True">
+                                                        <ValidationSettings AllowedFileExtensions=".jpg, .jpeg, .png, .bmp"
+                                                            GeneralErrorText="حدث خطأ أثناء تحميل الصور"
+                                                            MaxFileSize="10000000"
+                                                            MaxFileSizeErrorText="الحجم أكبر من 10 ميجابايت"
+                                                            NotAllowedFileExtensionErrorText="امتداد غير مسموح به" />
+                                                        <ClientSideEvents
+                                                            FilesUploadStart="function(s,e){ onFileUploadStart(s,e,'image'); }"
+                                                            FileUploadComplete="function(s,e){ onFileUploadComplete(s,e,'image'); }" />
+                                                        <BrowseButton Text="اختيــــــــار" />
+                                                        <CancelButton Text="إلغاء التحميل" />
+                                                    </dx:ASPxUploadControl>
+                                                </div>
+                                            </EditItemTemplate>
+                                            <EditFormSettings Visible="True" />
+
+                                        </dx:GridViewDataColumn>
+
+                                        <dx:GridViewDataColumn Caption="الصورة الشخصية" Visible="false" FieldName="residencePicture">
+                                            <CellStyle VerticalAlign="Middle">
+                                            </CellStyle>
+                                            <EditItemTemplate>
+                                                <div style="text-align: center; width: 90%">
+                                                    <img id="PersonalImage"
+                                                        src='<%# (Eval("residencePicture") != null && Eval("residencePicture").ToString().Length > 1 ? Eval("residencePicture").ToString() : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>'
+                                                        style="width: 15em; border: 1px solid #c8c8c8; border-radius: 5px;" />
+                                                    <dx:ASPxUploadControl ID="poorImageUpload" runat="server" ClientInstanceName="poorImageUpload"
+                                                        FileUploadMode="OnPageLoad" Font-Names="Cairo" Font-Size="1em"
+                                                        OnFileUploadComplete="ImageUpload_FileUploadComplete"
+                                                        ShowProgressPanel="True" UploadMode="Auto" Width="100%" AutoStartUpload="True">
+                                                        <ValidationSettings AllowedFileExtensions=".jpg, .jpeg, .png, .bmp"
+                                                            GeneralErrorText="حدث خطأ أثناء تحميل الصور"
+                                                            MaxFileSize="10000000"
+                                                            MaxFileSizeErrorText="الحجم أكبر من 10 ميجابايت"
+                                                            NotAllowedFileExtensionErrorText="امتداد غير مسموح به" />
+                                                        <ClientSideEvents
+                                                            FilesUploadStart="function(s,e){ onFileUploadStart(s,e,'image'); }"
+                                                            FileUploadComplete="function(s,e){ onFileUploadComplete(s,e,'image'); }" />
+                                                        <BrowseButton Text="اختيــــــــار" />
+                                                        <CancelButton Text="إلغاء التحميل" />
+                                                    </dx:ASPxUploadControl>
+                                                </div>
+                                            </EditItemTemplate>
+                                            <EditFormSettings Visible="True" />
+
+                                        </dx:GridViewDataColumn>
 
                                         <dx:GridViewDataColumn Caption="صورة السيارة" Visible="false" FieldName="carPicture">
                                             <CellStyle VerticalAlign="Middle">

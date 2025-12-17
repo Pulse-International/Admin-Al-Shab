@@ -24,6 +24,24 @@ namespace ShabAdmin
         protected global::DevExpress.Web.ASPxTextBox l_Order_Id;
 
         /// <summary>
+        /// popupXML control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxPopupControl popupXML;
+
+        /// <summary>
+        /// xmlContent control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTextArea xmlContent;
+
+        /// <summary>
         /// pageTab control.
         /// </summary>
         /// <remarks>
@@ -276,31 +294,67 @@ namespace ShabAdmin
         protected global::System.Web.UI.WebControls.SqlDataSource dsPayments;
 
         /// <summary>
-        /// popupXML control.
+        /// CountryList6 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxPopupControl popupXML;
+        protected global::DevExpress.Web.ASPxComboBox CountryList6;
 
         /// <summary>
-        /// callbackXML control.
+        /// DateFrom6 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxCallbackPanel callbackXML;
+        protected global::DevExpress.Web.ASPxDateEdit DateFrom6;
 
         /// <summary>
-        /// xmlContent control.
+        /// DateTo6 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTextArea xmlContent;
+        protected global::DevExpress.Web.ASPxDateEdit DateTo6;
+
+        /// <summary>
+        /// btnSearch6 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton btnSearch6;
+
+        /// <summary>
+        /// btnReset6 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton btnReset6;
+
+        /// <summary>
+        /// GridCredits control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxGridView GridCredits;
+
+        /// <summary>
+        /// dsCredits control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource dsCredits;
 
         /// <summary>
         /// StatusList control.

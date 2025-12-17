@@ -28,29 +28,59 @@ namespace ShabAdmin
         {
             if (Request.QueryString["i"] != null)
             {
-                if (Request.QueryString["i"].ToString() == "I")
+                string code = Request.QueryString["i"].ToString();
+
+                if (code == "I")
                 {
                     Response.Redirect("https://apps.apple.com/us/app/alshaeb-click/id6752823758", true);
                     return;
                 }
-                if (Request.QueryString["i"].ToString() == "A")
+
+                if (code == "A")
                 {
                     Response.Redirect("https://play.google.com/store/apps/details?id=com.alshaeb.alshaeb", true);
                     return;
                 }
+
                 string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
                 using (SqlConnection conn = new SqlConnection(connStr))
                 {
                     conn.Open();
+
                     string sql = "SELECT link FROM shortlinks WHERE code = @code";
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
-                        cmd.Parameters.AddWithValue("@code", Request.QueryString["i"].ToString());
+                        cmd.Parameters.AddWithValue("@code", code);
                         object result = cmd.ExecuteScalar();
+
                         if (result != null)
                         {
                             string originalLink = result.ToString();
+
+                            // إذا كان Deep Link
+                            if (originalLink.StartsWith("alshaebdriver://", StringComparison.OrdinalIgnoreCase))
+                            {
+                                // استدعاء الدالة الجديدة
+                                var userInfo = GetUserInfoFromDeepLink(originalLink);
+
+                                string platform = userInfo.platform;
+
+                                // تحديد fallback حسب المنصة
+                                string fallbackUrl = (platform == "android")
+                                    ? "https://play.google.com/store/apps/details?id=com.alshaeb.alshaeb"
+                                    : "https://apps.apple.com/us/app/alshaeb-click/id6752823758";
+
+                                string landingUrl =
+                                    "landing.aspx?deep=" + Server.UrlEncode(originalLink) +
+                                    "&fallback=" + Server.UrlEncode(fallbackUrl);
+
+                                Response.Redirect(landingUrl, true);
+                                return;
+                            }
+
+                            // الروابط العادية
                             Response.Redirect(originalLink, true);
+                            return;
                         }
                         return;
                     }
@@ -190,5 +220,69 @@ namespace ShabAdmin
             }
 
         }
+        private (string userId, string platform) GetUserInfoFromDeepLink(string deepLink)
+        {
+            string userId = null;
+            string username = null;
+            string platform = "ios"; // الافتراضي
+
+            // --- استخراج id أو username من الـ deep link ---
+            try
+            {
+                Uri uri;
+                if (Uri.TryCreate(deepLink.Replace("alshaebdriver://", "http://"), UriKind.Absolute, out uri))
+                {
+                    var parameters = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+                    userId = parameters["id"];
+                    username = parameters["phone"];
+                }
+            }
+            catch
+            {
+                // تجاهل أي خطأ
+            }
+
+            // إذا لا id ولا username → نرجع الافتراضي
+            if (string.IsNullOrEmpty(userId) && string.IsNullOrEmpty(username))
+                return (null, platform);
+
+            string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                conn.Open();
+
+                string sql;
+
+                // --- الأولوية للبحث بالـ id ---
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    sql = "SELECT id, userPlatform FROM usersDelivery WHERE id = @value";
+                }
+                else
+                {
+                    sql = "SELECT id, userPlatform FROM usersDelivery WHERE username = @value";
+                }
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@value", !string.IsNullOrEmpty(userId) ? userId : username);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            userId = reader["id"].ToString();
+                            platform = reader["userPlatform"]?.ToString().ToLower() ?? platform;
+                        }
+                    }
+                }
+            }
+
+            return (userId, platform);
+        }
+
+
     }
 }

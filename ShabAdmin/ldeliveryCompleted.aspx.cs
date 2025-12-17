@@ -145,8 +145,37 @@ namespace ShabAdmin
                 await MainHelper.SendSms(phone, $"مبروك تم اكمال الطلب بنجاح اضغط هنا لدخول التطبيق\n{applink}");
             }
             string script = $"setTimeout(function() {{ ShowRedirectPopup('{storeUrl}'); }}, 100);";
-
             ClientScript.RegisterStartupScript(this.GetType(), "RedirectScript", script, true);
         }
     }
 }
+//string storeUrl = "https://alshaeb.com/?v=d41d8cd98f00#app";
+//string applink = "";
+//string baseUrl = WebConfigurationManager.AppSettings["SourceURL"];
+//string deeplink = "alshaebdriver://app/login";
+
+//if (userplatform == "ANDROID")
+//{
+
+//    applink = $"{baseUrl}/?i=A";
+//    await MainHelper.SendSms(phone, $"مبروك تم اكمال الطلب بنجاح اضغط هنا لدخول التطبيق\n{applink}");
+//}
+//else
+//{
+//    applink = $"{baseUrl}/?i=I";
+//    await MainHelper.SendSms(phone, $"مبروك تم اكمال الطلب بنجاح اضغط هنا لدخول التطبيق\n{applink}");
+//}
+////string script = $"setTimeout(function() {{ ShowRedirectPopup('{storeUrl}'); }}, 100);";
+//string script = $@"
+//                      var is_mobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+//                      if(is_mobile){{
+//                          window.location.href = '{deeplink}';
+//                      setTimeout(function() {{
+//                          window.location.href = '{storeUrl}'; 
+//                      }}, 1500);
+//                  }}else {{
+//                          window.location.href = '{storeUrl}'; 
+//                      }}
+//              ";
+////ClientScript.RegisterStartupScript(this.GetType(), "SmartRedirectScript", scripts);
+//ClientScript.RegisterStartupScript(this.GetType(), "RedirectScript", script, true);

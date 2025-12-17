@@ -212,6 +212,7 @@
     <Content Include="assets\js\plugins\world.js" />
     <Content Include="ldeliveryCompleted.aspx" />
     <Content Include="GetApp.aspx" />
+    <Content Include="productInternational.aspx" />
     <Content Include="registerDriver.aspx" />
     <Content Include="lMain_page.aspx" />
     <Content Include="mCoupons.aspx" />
@@ -482,6 +483,13 @@
     </Compile>
     <Compile Include="GetApp.aspx.designer.cs">
       <DependentUpon>GetApp.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="productInternational.aspx.cs">
+      <DependentUpon>productInternational.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="productInternational.aspx.designer.cs">
+      <DependentUpon>productInternational.aspx</DependentUpon>
     </Compile>
     <Compile Include="registerDriver.aspx.cs">
       <DependentUpon>registerDriver.aspx</DependentUpon>

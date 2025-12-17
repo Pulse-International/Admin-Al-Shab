@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Products" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Products.aspx.cs" Inherits="ShabAdmin.Products" %>
+﻿<%@ Page Title="productInternational" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="productInternational.aspx.cs" Inherits="ShabAdmin.productInternational" %>
 
 <%@ Register Assembly="DevExpress.Web.v24.1, Version=24.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Namespace="DevExpress.Web" TagPrefix="dx" %>
 
@@ -480,7 +480,7 @@
         </script>
 
         <div class="w-100 text-center my-4">
-            <h2 class="pageTitle d-inline-block" style="font-family: Cairo">المنتجـــات</h2>
+            <h2 class="pageTitle d-inline-block" style="font-family: Cairo">المنتجـــات الدولية</h2>
         </div>
 
         <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
@@ -732,29 +732,13 @@
                         </CellStyle>
                     </dx:GridViewDataSpinEditColumn>
 
-                    <dx:GridViewDataSpinEditColumn Caption="السعر" FieldName="price" VisibleIndex="5">
+                    <dx:GridViewDataSpinEditColumn Caption="السعر الدولي" FieldName="priceInternational" VisibleIndex="5">
                         <DataItemTemplate>
-                            <%# Eval("price") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
+                            <%# Eval("priceInternational") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
                         </DataItemTemplate>
                         <EditFormSettings Visible="True" />
                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                     </dx:GridViewDataSpinEditColumn>
-
-                    <dx:GridViewDataSpinEditColumn
-                        Name="priceInternational"
-                        Caption="السعر الدولي"
-                        FieldName="priceInternational"
-                        Visible="false"
-                        VisibleIndex="5">
-
-                        <DataItemTemplate>
-                            <%# Eval("priceInternational") + "</br>" + MainHelper.GetCurrency(Eval("countryId")) %>
-                        </DataItemTemplate>
-
-                        <EditFormSettings Visible="false" />
-                        <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
-                    </dx:GridViewDataSpinEditColumn>
-
 
                     <dx:GridViewDataTextColumn Caption="بنكهات" FieldName="isHasFlavors" VisibleIndex="6">
                         <PropertiesTextEdit>
@@ -1110,7 +1094,6 @@
                     p.[categoryID], 
                     p.[subCategoryId], 
                     cs.[subName],           
-                    p.[price], 
                     p.[priceInternational], 
                     p.[isVisible], 
                     p.[isWeight], 
@@ -1125,13 +1108,13 @@
                 FROM [products] p
                 LEFT JOIN [companies] c ON p.companyID = c.id
                 LEFT JOIN [categoriesSub] cs ON p.subCategoryId = cs.id  
-                Where p.isvirtual = 0
+                Where p.isvirtual = 0 AND p.countryID = 2000
                 ORDER BY p.id ASC;"
                 InsertCommand="
                 INSERT INTO [products]
-                    ([name],[description],  [categoryID], [subCategoryId], [price], [nameEn], [countryID],  [companyID], [isHasFlavors], [isSpecial], [isVisible],[isProductPrice], [isWeight], [barcode], [userDate])
+                    ([name],[description],  [categoryID], [subCategoryId], [priceInternational], [nameEn], [countryID],  [companyID], [isHasFlavors], [isSpecial], [isVisible],[isProductPrice], [isWeight], [barcode], [userDate])
                 VALUES
-                    (@name,@description, @categoryID, @subCategoryId, @price, @nameEn, @countryID, @companyID, @isHasFlavors, @isSpecial, @isVisible, @isProductPrice, @isWeight, @barcode, getdate()); SELECT @newID = SCOPE_IDENTITY()"
+                    (@name,@description, @categoryID, @subCategoryId, @priceInternational, @nameEn, @countryID, @companyID, @isHasFlavors, @isSpecial, @isVisible, @isProductPrice, @isWeight, @barcode, getdate()); SELECT @newID = SCOPE_IDENTITY()"
                 UpdateCommand="
                 delete from branchProducts where productID=@id;
                 UPDATE [products]
@@ -1140,7 +1123,7 @@
                     [description]           = @description,
                     [categoryID]     = @categoryID,
                     [subCategoryId]     = @subCategoryId,
-                    [price]          = @price,        
+                    [priceInternational]          = @priceInternational,        
                     [nameEn]         = @nameEn,
                     [countryID]         = @countryID,
                     [companyID]         = @companyID,
@@ -1160,7 +1143,7 @@
                     <asp:Parameter Name="description" Type="String" />
                     <asp:Parameter Name="categoryID" Type="string" />
                     <asp:Parameter Name="subCategoryId" Type="string" />
-                    <asp:Parameter Name="price" Type="string" />
+                    <asp:Parameter Name="priceInternational" Type="string" />
                     <asp:Parameter Name="nameEn" Type="String" />
                     <asp:Parameter Name="isVisible" Type="Int32" />
                     <asp:Parameter Name="isProductPrice" Type="Int32" />
@@ -1178,7 +1161,7 @@
                     <asp:Parameter Name="description" Type="String" />
                     <asp:Parameter Name="categoryID" Type="string" />
                     <asp:Parameter Name="subCategoryId" Type="string" />
-                    <asp:Parameter Name="price" Type="string" />
+                    <asp:Parameter Name="priceInternational" Type="string" />
                     <asp:Parameter Name="isVisible" Type="Int32" />
                     <asp:Parameter Name="isProductPrice" Type="Int32" />
                     <asp:Parameter Name="isWeight" Type="Int32" />

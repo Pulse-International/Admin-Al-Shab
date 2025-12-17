@@ -23,6 +23,7 @@ namespace ShabAdmin
         public string isActive7 = string.Empty;
         public string isActive8 = string.Empty;
         public string isActive9 = string.Empty;
+        public string isActive10 = string.Empty;
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Request.QueryString["i"] != null)
@@ -140,6 +141,10 @@ namespace ShabAdmin
             else if (pageName.ToLower().Contains("/cities"))
             {
                 isActive9 = "active";
+            }
+            else if (pageName.ToLower().Contains("/productinternational"))
+            {
+                isActive10 = "active";
             }
 
             if (!IsPostBack)

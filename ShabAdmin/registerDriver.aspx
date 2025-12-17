@@ -12,7 +12,7 @@
         }
 
         .dxeBase_Moderno {
-            font-family: 'Cairo', sans-serif;
+            font-family: 'Cairo', sans-serif;   
         }
 
         #MainContent_txtPhone_EC {
@@ -498,12 +498,11 @@
         }
 
         .driver-alert-text {
-            font-size: 15px;
+            font-size: 19px;
             color: #555;
             line-height: 1.7;
             font-weight: 600;
         }
-
             .driver-alert-text ul {
                 margin: 10px 0 0 0;
                 padding-right: 20px;
@@ -1022,14 +1021,30 @@
 
         function OnDocumentTypeChanged(s, e) {
             var value = s.GetValue();
+
             document.getElementById('docIdFront').style.display = (value === "1") ? 'block' : 'none';
             document.getElementById('docIdBack').style.display = (value === "1") ? 'block' : 'none';
             document.getElementById('passportDiv').style.display = (value === "2") ? 'block' : 'none';
             document.getElementById('residenceDiv').style.display = (value === "3") ? 'block' : 'none';
+
             if (value === "" || value === null) {
-                documentnumber.SetEnabled(false);
+                if (typeof documentnumber !== 'undefined') documentnumber.SetEnabled(false);
             } else {
-                documentnumber.SetEnabled(true);
+                if (typeof documentnumber !== 'undefined') documentnumber.SetEnabled(true);
+            }
+            if (value === "1") {
+                clearUploadControl('passportPic', 'preview_passport');
+                clearUploadControl('residencePic', 'preview_residence');
+            }
+            else if (value === "2") {
+                clearUploadControl('idFrontPic', 'preview_idFront');
+                clearUploadControl('idBackPic', 'preview_idBack');
+                clearUploadControl('residencePic', 'preview_residence');
+            }
+            else if (value === "3") {
+                clearUploadControl('idFrontPic', 'preview_idFront');
+                clearUploadControl('idBackPic', 'preview_idBack');
+                clearUploadControl('passportPic', 'preview_passport');
             }
         }
 
@@ -1123,6 +1138,17 @@
             }
 
             return null;
+        }
+        function clearUploadControl(uploadControlName, previewDivId) {
+            var uploadControl = ASPxClientControl.GetControlCollection().GetByName(uploadControlName);
+            if (uploadControl) {
+                uploadControl.ClearText();
+            }
+            var previewDiv = document.getElementById(previewDivId);
+            if (previewDiv) {
+                previewDiv.innerHTML = '<span style="color:#aaa;">ستظهر الصورة هنا</span>';
+                previewDiv.classList.remove('has-image'); 
+            }
         }
     </script>
     <main>

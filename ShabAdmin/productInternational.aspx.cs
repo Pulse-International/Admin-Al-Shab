@@ -14,136 +14,11 @@ using Microsoft.Ajax.Utilities;
 
 namespace ShabAdmin
 {
-    public partial class Products : Page
+    public partial class productInternational : Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
 
-        }
-        protected void Page_Init(object sender, EventArgs e)
-        {
-            string username = MainHelper.M_Check(Request.Cookies["M_Username"]?.Value);
-            int privilegeCountryID = 0;
-            int privilegeCompanyID = 0;
-
-            if (!IsPostBack)
-            {
-                if (string.Equals(username, "admin", StringComparison.OrdinalIgnoreCase))
-                {
-                    GridProducts.Columns["priceInternational"].Visible = true;
-                }
-            }
-
-            if (!string.IsNullOrEmpty(username))
-            {
-                string connStr = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
-                using (SqlConnection conn = new SqlConnection(connStr))
-                {
-                    conn.Open();
-                    SqlCommand cmd = new SqlCommand("SELECT privilegeCountryID,privilegeCompanyID FROM users WHERE username = @username", conn);
-                    cmd.Parameters.AddWithValue("@username", username);
-
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    if (reader.Read() && reader["privilegeCountryID"] != DBNull.Value)
-                    {
-                        privilegeCountryID = Convert.ToInt32(reader["privilegeCountryID"]);
-                        privilegeCompanyID = Convert.ToInt32(reader["privilegeCompanyID"]);
-                    }
-                }
-            }
-
-            if (privilegeCountryID != 1000 && privilegeCompanyID != 1000)
-            {
-                db_Products.SelectCommand = @"
-                 SELECT 
-                     p.[id], 
-                     p.[name], 
-                     p.[description],
-                     (select pi.imagePath from productsImages pi where p.id = pi.productId and pi.isDefault = 1) as Image,
-                     p.[categoryID], 
-                     cs.[subName],   
-                     p.[subCategoryId], 
-                     p.[price], 
-                     p.[priceInternational], 
-                     p.[isVisible], 
-                     p.[isProductPrice], 
-                     p.[isWeight], 
-                     p.[barcode], 
-                     p.[nameEn], 
-                     p.[countryID], 
-                     p.[companyID], 
-                     c.[companyName],       
-                     p.[isHasFlavors],
-                     p.[isSpecial]
-                 FROM [products] p
-                 LEFT JOIN [companies] c ON p.companyID = c.id
-                 LEFT JOIN [categoriesSub] cs ON p.subCategoryId = cs.id  
-                 Where p.isvirtual = 0 AND p.companyID = @companyID AND p.countryID = @countryID
-                 ORDER BY p.id ASC";
-
-                db_Products.SelectParameters.Clear();
-                db_Products.SelectParameters.Add("companyID", privilegeCompanyID.ToString());
-                db_Products.SelectParameters.Add("countryID", privilegeCountryID.ToString());
-
-                dsCountries.SelectCommand = @"SELECT id, countryName FROM countries where id = @countryID";
-                dsCountries.SelectParameters.Clear();
-                dsCountries.SelectParameters.Add("countryID", privilegeCountryID.ToString());
-
-                db_Company.SelectCommand = @"SELECT p.id, p.companyName + ' <br> (' + (select c.countryName from countries c where c.id = p.countryId) + ')' as companyName FROM companies p where countryId=@countryID AND Id=@companyID";
-                db_Company.SelectParameters.Clear();
-                db_Company.SelectParameters.Add("countryID", privilegeCountryID.ToString());
-                db_Company.SelectParameters.Add("companyID", privilegeCompanyID.ToString());
-
-                db_Categories.SelectCommand = @"SELECT id, name FROM categories where countryId=@countryID AND companyId=@companyID";
-                db_Categories.SelectParameters.Clear();
-                db_Categories.SelectParameters.Add("countryID", privilegeCountryID.ToString());
-                db_Categories.SelectParameters.Add("companyID", privilegeCompanyID.ToString());
-
-            }
-            else if (privilegeCountryID != 1000)
-            {
-                db_Products.SelectCommand = @"
-                                SELECT 
-                                    p.[id], 
-                                    p.[name], 
-                                    p.[description],
-                                    (select pi.imagePath from productsImages pi where p.id = pi.productId and pi.isDefault = 1) as Image,
-                                    p.[categoryID], 
-                                    p.[subCategoryId], 
-                                    cs.[subName],   
-                                    p.[price], 
-                                    p.[priceInternational],
-                                    p.[isVisible], 
-                                    p.[isProductPrice], 
-                                    p.[isWeight], 
-                                    p.[barcode], 
-                                    p.[nameEn], 
-                                    p.[countryID], 
-                                    p.[companyID], 
-                                    c.[companyName],       
-                                    p.[isHasFlavors],
-                                    p.[isSpecial]
-                                FROM [products] p
-                                LEFT JOIN [companies] c ON p.companyID = c.id
-                                LEFT JOIN [categoriesSub] cs ON p.subCategoryId = cs.id  
-                                Where p.isvirtual = 0 AND p.countryID = @countryID 
-                                ORDER BY p.id ASC";
-
-                db_Products.SelectParameters.Clear();
-                db_Products.SelectParameters.Add("countryID", privilegeCountryID.ToString());
-
-                dsCountries.SelectCommand = @"SELECT id, countryName FROM countries where id = @countryID";
-                dsCountries.SelectParameters.Clear();
-                dsCountries.SelectParameters.Add("countryID", privilegeCountryID.ToString());
-
-                db_Company.SelectCommand = @"SELECT p.id, p.companyName + ' <br> (' + (select c.countryName from countries c where c.id = p.countryId) + ')' as companyName FROM companies p where countryId=@countryID";
-                db_Company.SelectParameters.Clear();
-                db_Company.SelectParameters.Add("countryID", privilegeCountryID.ToString());
-
-                db_Categories.SelectCommand = @"SELECT id, name FROM categories where countryId=@countryID";
-                db_Categories.SelectParameters.Clear();
-                db_Categories.SelectParameters.Add("countryID", privilegeCountryID.ToString());
-            }
         }
 
         protected void GridProducts_RowValidating(object sender, ASPxDataValidationEventArgs e)
@@ -450,10 +325,10 @@ namespace ShabAdmin
             }
 
             // 🔹 التحقق من تغيّر السعر
-            if (e.NewValues["price"] != null && e.OldValues["price"] != null)
+            if (e.NewValues["priceInternational"] != null && e.OldValues["priceInternational"] != null)
             {
-                decimal newPrice = Convert.ToDecimal(e.NewValues["price"]);
-                decimal oldPrice = Convert.ToDecimal(e.OldValues["price"]);
+                decimal newPrice = Convert.ToDecimal(e.NewValues["priceInternational"]);
+                decimal oldPrice = Convert.ToDecimal(e.OldValues["priceInternational"]);
 
                 if (newPrice != oldPrice)
                 {

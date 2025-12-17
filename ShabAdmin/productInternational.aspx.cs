@@ -37,7 +37,6 @@ namespace ShabAdmin
             {
                 missingFields.Add("الشركة");
             }
-
             // --- Find Branches ---
             string selectedBranches = SelectedBranchIds.Text;
             List<int> branchIDs = selectedBranches

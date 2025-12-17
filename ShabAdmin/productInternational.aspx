@@ -1059,7 +1059,7 @@
                 ID="db_Company"
                 runat="server"
                 ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                SelectCommand="SELECT p.id, p.companyName + ' <br> (' + (select c.countryName from countries c where c.id = p.countryId) + ')' as companyName FROM companies p where p.id <> 1000"></asp:SqlDataSource>
+                SelectCommand="SELECT p.id, p.companyName FROM companies p where p.id <> 1000"></asp:SqlDataSource>
 
             <asp:SqlDataSource
                 ID="DB_BranchNames"

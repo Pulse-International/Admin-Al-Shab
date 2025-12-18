@@ -842,7 +842,7 @@ namespace ShabAdmin
                         string encryptedUserId1 = MainHelper.Encrypt_Me(userId.ToString(), true);
 
                         longUrl = isMobile
-                            ? $"alshaebdriver://app/driver-registration-update/?id={userId}"
+                            ? $"alshaebdriver://app/driver-registration-update/?id={userNumber}"
                             : $"{baseUrl}/registerDriver?id={encryptedUserId1}";
 
                         smsText = "طلبك غير مكتمل، اضغط لاستكمال الطلب:";

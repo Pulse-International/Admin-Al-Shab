@@ -225,32 +225,36 @@
             }
 
 
-            function ShowRejectPopup(orderId) {
+            function ShowRejectPopup(orderId, hasCareem) {
                 document.getElementById("lblRejectOrderId").value = orderId;
+                document.getElementById("hfHasCareem").value = hasCareem ? "1" : "0";
                 document.getElementById("txtRejectNote").value = "";
-                document.getElementById("rejectNoteError").style.display = "none"; // إخفاء رسالة الخطأ عند فتح البوب أب
+                document.getElementById("rejectNoteError").style.display = "none";
                 popupReject.Show();
             }
 
-            // تأكيد الرفض وإرسال callback
+
             function ConfirmReject() {
                 var id = document.getElementById("lblRejectOrderId").value;
                 var note = document.getElementById("txtRejectNote").value;
+                var hasCareem = document.getElementById("hfHasCareem").value;
                 var errorDiv = document.getElementById("rejectNoteError");
 
                 if (!note || note.trim() === "") {
-                    errorDiv.style.display = "block"; // عرض رسالة الخطأ باللون الأحمر
+                    errorDiv.style.display = "block";
                     return;
                 }
 
-                errorDiv.style.display = "none"; // إخفاء الرسالة إذا كل شيء صحيح
+                errorDiv.style.display = "none";
 
-                // إرسال الكول باك للـ ASPxGridView
-                GridOrders.PerformCallback("reject:" + id + ":" + note);
+                // مهم: encodeURIComponent عشان النوت
+                GridOrders.PerformCallback(
+                    "reject:" + id + ":" + note + ":" + hasCareem
+                );
 
-                // إغلاق البوب أب
                 popupReject.Hide();
             }
+
             var approveOrderId = 0;
 
             function ShowApprovePopup(orderId) {
@@ -259,12 +263,15 @@
             }
 
             function ConfirmApproveNow() {
+                callbackApprove.PerformCallback("careem:" + approveOrderId);
                 popupApprove1.Hide();
                 callbackApprove.PerformCallback(approveOrderId);
                 setTimeout(function () {
                     GridOrders.Refresh();
                 }, 300);
             }
+
+
 
             function copyMapLink(link, iconId) {
                 navigator.clipboard.writeText(link).then(function () {
@@ -424,8 +431,8 @@
                                                 ValueField="id"
                                                 TextField="description"
                                                 ValueType="System.Int32">
-                                                <ValidationSettings RequiredField-IsRequired="True" ErrorText="يجب تحديد حالة الطلب" >
-<RequiredField IsRequired="True"></RequiredField>
+                                                <ValidationSettings RequiredField-IsRequired="True" ErrorText="يجب تحديد حالة الطلب">
+                                                    <RequiredField IsRequired="True"></RequiredField>
                                                 </ValidationSettings>
                                             </PropertiesComboBox>
                                             <DataItemTemplate>
@@ -590,30 +597,34 @@
 
                                         <dx:GridViewDataColumn Caption="التحكم">
                                             <DataItemTemplate>
-                                                <%# 
-                                                    Convert.ToInt32(Eval("l_orderStatus")) == 1 
-                                                    ? 
-                                                    "<div style='display:flex; flex-direction:column; gap:6px; align-items:center;'>" +
+                                                <%#
+            Convert.ToInt32(Eval("l_orderStatus")) == 1
+            ?
+            "<div style='display:flex; flex-direction:column; gap:6px; align-items:center;'>" +
 
-                                                        "<button type='button' class=\"dx-button\" onclick=\"ShowApprovePopup(" + Eval("id") + "); return false;\" " +
-                                                        "style='background-color:green;color:white;font-family:Cairo; width:90px;border:none;padding:6px;border-radius:4px;'>موافقة</button>" +
+                "<button type='button' class=\"dx-button\" " +
+                "onclick=\"ShowApprovePopup(" + Eval("id") + "); return false;\" " +
+                "style='background-color:green;color:white;font-family:Cairo;width:90px;border:none;padding:6px;border-radius:4px;'>موافقة</button>" +
 
-                                                        "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" " +
-                                                        "style='background-color:red;color:white;font-family:Cairo; width:90px;border:none;padding:6px;border-radius:4px;'>رفض</button>" +
+                "<button type='button' class=\"dx-button\" " +
+                "onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" " +
+                "style='background-color:red;color:white;font-family:Cairo;width:90px;border:none;padding:6px;border-radius:4px;'>رفض</button>" +
 
-                                                    "</div>"
-                                                    :
-                                                    "<div style='display:flex; flex-direction:column; align-items:center;'>" +
+            "</div>"
+            :
+            "<div style='display:flex; flex-direction:column; align-items:center;'>" +
 
-                                                    "<button type='button' class=\"dx-button\" onclick=\"ShowRejectPopup(" + Eval("id") + "); return false;\" " +
-                                                    "style='background-color:orange;color:white;font-family:Cairo; width:90px;border:none;padding:6px;border-radius:4px;'>إلغاء</button>" +
+                "<button type='button' class=\"dx-button\" " +
+                "onclick=\"ShowRejectPopup(" + Eval("id") + ", true); return false;\" " +
+                "style='background-color:orange;color:white;font-family:Cairo;width:90px;border:none;padding:6px;border-radius:4px;'>إلغاء</button>" +
 
-                                                    "</div>"
-                                                %>
+            "</div>"
+        %>
                                             </DataItemTemplate>
 
                                             <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
                                         </dx:GridViewDataColumn>
+
 
 
 
@@ -668,7 +679,7 @@
                                     Border-BorderColor="#b7b7b7"
                                     PopupAnimationType="Fade">
 
-<HeaderStyle Font-Names="Cairo" Font-Size="18px"></HeaderStyle>
+                                    <HeaderStyle Font-Names="Cairo" Font-Size="18px"></HeaderStyle>
 
                                     <ContentCollection>
                                         <dx:PopupControlContentControl>
@@ -699,7 +710,7 @@
                                         </dx:PopupControlContentControl>
                                     </ContentCollection>
 
-<Border BorderColor="#B7B7B7" BorderStyle="Solid" BorderWidth="2px"></Border>
+                                    <Border BorderColor="#B7B7B7" BorderStyle="Solid" BorderWidth="2px"></Border>
                                 </dx:ASPxPopupControl>
 
 
@@ -708,8 +719,8 @@
                                     ClientInstanceName="callbackApprove"
                                     OnCallback="callbackApprove_Callback">
                                     <PanelCollection>
-<dx:PanelContent runat="server"></dx:PanelContent>
-</PanelCollection>
+                                        <dx:PanelContent runat="server"></dx:PanelContent>
+                                    </PanelCollection>
                                 </dx:ASPxCallbackPanel>
 
 
@@ -801,7 +812,7 @@
                                 Border-BorderColor="#b7b7b7"
                                 PopupAnimationType="Fade">
 
-<HeaderStyle Font-Names="Cairo" Font-Size="18px"></HeaderStyle>
+                                <HeaderStyle Font-Names="Cairo" Font-Size="18px"></HeaderStyle>
 
                                 <ContentCollection>
                                     <dx:PopupControlContentControl>
@@ -817,6 +828,9 @@
                                         </div>
 
                                         <input type="hidden" id="lblRejectOrderId" />
+
+                                        <input type="hidden" id="hfHasCareem" value="0" />
+
 
                                         <div style="display: flex; justify-content: space-between; gap: 5px; margin-top: 12px;">
                                             <button type="button" onclick="ConfirmReject()" style="flex: 1; padding: 12px; background: #b00000; color: white; border: none; border-radius: 8px; font-family: Cairo; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: 0.2s;"
@@ -836,7 +850,7 @@
                                     </dx:PopupControlContentControl>
                                 </ContentCollection>
 
-<Border BorderColor="#B7B7B7" BorderStyle="Solid" BorderWidth="2px"></Border>
+                                <Border BorderColor="#B7B7B7" BorderStyle="Solid" BorderWidth="2px"></Border>
                             </dx:ASPxPopupControl>
 
                             <dx:ASPxPopupControl ID="popupAddress1" runat="server" ClientInstanceName="popupAddress1"

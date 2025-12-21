@@ -1,8 +1,11 @@
 ﻿using DevExpress.Web;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Net.Http;
+using System.Text;
 using System.Web.Script.Serialization;
 using System.Web.UI;
 
@@ -586,7 +589,7 @@ namespace ShabAdmin
         protected void GridOrders_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
         {
             string[] parts = e.Parameters.Split(':');
-
+            bool hasCareem = parts.Length > 3 && parts[3] == "1";
             if (parts[0] == "reject")
             {
                 int orderId = Convert.ToInt32(parts[1]);
@@ -793,6 +796,18 @@ namespace ShabAdmin
 
 
                             tx.Commit();
+                            if (hasCareem)
+                            {
+                                try
+                                {
+                                    CancelCareemDelivery(orderId);
+                                }
+                                catch (Exception careemEx)
+                                {
+                                    (sender as ASPxGridView).JSProperties["cpMessage"] =
+                                        "تم رفض الطلب، لكن فشل إلغاء Careem: " + careemEx.Message;
+                                }
+                            }
                             GridOrders.DataBind();
                             (sender as ASPxGridView).JSProperties["cpMessage"] = "تم رفض الطلب وتحديث البيانات بنجاح";
                         }
@@ -805,6 +820,87 @@ namespace ShabAdmin
                 }
             }
         }
+        private void CancelCareemDelivery(int orderId)
+        {
+            string careemId = null;
+
+            // 1) جلب careemId
+            using (SqlConnection conn =
+                new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
+            {
+                conn.Open();
+
+                string sql = @"
+            SELECT TOP 1 careemId
+            FROM careemDeliveries
+            WHERE orderId = @orderId
+            ORDER BY userDate DESC
+        ";
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@orderId", orderId);
+                    careemId = cmd.ExecuteScalar()?.ToString();
+                }
+            }
+
+            if (string.IsNullOrEmpty(careemId))
+                throw new Exception("لا يوجد طلب Careem مرتبط بهذا الطلب");
+
+            string accessToken = GetCareemAccessToken();
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://sagateway.careem-engineering.com");
+                client.Timeout = TimeSpan.FromSeconds(30);
+                client.DefaultRequestHeaders.Clear();
+
+                var request = new HttpRequestMessage(
+                    HttpMethod.Delete,
+                    $"/b2b/deliveries/{careemId}/?cancellation_reason=OTHER"
+                );
+
+                request.Headers.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+
+                request.Headers.Accept.Add(
+                    new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")
+                );
+
+                HttpResponseMessage response =
+                    client.SendAsync(request).GetAwaiter().GetResult();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    string error =
+                        response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+                    throw new Exception("Careem DELETE Error: " + error);
+                }
+            }
+
+            // 4) تحديث الحالة محليًا
+            using (SqlConnection conn =
+                new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
+            {
+                conn.Open();
+
+                string sql = @"
+            UPDATE careemDeliveries
+            SET status = 'CANCELLED',
+                userDate = GETDATE()
+            WHERE careemId = @careemId
+        ";
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@careemId", careemId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+
 
         protected void callbackAddress1_Callback(object sender, DevExpress.Web.CallbackEventArgsBase e)
         {
@@ -929,27 +1025,185 @@ namespace ShabAdmin
 
         protected void callbackApprove_Callback(object sender, DevExpress.Web.CallbackEventArgsBase e)
         {
+            if (string.IsNullOrWhiteSpace(e.Parameter))
+                return;
+
+            if (e.Parameter.StartsWith("careem:"))
             {
-                if (string.IsNullOrWhiteSpace(e.Parameter)) return;
+                int orderId = int.Parse(e.Parameter.Replace("careem:", ""));
 
-                int orderId;
-                if (!int.TryParse(e.Parameter, out orderId)) return;
-
-                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
-                {
-                    conn.Open();
-
-                    string sql = "UPDATE orders SET l_orderStatus = 2 WHERE id = @id";
-                    using (SqlCommand cmd = new SqlCommand(sql, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@id", orderId);
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-
-                GridOrders.DataBind();
+                CreateCareemDelivery(orderId);   // Careem
+                ApproveOrderOldLogic(orderId);   // منطقك القديم
+                return;
             }
 
+            if (int.TryParse(e.Parameter, out int oldOrderId))
+            {
+                ApproveOrderOldLogic(oldOrderId);
+            }
         }
+
+
+        private void ApproveOrderOldLogic(int orderId)
+        {
+            using (SqlConnection conn =
+                new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
+            {
+                conn.Open();
+
+                string sql = "UPDATE orders SET l_orderStatus = 2 WHERE id = @id";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", orderId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            GridOrders.DataBind();
+        }
+
+
+
+        private string GetCareemAccessToken()
+        {
+            string clientId = ConfigurationManager.AppSettings["CareemClientId"];
+            string clientSecret = ConfigurationManager.AppSettings["CareemClientSecret"];
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://identity.careem.com");
+                client.Timeout = TimeSpan.FromSeconds(30);
+                client.DefaultRequestHeaders.Clear();
+
+                var form = new List<KeyValuePair<string, string>>
+        {
+            new KeyValuePair<string, string>("grant_type", "client_credentials"),
+            new KeyValuePair<string, string>("scope", "deliveries"),
+            new KeyValuePair<string, string>("client_id", clientId),
+            new KeyValuePair<string, string>("client_secret", clientSecret)
+        };
+
+                var content = new FormUrlEncodedContent(form);
+
+                HttpResponseMessage response =
+                    client.PostAsync("/token", content).GetAwaiter().GetResult();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    string error = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    throw new Exception("Careem Identity Error: " + error);
+                }
+
+                string json = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                dynamic tokenObj = JsonConvert.DeserializeObject(json);
+
+                return tokenObj.access_token;
+            }
+        }
+
+        private void CreateCareemDelivery(int orderId)
+        {
+            string accessToken = GetCareemAccessToken();
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://sagateway.careem-engineering.com");
+                client.Timeout = TimeSpan.FromSeconds(30);
+                client.DefaultRequestHeaders.Clear();
+
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+
+                var bodyObj = new
+                {
+                    volume = 1,
+                    delivery_action = "HANDOVER",
+                    type = "LMD_SANDBOX",
+
+                    pickup = new
+                    {
+                        coordinate = new
+                        {
+                            latitude = -33.877468,
+                            longitude = 151.272802
+                        },
+                        area = "Sydney CBD",
+                        city = "Sydney",
+                        street = "George Street"
+                    },
+
+                    dropoff = new
+                    {
+                        coordinate = new
+                        {
+                            latitude = -33.870000,
+                            longitude = 151.280000
+                        },
+                        area = "Bondi",
+                        city = "Sydney",
+                        street = "Campbell Parade"
+                    },
+
+                    customer = new
+                    {
+                        name = "Mohammed Alfaris",
+                        phone_number = "+61490000000"
+                    },
+
+                    order = new
+                    {
+                        reference = $"ORDER-{orderId}"
+                    }
+                };
+
+                string json = JsonConvert.SerializeObject(bodyObj);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response =
+                    client.PostAsync("/b2b/deliveries", content).GetAwaiter().GetResult();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    string error =
+                        response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+                    throw new Exception("Careem Delivery Error: " + error);
+                }
+
+                string responseJson =
+                    response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+                dynamic result = JsonConvert.DeserializeObject(responseJson);
+
+                string careemId = result.id;
+                string status = result.status;
+
+                InsertCareemDelivery(orderId, careemId, status);
+            }
+        }
+        private void InsertCareemDelivery(int orderId, string careemId, string status)
+        {
+            using (SqlConnection conn =
+                new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
+            {
+                conn.Open();
+
+                string sql = @"
+            INSERT INTO careemDeliveries
+            (orderId, careemId, status, userDate)
+            VALUES
+            (@orderId, @careemId, @status, GETDATE())
+        ";
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@orderId", orderId);
+                    cmd.Parameters.AddWithValue("@careemId", careemId);
+                    cmd.Parameters.AddWithValue("@status", status);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
     }
 }

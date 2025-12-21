@@ -32,6 +32,10 @@ namespace ShabAdmin
                 {
                     GridProducts.Columns["priceInternational"].Visible = true;
                 }
+                else
+                {
+                    GridProducts.Columns["priceInternational"].Visible = false;
+                }
             }
 
             if (!string.IsNullOrEmpty(username))
@@ -49,6 +53,17 @@ namespace ShabAdmin
                         privilegeCountryID = Convert.ToInt32(reader["privilegeCountryID"]);
                         privilegeCompanyID = Convert.ToInt32(reader["privilegeCompanyID"]);
                     }
+                }
+            }
+            if (!IsPostBack)
+            {
+                if (privilegeCountryID == 1000 && privilegeCompanyID == 1000)
+                {
+                    GridProducts.Columns["priceInternational"].Visible = true;
+                }
+                else
+                {
+                    GridProducts.Columns["priceInternational"].Visible = false;
                 }
             }
 

@@ -8,7 +8,7 @@
     <main>
         <style>
             .combo-large-font .dxeEditArea {
-                font-size: 16px !important; /* You can increase or decrease as needed */
+                font-size: 16px !important;
             }
 
             .error-popup-message {

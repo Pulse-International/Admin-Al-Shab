@@ -392,10 +392,6 @@ namespace ShabAdmin
             }
         }
 
-
-
-
-
         string SavePostedFile_all(UploadedFile uploadedFile)
         {
             if (!uploadedFile.IsValid)
@@ -408,7 +404,7 @@ namespace ShabAdmin
                 string filePath = Path.Combine(MapPath(UploadDirectory), Docs);
                 using (System.Drawing.Image original = System.Drawing.Image.FromStream(uploadedFile.FileContent))
                 {
-                    MainHelper.CompressAndSaveImage(original, filePath, 500, 500, 85);
+                    MainHelper.CompressAndSaveImage(original, filePath, 700, 700, 85);
                 }
             }
             catch
@@ -1215,7 +1211,7 @@ namespace ShabAdmin
                 string filePath = Path.Combine(MapPath(UploadDirectory), Docs);
                 using (System.Drawing.Image original = System.Drawing.Image.FromStream(uploadedFile.FileContent))
                 {
-                    MainHelper.CompressAndSaveImage(original, filePath, 500, 500, 85);
+                    MainHelper.CompressAndSaveImage(original, filePath, 700, 700, 85);
                 }
             }
             catch
@@ -1382,7 +1378,7 @@ namespace ShabAdmin
                 string filePath = Path.Combine(MapPath(UploadDirectory), Docs);
                 using (System.Drawing.Image original = System.Drawing.Image.FromStream(uploadedFile.FileContent))
                 {
-                    MainHelper.CompressAndSaveImage(original, filePath, 500, 500, 85);
+                    MainHelper.CompressAndSaveImage(original, filePath, 700, 700, 85);
                 }
             }
             catch

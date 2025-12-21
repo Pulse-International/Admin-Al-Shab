@@ -235,7 +235,7 @@ namespace ShabAdmin
                     var parameters = System.Web.HttpUtility.ParseQueryString(uri.Query);
 
                     userId = parameters["id"];
-                    username = parameters["phone"];
+                    username = parameters["id"];
                 }
             }
             catch
@@ -255,15 +255,8 @@ namespace ShabAdmin
 
                 string sql;
 
-                // --- الأولوية للبحث بالـ id ---
-                if (!string.IsNullOrEmpty(userId))
-                {
-                    sql = "SELECT id, userPlatform FROM usersDelivery WHERE id = @value";
-                }
-                else
-                {
-                    sql = "SELECT id, userPlatform FROM usersDelivery WHERE username = @value";
-                }
+
+                sql = "SELECT id, userPlatform FROM usersDelivery WHERE username = @value";
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {

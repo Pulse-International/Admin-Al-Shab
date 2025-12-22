@@ -601,7 +601,7 @@ namespace ShabAdmin
             e.Cancel = true;
             GridDeliveryUsers.CancelEdit();
             GridDeliveryUsers.DataBind();
-        }       
+        }
 
         string fileName = string.Empty;
         int checkError = 0;
@@ -799,10 +799,26 @@ namespace ShabAdmin
                     // ================== APPROVE ==================
                     case "approve":
 
+                        // تحديث حالة السائق
                         cmd = new SqlCommand(
                             "UPDATE usersDelivery SET l_deliveryStatusId = 3, isActive = 1 WHERE id = @id",
                             conn);
+                        cmd.Parameters.AddWithValue("@id", userId);
+                        cmd.ExecuteNonQuery();
 
+                        // إنشاء سجل موقع مبدئي للسائق
+                        SqlCommand cmdLocation = new SqlCommand(
+                            @"INSERT INTO driverLocation (driverId, latitude, longitude, userDate)
+          VALUES (@driverId, @latitude, @longitude, GETDATE())",
+                            conn);
+
+                        cmdLocation.Parameters.AddWithValue("@driverId", userId);
+                        cmdLocation.Parameters.AddWithValue("@latitude", "0");
+                        cmdLocation.Parameters.AddWithValue("@longitude", "0");
+
+                        cmdLocation.ExecuteNonQuery();
+
+                        // الروابط والرسالة
                         string encryptedUserId = MainHelper.Encrypt_Me(userId.ToString(), true);
 
                         longUrl = isMobile
@@ -811,6 +827,7 @@ namespace ShabAdmin
 
                         smsText = "مبروك! تمت الموافقة، اضغط لاستكمال العملية:";
                         break;
+
 
                     // ================== REJECT ==================
                     case "reject":

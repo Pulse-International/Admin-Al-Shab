@@ -1032,7 +1032,7 @@ namespace ShabAdmin
             {
                 int orderId = int.Parse(e.Parameter.Replace("careem:", ""));
 
-                CreateCareemDelivery(orderId);   // Careem
+                //CreateCareemDelivery(orderId);   // Careem
                 ApproveOrderOldLogic(orderId);   // منطقك القديم
                 return;
             }

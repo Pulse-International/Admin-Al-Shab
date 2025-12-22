@@ -360,7 +360,7 @@ namespace ShabAdmin
                         ol.[latitude],
                         ol.[longitude]
                     FROM orders o
-                    INNER JOIN ordersLocation ol ON o.id = ol.orderId
+                    INNER JOIN driverLocation ol ON o.usersDeliveryId = ol.driverId
                     WHERE o.id = @id", conn);
 
                     cmd.Parameters.AddWithValue("@id", addressId);
@@ -421,10 +421,10 @@ namespace ShabAdmin
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(@"
                     SELECT ol.latitude, ol.longitude, u.l_vehicleType
-                        FROM ordersLocation ol
-                        JOIN Orders o ON ol.orderId = o.id
+                        FROM driverLocation ol
+                        JOIN Orders o ON ol.driverId = o.usersDeliveryId
                         JOIN usersDelivery u ON o.usersDeliveryId = u.id
-                        WHERE ol.orderId = @id
+                        WHERE o.id = @id
                         ", conn);
 
                     cmd.Parameters.AddWithValue("@id", locationId);
@@ -477,12 +477,12 @@ namespace ShabAdmin
             SELECT 
                 ol.latitude, 
                 ol.longitude, 
-                ol.orderId,
+                ol.driverId,
                 u.firstName,
                 u.lastName,
                 u.l_vehicleType
-            FROM ordersLocation ol
-            JOIN Orders o ON ol.orderId = o.id
+            FROM driverLocation ol
+            JOIN Orders o ON ol.driverId = o.usersDeliveryId
             JOIN usersDelivery u ON o.usersDeliveryId = u.id
             WHERE o.l_orderStatus = 3", conn);
 
@@ -494,7 +494,7 @@ namespace ShabAdmin
                         {
                             latitude = reader["latitude"].ToString(),
                             longitude = reader["longitude"].ToString(),
-                            orderId = reader["orderId"].ToString(),
+                            driverId = reader["driverId"].ToString(),
                             firstName = reader["firstName"].ToString(),
                             l_vehicleType = reader["l_vehicleType"].ToString(),
                             lastName = reader["lastName"].ToString()

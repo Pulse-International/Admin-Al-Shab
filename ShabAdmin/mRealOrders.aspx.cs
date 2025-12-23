@@ -1032,7 +1032,7 @@ namespace ShabAdmin
             {
                 int orderId = int.Parse(e.Parameter.Replace("careem:", ""));
 
-                //CreateCareemDelivery(orderId);   // Careem
+                CreateCareemDelivery(orderId);   // Careem
                 ApproveOrderOldLogic(orderId);   // منطقك القديم
                 return;
             }
@@ -1189,11 +1189,11 @@ namespace ShabAdmin
                 conn.Open();
 
                 string sql = @"
-            INSERT INTO careemDeliveries
-            (orderId, careemId, status, userDate)
-            VALUES
-            (@orderId, @careemId, @status, GETDATE())
-        ";
+                    INSERT INTO careemDeliveries
+                    (orderId, careemId, status, userDate)
+                    VALUES
+                    (@orderId, @careemId, @status, GETDATE())
+                ";
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {

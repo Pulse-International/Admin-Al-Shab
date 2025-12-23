@@ -27,8 +27,8 @@ namespace ShabAdmin
                 string encryptedId = Request.QueryString["id"];
                 string realId = "";
                 bool isEdit = !string.IsNullOrEmpty(encryptedId);
-                string testid = "52";
-                testid = MainHelper.Encrypt_Me(testid,true);
+                //string testid = "52";
+                //testid = MainHelper.Encrypt_Me(testid,true);
                 if (!string.IsNullOrEmpty(encryptedId))
                 {
                     realId = MainHelper.Decrypt_Me(encryptedId, true);
@@ -121,7 +121,18 @@ namespace ShabAdmin
                             ";
                             ClientScript.RegisterStartupScript(this.GetType(), "ActivateMask", scriptMask, true);
                         }
-
+                        if (countryId == 5)
+                        {
+                            ddlCity.Value = "الأمارات";
+                            string scriptMask = @"
+                                setTimeout(function() {
+                                    if (typeof coutryid !== 'undefined' && typeof changemask === 'function') {
+                                        changemask(coutryid, null);
+                                    }
+                                }, 300);
+                            ";
+                            ClientScript.RegisterStartupScript(this.GetType(), "ActivateMask", scriptMask, true);
+                        }
                         string vehicleNo = rdr["vehicleNo"].ToString();
                         if (countryId == 1 && vehicleNo.Length == 7)
                         {
@@ -135,7 +146,8 @@ namespace ShabAdmin
                         lastheader.Text = rdr["lastName"].ToString();
                         driverEmailAddress.Text = rdr["email"].ToString();
                         driverProfilePic.Src = rdr["userPicture"].ToString();
-
+                        JordanCity.Value = rdr["l_city"].ToString();
+                        UAE.Value = rdr["l_city"].ToString();
                         string noteStr = rdr["incompleteNote"].ToString();
                         if (!string.IsNullOrEmpty(noteStr))
                         {
@@ -217,6 +229,7 @@ namespace ShabAdmin
             string nerbynamee = nerbyname.Text;
             string country = ddlCity.Value?.ToString();
             if (country == "الأردن") country = "1";
+            if (country == "الأمارات") country = "5";
 
             string carkindStr = carKind.Value?.ToString();
             string carkind = (carkindStr == "سيارة" || carkindStr == "1") ? "1" : "0";
@@ -240,12 +253,24 @@ namespace ShabAdmin
             string passportt = SaveUploadedFile(passport, "passport");
             string residentt = SaveUploadedFile(resident, "resident");
             int is_updatedd = 1;
+            string uaee = UAE.Value?.ToString();
+            string jordancountry = JordanCity.Value?.ToString();
+            string finalresult = "";
+            if (uaee != null)
+            {
+                finalresult = uaee;
+            }
+            else
+            {
+                finalresult = jordancountry;
+            }
 
             string connectionString = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 string query = @"UPDATE usersDelivery SET 
                     firstName = COALESCE(NULLIF(@firstname, ''), firstName),
+                    l_city = COALESCE(NULLIF(@finalresult, ''), l_city),
                     lastName = COALESCE(NULLIF(@lastname, ''), lastName),
                     email = COALESCE(NULLIF(@email, ''), email),
                     username = COALESCE(NULLIF(@phone, ''), username),
@@ -280,6 +305,7 @@ namespace ShabAdmin
                     cmd.Parameters.AddWithValue("@encryptedId", encryptedId);
 
                     cmd.Parameters.AddWithValue("@firstname", (object)firstname ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@finalresult", (object)finalresult ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@lastname", (object)lastname ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@email", (object)email ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@phone", (object)phone ?? DBNull.Value);
@@ -348,6 +374,17 @@ namespace ShabAdmin
             string nerbynamee = nerbyname.Text;
             string input = txtPhone.Text.Trim();
             string phonen = input;
+            string uaee = UAE.Value?.ToString();
+            string jordancountry = JordanCity.Value?.ToString();
+            string finalresult = "";
+            if(uaee != null)
+            {
+                finalresult = uaee;
+            }
+            else
+            {
+                finalresult = jordancountry;
+            }
 
             if (input.StartsWith("00962"))
             {
@@ -371,6 +408,7 @@ namespace ShabAdmin
             if (IsPhoneExists(txtPhone.Text)) { lblMessage.Text = "❌ هذا الرقم مسجل مسبقاً!"; lblMessage.ForeColor = System.Drawing.Color.Red; return; }
 
             if (country == "الأردن") country = "1";
+            if (country == "الأمارات") country = "5";
             if (carkind == "سيارة") carkind = "1"; else carkind = "2";
 
             string connectionString = ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString;
@@ -379,23 +417,24 @@ namespace ShabAdmin
                 string query = "";
                 if (documenttype == 2)
                 {
-                    query = @"INSERT INTO usersDelivery (countryId,username,firstName,referenceMobile,referenceName,isMobile,vehicleModel,userPlatform,l_gender,lastName,email,userPicture,vehicleNo,vehicleVin,passportPicture,licensePicture,carLicensePicture,carPicture,l_vehicleType,l_deliveryStatusId,l_documentType,documentNo,userDate)
-                              VALUES(@country,@phonen,@firstname,@nerbynumberr,@nerbynamee,@ismobilee,@carmarkaa,@userPlatformm,@genderr,@lastname,@email,@userPicPath,@carNumber,@vinCar,@passportt,@licensePicPath,@carLicensePicPath,@carPicPath,@carkind,@deliveryStatus,@documenttype,@docnumber,getDate())";
+                    query = @"INSERT INTO usersDelivery (countryId,l_city,username,firstName,referenceMobile,referenceName,isMobile,vehicleModel,userPlatform,l_gender,lastName,email,userPicture,vehicleNo,vehicleVin,passportPicture,licensePicture,carLicensePicture,carPicture,l_vehicleType,l_deliveryStatusId,l_documentType,documentNo,userDate)
+                              VALUES(@country,@finalresult,@phonen,@firstname,@nerbynumberr,@nerbynamee,@ismobilee,@carmarkaa,@userPlatformm,@genderr,@lastname,@email,@userPicPath,@carNumber,@vinCar,@passportt,@licensePicPath,@carLicensePicPath,@carPicPath,@carkind,@deliveryStatus,@documenttype,@docnumber,getDate())";
                 }
                 else if (documenttype == 3)
                 {
-                    query = @"INSERT INTO usersDelivery (countryId,username,firstName,referenceMobile,referenceName,isMobile,vehicleModel,userPlatform,l_gender,lastName,email,userPicture,vehicleNo,vehicleVin,residencePicture,licensePicture,carLicensePicture,carPicture,l_vehicleType,l_deliveryStatusId,l_documentType,documentNo,userDate)
-                              VALUES(@country,@phonen,@firstname,@nerbynumberr,@nerbynamee,@ismobilee,@carmarkaa,@userPlatformm,@genderr,@lastname,@email,@userPicPath,@carNumber,@vinCar,@residentt,@licensePicPath,@carLicensePicPath,@carPicPath,@carkind,@deliveryStatus,@documenttype,@docnumber,getDate())";
+                    query = @"INSERT INTO usersDelivery (countryId,l_city,username,firstName,referenceMobile,referenceName,isMobile,vehicleModel,userPlatform,l_gender,lastName,email,userPicture,vehicleNo,vehicleVin,residencePicture,licensePicture,carLicensePicture,carPicture,l_vehicleType,l_deliveryStatusId,l_documentType,documentNo,userDate)
+                              VALUES(@country,@finalresult,@phonen,@firstname,@nerbynumberr,@nerbynamee,@ismobilee,@carmarkaa,@userPlatformm,@genderr,@lastname,@email,@userPicPath,@carNumber,@vinCar,@residentt,@licensePicPath,@carLicensePicPath,@carPicPath,@carkind,@deliveryStatus,@documenttype,@docnumber,getDate())";
                 }
                 else
                 {
-                    query = @"INSERT INTO usersDelivery (countryId,username,firstName,referenceMobile,referenceName,isMobile,vehicleModel,userPlatform,l_gender,lastName,email,userPicture,vehicleNo,vehicleVin,idFrontPicture,idBackPicture,licensePicture,carLicensePicture,carPicture,l_vehicleType,l_deliveryStatusId,l_documentType,documentNo,userDate)
-                              VALUES(@country,@phonen,@firstname,@nerbynumberr,@nerbynamee,@ismobilee,@carmarkaa,@userPlatformm,@genderr,@lastname,@email,@userPicPath,@carNumber,@vinCar,@frontPicPath,@backPicPath,@licensePicPath,@carLicensePicPath,@carPicPath,@carkind,@deliveryStatus,@documenttype,@docnumber,getDate())";
+                    query = @"INSERT INTO usersDelivery (countryId,l_city,username,firstName,referenceMobile,referenceName,isMobile,vehicleModel,userPlatform,l_gender,lastName,email,userPicture,vehicleNo,vehicleVin,idFrontPicture,idBackPicture,licensePicture,carLicensePicture,carPicture,l_vehicleType,l_deliveryStatusId,l_documentType,documentNo,userDate)
+                              VALUES(@country,@finalresult,@phonen,@firstname,@nerbynumberr,@nerbynamee,@ismobilee,@carmarkaa,@userPlatformm,@genderr,@lastname,@email,@userPicPath,@carNumber,@vinCar,@frontPicPath,@backPicPath,@licensePicPath,@carLicensePicPath,@carPicPath,@carkind,@deliveryStatus,@documenttype,@docnumber,getDate())";
                 }
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@country", country);
+                    cmd.Parameters.AddWithValue("@finalresult", finalresult);
                     cmd.Parameters.AddWithValue("@phonen", phonen);
                     cmd.Parameters.AddWithValue("@firstname", firstname);
                     cmd.Parameters.AddWithValue("@nerbynumberr", nerbynumberr);

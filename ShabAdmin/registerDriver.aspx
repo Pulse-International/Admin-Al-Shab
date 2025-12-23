@@ -965,10 +965,16 @@
                     var element = document.getElementById(elementId);
                     if (element) element.innerText = value || 'غير محدد';
                 }
+                var divJordan = document.getElementById('rev_JordanCity');
+                var divUAE = document.getElementById('rev_UAE');
+                var jordanVal = JordanCity.GetText();
+                var uaeVal = UAE.GetText();
                 safeSetText('rev_name', txtFirstName.GetText() + ' ' + txtLastName.GetText());
                 safeSetText('rev_phone', txtPhone.GetText());
                 safeSetText('rev_email', txtEmail.GetText());
                 safeSetText('rev_country', coutryid.GetText());
+                safeSetText('rev_JordanCity', JordanCity.GetText());
+                safeSetText('rev_UAE', UAE.GetText());
                 safeSetText('rev_docType', documentType.GetText());
                 safeSetText('rev_docNum', documentnumber.GetText());
                 safeSetText('rev_carType', carKind.GetText());
@@ -984,6 +990,23 @@
                 copyImageToReview('preview_license', 'rev_img_license');
                 copyImageToReview('preview_carLicense', 'rev_img_carLicense');
                 copyImageToReview('preview_car', 'rev_img_car');
+                if (divJordan) {
+                    if (!jordanVal) {
+                        divJordan.parentElement.style.display = 'none';
+                    } else {
+                        divJordan.parentElement.style.display = 'flex';
+                        divJordan.innerText = jordanVal;
+                    }
+                }
+
+                if (divUAE) {
+                    if (!uaeVal) {
+                        divUAE.parentElement.style.display = 'none';
+                    } else {
+                        divUAE.parentElement.style.display = 'flex';
+                        divUAE.innerText = uaeVal;
+                    }
+                }
             } catch (e) { }
         }
 
@@ -1049,7 +1072,22 @@
         }
 
         function changemask(s, e) {
+            UAE.SetVisible(false);
+            JordanCity.SetVisible(false)
             var country = s.GetValue();
+            if (country === 'الأمارات') {
+                document.getElementById('divJordan').style.display = 'none';
+                document.getElementById('divUAE').style.display = 'block';
+                JordanCity.SetVisible(false)
+                UAE.SetVisible(true)
+                JordanCity.SetValue('');
+            } else {
+                document.getElementById('divJordan').style.display = 'block';
+                document.getElementById('divUAE').style.display = 'none';
+                JordanCity.SetVisible(true)
+                UAE.SetVisible(false)
+                UAE.SetValue('');
+            }
             if (e !== null) {
                 Vehieclenumber.SetValue('');
                 if (typeof ASPxLabel3 !== 'undefined') ASPxLabel3.SetText('');
@@ -1302,8 +1340,9 @@
                         <label>الدولة <span style="color:red">*</span></label>
                         <dx:ASPxComboBox ID="ddlCity" runat="server" Width="100%" Height="45px" ClientInstanceName="coutryid">
                             <Items>
-                                <dx:ListEditItem Text="-- اختر المدينة --" Value="" />
+                                <dx:ListEditItem Text="-- اختر الدولة --" Value="" />
                                 <dx:ListEditItem Text="الأردن" Value="الأردن" />
+                                <dx:ListEditItem Text="الأمارات" Value="الأمارات" />
                             </Items>
                             <ValidationSettings RequiredField-IsRequired="true" ErrorText="مطلوب" Display="Dynamic" SetFocusOnError="True" >
                             <RequiredField IsRequired="True"></RequiredField>
@@ -1311,7 +1350,28 @@
                             <ClientSideEvents SelectedIndexChanged="changemask" />
                         </dx:ASPxComboBox>
                     </div>
-
+                     <div style="margin-bottom: 20px;display:none" id="divJordan">
+                        <label>المحافظه<span style="color:red">*</span></label><br>
+                        <dx:ASPxComboBox ID="JordanCity" runat="server" Width="100%" Height="45px" ClientInstanceName="JordanCity" DataSourceID="SqlDataSource1" ValueField="id" TextField="description">
+                            <ValidationSettings RequiredField-IsRequired="true" ErrorText="مطلوب" Display="Dynamic" SetFocusOnError="True" >
+                            <RequiredField IsRequired="True"></RequiredField>
+                            </ValidationSettings>
+                        </dx:ASPxComboBox>
+                         <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>" SelectCommand="SELECT [id], [description] FROM [L_City] where countryid = 1"></asp:SqlDataSource>
+                    </div>
+                    <div style="margin-bottom: 20px; display:none" id="divUAE">
+                        <label>المحافظه<span style="color:red">*</span></label>
+                        <dx:ASPxComboBox ID="UAE" runat="server" Width="100%" Height="45px" ClientInstanceName="UAE" DataSourceID="SqlDataSource2" ValueField="id" TextField="description">
+                            <ValidationSettings RequiredField-IsRequired="true" ErrorText="مطلوب" Display="Dynamic" SetFocusOnError="True" >
+                            <RequiredField IsRequired="True"></RequiredField>
+                            </ValidationSettings>
+                        </dx:ASPxComboBox>
+                        <asp:SqlDataSource ID="SqlDataSource2" runat="server" ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>" SelectCommand="SELECT [id], [description] FROM [L_City] WHERE ([countryid] = @countryid)">
+                            <SelectParameters>
+                                <asp:Parameter DefaultValue="5" Name="countryid" Type="Int32" />
+                            </SelectParameters>
+                        </asp:SqlDataSource>
+                    </div>
                     <div style="margin-bottom: 20px;">
                         <label>رقم الهاتف <span style="color:red">*</span></label>
                         <dx:ASPxTextBox ID="txtPhone" runat="server" ClientInstanceName="txtPhone" Width="100%"  Height="45px">
@@ -1762,6 +1822,8 @@
                     <div class="review-item"><span class="review-label">رقم الهاتف:</span> <span class="review-value" id="rev_phone"></span></div>
                     <div class="review-item"><span class="review-label">البريد الإلكتروني:</span> <span class="review-value" id="rev_email"></span></div>
                     <div class="review-item"><span class="review-label">الدولة:</span> <span class="review-value" id="rev_country"></span></div>
+                    <div class="review-item"><span class="review-label">المحافظه:</span> <span class="review-value" id="rev_JordanCity"></span></div>
+                    <div class="review-item"><span class="review-label">المحافظه:</span> <span class="review-value" id="rev_UAE"></span></div>
                 </div>
                 <div class="review-section">
                     <div class="review-title">الوثائق والمركبة</div>

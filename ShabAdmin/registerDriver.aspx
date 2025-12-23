@@ -1351,7 +1351,7 @@
                         </dx:ASPxComboBox>
                     </div>
                      <div style="margin-bottom: 20px;display:none" id="divJordan">
-                        <label>المحافظه<span style="color:red">*</span></label><br>
+                        <label>اختر المحافظة التي تريد العمل بها:<span style="color:red">*</span></label><br>
                         <dx:ASPxComboBox ID="JordanCity" runat="server" Width="100%" Height="45px" ClientInstanceName="JordanCity" DataSourceID="SqlDataSource1" ValueField="id" TextField="description">
                             <ValidationSettings RequiredField-IsRequired="true" ErrorText="مطلوب" Display="Dynamic" SetFocusOnError="True" >
                             <RequiredField IsRequired="True"></RequiredField>
@@ -1360,7 +1360,7 @@
                          <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>" SelectCommand="SELECT [id], [description] FROM [L_City] where countryid = 1"></asp:SqlDataSource>
                     </div>
                     <div style="margin-bottom: 20px; display:none" id="divUAE">
-                        <label>المحافظه<span style="color:red">*</span></label>
+                        <label>اختر المحافظة التي تريد العمل بها:<span style="color:red">*</span></label>
                         <dx:ASPxComboBox ID="UAE" runat="server" Width="100%" Height="45px" ClientInstanceName="UAE" DataSourceID="SqlDataSource2" ValueField="id" TextField="description">
                             <ValidationSettings RequiredField-IsRequired="true" ErrorText="مطلوب" Display="Dynamic" SetFocusOnError="True" >
                             <RequiredField IsRequired="True"></RequiredField>

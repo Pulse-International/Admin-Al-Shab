@@ -79,15 +79,17 @@
 
                 draw() {
                     const overlayProjection = this.getProjection();
-                    const pixel = overlayProjection.fromLatLngToDivPixel(new google.maps.LatLng(this.position.lat, this.position.lng));
-                    if (this.div) {
-                        this.div.style.left = pixel.x - 30 + "px";
-                        this.div.style.top = pixel.y - 50 + "px";
+                    if (!overlayProjection || !this.div) return; // ✅ هنا بالضبط
 
-                        this.div.style.transition = "none";
-                        this.div.style.transform = `rotate(${this.rotation}deg)`;
-                    }
+                    const pixel = overlayProjection.fromLatLngToDivPixel(
+                        new google.maps.LatLng(this.position.lat, this.position.lng)
+                    );
+
+                    this.div.style.left = (pixel.x - 30) + "px";
+                    this.div.style.top = (pixel.y - 50) + "px";
+                    this.div.style.transform = `rotate(${this.rotation}deg)`;
                 }
+
 
                 update(position, bearing) {
                     this.position = position;
@@ -284,13 +286,75 @@
                 });
             }
 
+            var lastOrderId = 0;
+
             setInterval(function () {
-                if (typeof GridOrders !== "undefined") {
-                    GridOrders.Refresh();
-                }
+                if (typeof GridOrders === "undefined")
+                    return;
+
+                GridOrders.Refresh();
+
+                setTimeout(function () {
+
+                    getLastOrderIdFromGrid(function (currentLastId) {
+
+                        if (lastOrderId === 0) {
+                            lastOrderId = currentLastId;
+                            return;
+                        }
+
+                        console.log("Last ID:", currentLastId);
+
+                        if (currentLastId > lastOrderId) {
+
+                            var audio = document.getElementById("newOrderSound");
+                            if (audio) {
+                                audio.currentTime = 0;
+                                audio.play();
+
+                                setTimeout(function () {
+                                    audio.currentTime = 0;
+                                    audio.play();
+                                    setTimeout(function () {
+                                        audio.currentTime = 0;
+                                        audio.play();
+                                    },4000)
+                                }, 4000);
+                            }
+
+                            lastOrderId = currentLastId;
+                        }
+                    });
+
+                }, 800);
+
             }, 30000);
 
+            function getLastOrderIdFromGrid(callback) {
+                if (!GridOrders || GridOrders.GetVisibleRowsOnPage() === 0) {
+                    callback(0);
+                    return;
+                }
+
+                GridOrders.GetRowValues(0, "id", function (value) {
+                    var id = parseInt(value);
+                    callback(isNaN(id) ? 0 : id);
+                });
+            }
+
+            function initLastOrderId() {
+                if (typeof GridOrders === "undefined")
+                    return;
+
+                getLastOrderIdFromGrid(function (currentLastId) {
+                    lastOrderId = currentLastId;
+                    console.log("Initial Last ID:", lastOrderId);
+                });
+            }
+
+            setTimeout(initLastOrderId, 500);
         </script>
+        <audio id="newOrderSound" src="/assets/sounds/Notify.mp3" preload="auto"></audio>
 
         <dx:ASPxCallback ID="callbackLocation" runat="server" ClientInstanceName="callbackLocation"
             OnCallback="callbackLocation_Callback">
@@ -619,7 +683,7 @@
                 "style='background-color:orange;color:white;font-family:Cairo;width:90px;border:none;padding:6px;border-radius:4px;'>إلغاء</button>" +
 
             "</div>"
-        %>
+                                                %>
                                             </DataItemTemplate>
 
                                             <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
@@ -956,18 +1020,17 @@
 
                                     draw() {
                                         const overlayProjection = this.getProjection();
-                                        const pixel = overlayProjection.fromLatLngToDivPixel(new google.maps.LatLng(this.position.lat, this.position.lng));
-                                        if (this.div) {
-                                            if (this.isBike) {
-                                                this.div.style.left = (pixel.x - 30) + "px";
-                                                this.div.style.top = (pixel.y - 50) + "px";
-                                            } else {
-                                                this.div.style.left = (pixel.x - 30) + "px";
-                                                this.div.style.top = (pixel.y - 50) + "px";
-                                            }
-                                            this.div.style.transform = `rotate(${this.rotation}deg)`;
-                                        }
+                                        if (!overlayProjection || !this.div) return; // ✅ نفس السطر
+
+                                        const pixel = overlayProjection.fromLatLngToDivPixel(
+                                            new google.maps.LatLng(this.position.lat, this.position.lng)
+                                        );
+
+                                        this.div.style.left = (pixel.x - 30) + "px";
+                                        this.div.style.top = (pixel.y - 50) + "px";
+                                        this.div.style.transform = `rotate(${this.rotation}deg)`;
                                     }
+
 
                                     update(position, rotation) {
                                         this.position = position;

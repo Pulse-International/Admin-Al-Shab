@@ -1404,7 +1404,7 @@
                                         <dx:GridViewDataTextColumn Caption="رقم الوثيقة" Width="3%" FieldName="documentNo">
                                             <DataItemTemplate>
                                                 <%# 
-                                                    Eval("l_documentType") != null 
+                                                    Eval("l_documentType") != null && Eval("documentNo") != null
                                                         ? (
                                                             (Convert.ToInt32(Eval("l_documentType")) == 1 
                                                                 ? "رقم الهوية: " + Eval("documentNo")

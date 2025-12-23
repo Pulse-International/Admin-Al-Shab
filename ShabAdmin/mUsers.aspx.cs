@@ -601,7 +601,7 @@ namespace ShabAdmin
             e.Cancel = true;
             GridDeliveryUsers.CancelEdit();
             GridDeliveryUsers.DataBind();
-        }       
+        }
 
         string fileName = string.Empty;
         int checkError = 0;
@@ -790,66 +790,92 @@ namespace ShabAdmin
                 }
 
                 string baseUrl = WebConfigurationManager.AppSettings["SourceURL"];
-                SqlCommand cmd = null;
-                string longUrl = "";   // 👈 الرابط النهائي (ويب أو Deep Link)
+                string longUrl = "";
                 string smsText = "";
 
                 switch (action)
                 {
                     // ================== APPROVE ==================
                     case "approve":
+                        {
+                            // تحديث حالة السائق
+                            using (SqlCommand cmd = new SqlCommand(
+                                "UPDATE usersDelivery SET l_deliveryStatusId = 3, isActive = 1 WHERE id = @id",
+                                conn))
+                            {
+                                cmd.Parameters.AddWithValue("@id", userId);
+                                cmd.ExecuteNonQuery();
+                            }
 
-                        cmd = new SqlCommand(
-                            "UPDATE usersDelivery SET l_deliveryStatusId = 3, isActive = 1 WHERE id = @id",
-                            conn);
+                            // إنشاء سجل موقع مبدئي (مرة واحدة فقط)
+                            using (SqlCommand cmdLocation = new SqlCommand(
+                                @"INSERT INTO driverLocation (driverId, latitude, longitude, userDate)
+                      VALUES (@driverId, '0', '0', GETDATE())",
+                                conn))
+                            {
+                                cmdLocation.Parameters.AddWithValue("@driverId", userId);
+                                cmdLocation.ExecuteNonQuery();
+                            }
 
-                        string encryptedUserId = MainHelper.Encrypt_Me(userId.ToString(), true);
+                            string encryptedUserId = MainHelper.Encrypt_Me(userId.ToString(), true);
 
-                        longUrl = isMobile
-                            ? $"alshaebdriver://app/reset-password?countryCode=00962&phone={userNumber}"
-                            : $"{baseUrl}/ldeliveryCompleted?id={encryptedUserId}";
+                            longUrl = isMobile
+                                ? $"alshaebdriver://app/reset-password?countryCode=00962&phone={userNumber}"
+                                : $"{baseUrl}/ldeliveryCompleted?id={encryptedUserId}";
 
-                        smsText = "مبروك! تمت الموافقة، اضغط لاستكمال العملية:";
-                        break;
+                            smsText = "مبروك! تمت الموافقة، اضغط لاستكمال العملية:";
+                            break;
+                        }
 
                     // ================== REJECT ==================
                     case "reject":
+                        {
+                            using (SqlCommand cmd = new SqlCommand(
+                                @"UPDATE usersDelivery 
+                      SET l_deliveryStatusId = 4,
+                          isActive = 0,
+                          rejectNote = @note
+                      WHERE id = @id",
+                                conn))
+                            {
+                                cmd.Parameters.AddWithValue("@id", userId);
+                                cmd.Parameters.AddWithValue("@note", note);
+                                cmd.ExecuteNonQuery();
+                            }
 
-                        cmd = new SqlCommand(
-                            "UPDATE usersDelivery SET l_deliveryStatusId = 4, isActive = 0, rejectNote = @note WHERE id = @id",
-                            conn);
-
-                        cmd.Parameters.AddWithValue("@note", note);
-
-                        longUrl = $"{baseUrl}/contact"; // أو أي صفحة بدك
-                        smsText = "تم رفض الطلب، للاستفسار:";
-                        break;
+                            longUrl = $"{baseUrl}/contact";
+                            smsText = "تم رفض الطلب، للاستفسار:";
+                            break;
+                        }
 
                     // ================== INCOMPLETE ==================
                     case "incomplete":
-
-                        cmd = new SqlCommand(
-                            @"UPDATE usersDelivery 
-                      SET l_deliveryStatusId = @status,
+                        {
+                            using (SqlCommand cmd = new SqlCommand(
+                                @"UPDATE usersDelivery 
+                      SET l_deliveryStatusId = 2,
                           isUpdated = 0,
                           incompleteNote = @note
                       WHERE id = @id",
-                            conn);
+                                conn))
+                            {
+                                cmd.Parameters.AddWithValue("@id", userId);
+                                cmd.Parameters.AddWithValue("@note", note);
+                                cmd.ExecuteNonQuery();
+                            }
 
-                        cmd.Parameters.AddWithValue("@status", 2);
-                        cmd.Parameters.AddWithValue("@note", note);
+                            string encryptedUserId = MainHelper.Encrypt_Me(userId.ToString(), true);
 
-                        string encryptedUserId1 = MainHelper.Encrypt_Me(userId.ToString(), true);
+                            longUrl = isMobile
+                                ? $"alshaebdriver://app/driver-registration-update/?id={userNumber}"
+                                : $"{baseUrl}/registerDriver?id={encryptedUserId}";
 
-                        longUrl = isMobile
-                            ? $"alshaebdriver://app/driver-registration-update/?id={userNumber}"
-                            : $"{baseUrl}/registerDriver?id={encryptedUserId1}";
-
-                        smsText = "طلبك غير مكتمل، اضغط لاستكمال الطلب:";
-                        break;
+                            smsText = "طلبك غير مكتمل، اضغط لاستكمال الطلب:";
+                            break;
+                        }
                 }
 
-                // ========= إرسال SMS (Short URL دائمًا) =========
+                // ========= إرسال SMS =========
                 Task.Run(async () =>
                 {
                     try
@@ -863,16 +889,11 @@ namespace ShabAdmin
                     }
                     catch
                     {
-                        // fallback → long url
                         await MainHelper.SendSms(
                             userNumber,
                             $"{smsText} {longUrl}");
                     }
                 });
-
-                // ========= تنفيذ التحديث =========
-                cmd.Parameters.AddWithValue("@id", userId);
-                cmd.ExecuteNonQuery();
             }
 
             GridDeliveryUsers.DataBind();

@@ -318,7 +318,7 @@
                                     setTimeout(function () {
                                         audio.currentTime = 0;
                                         audio.play();
-                                    },4000)
+                                    }, 4000)
                                 }, 4000);
                             }
 
@@ -354,7 +354,10 @@
 
             setTimeout(initLastOrderId, 500);
         </script>
-        <audio id="newOrderSound" src="/assets/sounds/Notify.mp3" preload="auto"></audio>
+
+        <audio id="newOrderSound" controls style="display:none">
+            <source src="https://www.alshaeb.net/assets/sounds/Notify.mp3" preload="auto" type="audio/mpeg">
+        </audio>      
 
         <dx:ASPxCallback ID="callbackLocation" runat="server" ClientInstanceName="callbackLocation"
             OnCallback="callbackLocation_Callback">

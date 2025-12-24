@@ -249,6 +249,15 @@ namespace ShabAdmin
         protected global::System.Web.UI.WebControls.SqlDataSource db_L_DeliveryStatus;
 
         /// <summary>
+        /// db_l_city control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource db_l_city;
+
+        /// <summary>
         /// db_L_Gender control.
         /// </summary>
         /// <remarks>

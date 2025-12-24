@@ -47,7 +47,7 @@ namespace ShabAdmin
                        u.licensePicture, u.password, u.firstName, u.lastName, u.l_vehicleType, u.isActive, 
                        u.vehicleVin, u.l_DeliveryStatusId, u.incompleteNote, u.rejectNote, u.vehicleNo, 
                        u.isOnline, u.countryId, u.isUpdated, u.documentNo, u.l_gender, g.description AS gender,
-                       u.userplatform,u.vehicleModel,u.rate, u.userDate
+                       u.userplatform,u.vehicleModel,u.rate, u.userDate,u.l_city
                 FROM [usersDelivery] u
                 LEFT JOIN L_Gender g ON u.l_gender = g.id
                 WHERE u.countryId = @countryId
@@ -112,7 +112,7 @@ namespace ShabAdmin
                        u.licensePicture, u.password, u.firstName, u.lastName, u.l_vehicleType, u.isActive, 
                        u.vehicleVin, u.l_DeliveryStatusId, u.incompleteNote, u.rejectNote, u.vehicleNo, 
                        u.isOnline, u.countryId, u.isUpdated, u.documentNo, u.l_gender, g.description AS gender,
-                       u.userplatform,u.vehicleModel,u.rate, u.userDate
+                       u.userplatform,u.vehicleModel,u.rate, u.userDate,u.l_city
                 FROM [usersDelivery] u
                 LEFT JOIN L_Gender g ON u.l_gender = g.id
                 WHERE u.countryId = @countryId
@@ -173,7 +173,7 @@ namespace ShabAdmin
                        u.licensePicture, u.password, u.firstName, u.lastName, u.l_vehicleType, u.isActive, 
                        u.vehicleVin, u.l_DeliveryStatusId, u.incompleteNote, u.rejectNote, u.vehicleNo, 
                        u.isOnline, u.countryId, u.isUpdated, u.documentNo, u.l_gender, g.description AS gender,
-                       u.userplatform,u.vehicleModel,u.rate, u.userDate
+                       u.userplatform,u.vehicleModel,u.rate, u.userDate,u.l_city
                 FROM [usersDelivery] u
                 LEFT JOIN L_Gender g ON u.l_gender = g.id
                 ORDER BY u.l_deliveryStatusId,u.isOnline,u.userDate";

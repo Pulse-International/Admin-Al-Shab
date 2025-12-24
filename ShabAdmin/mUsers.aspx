@@ -1368,6 +1368,20 @@
                                             </PropertiesComboBox>
                                             <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataComboBoxColumn>
+                                        
+                                        <dx:GridViewDataComboBoxColumn Caption="المدينة" Width="3%" FieldName="l_city">
+                                            <PropertiesComboBox ClientInstanceName="cmbCity"
+                                                DataSourceID="db_l_city"
+                                                TextField="description"
+                                                ValueField="id"
+                                                ValueType="System.Int32"
+                                                EnableCallbackMode="false">
+                                                <ValidationSettings RequiredField-IsRequired="true" ErrorText="اختر الدولة" Display="Dynamic">
+                                                    <RequiredField IsRequired="True"></RequiredField>
+                                                </ValidationSettings>
+                                            </PropertiesComboBox>
+                                            <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
+                                        </dx:GridViewDataComboBoxColumn>
 
                                         <dx:GridViewDataTextColumn Caption="كلمة السر" FieldName="password" Visible="false" VisibleIndex="3">
                                             <PropertiesTextEdit Password="True" HelpText="لتغيير كلمة السر الرجاء أدخل قيمة جديدة، أو اترك الحقل لبقاء نفس كلمة السر القديمة" Native="True">
@@ -1943,7 +1957,7 @@
                                            u.licensePicture, u.password, u.firstName, u.lastName, u.l_vehicleType, u.isActive, 
                                            u.vehicleVin, u.vehicleNo, u.l_DeliveryStatusId, u.incompleteNote, u.rejectNote, 
                                            u.isUpdated, u.isOnline, u.countryId, u.documentNo, u.l_gender, g.description AS gender, 
-                                           u.userplatform,u.vehicleModel,u.rate, u.userDate
+                                           u.userplatform,u.vehicleModel,u.rate, u.userDate,u.l_city
                                     FROM [usersDelivery] u
                                     LEFT JOIN L_Gender g ON u.l_gender = g.id
                                     ORDER BY u.l_deliveryStatusId,u.isOnline,u.userDate"
@@ -1967,6 +1981,12 @@
                                 runat="server"
                                 ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
                                 SelectCommand="SELECT id, description FROM [l_DeliveryStatus]" />
+
+                            <asp:SqlDataSource
+                                ID="db_l_city"
+                                runat="server"
+                                ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
+                                SelectCommand="SELECT id, description FROM [L_City]" />
 
                             <asp:SqlDataSource
                                 ID="db_L_Gender"

@@ -1103,7 +1103,7 @@
                                         } else {
                                             imageUrl = hasOrder
                                                 ? "/assets/animations/redCar.png"
-                                                : "/assets/animations/yallowCar.png";
+                                                : "/assets/animations/yellowCar.png";
                                         }
 
                                         if (!driverOverlays[id]) {

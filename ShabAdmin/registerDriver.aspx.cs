@@ -27,8 +27,8 @@ namespace ShabAdmin
                 string encryptedId = Request.QueryString["id"];
                 string realId = "";
                 bool isEdit = !string.IsNullOrEmpty(encryptedId);
-                //string testid = "52";
-                //testid = MainHelper.Encrypt_Me(testid,true);
+                string testid = "52";
+                testid = MainHelper.Encrypt_Me(testid, true);
                 if (!string.IsNullOrEmpty(encryptedId))
                 {
                     realId = MainHelper.Decrypt_Me(encryptedId, true);
@@ -146,8 +146,8 @@ namespace ShabAdmin
                         lastheader.Text = rdr["lastName"].ToString();
                         driverEmailAddress.Text = rdr["email"].ToString();
                         driverProfilePic.Src = rdr["userPicture"].ToString();
-                        JordanCity.Value = rdr["l_city"].ToString();
-                        UAE.Value = rdr["l_city"].ToString();
+                        JordanCity.Value = rdr["cityId"].ToString();
+                        UAE.Value = rdr["cityId"].ToString();
                         string noteStr = rdr["incompleteNote"].ToString();
                         if (!string.IsNullOrEmpty(noteStr))
                         {
@@ -270,7 +270,7 @@ namespace ShabAdmin
             {
                 string query = @"UPDATE usersDelivery SET 
                     firstName = COALESCE(NULLIF(@firstname, ''), firstName),
-                    l_city = COALESCE(NULLIF(@finalresult, ''), l_city),
+                    cityId = COALESCE(NULLIF(@finalresult, ''), cityId),
                     lastName = COALESCE(NULLIF(@lastname, ''), lastName),
                     email = COALESCE(NULLIF(@email, ''), email),
                     username = COALESCE(NULLIF(@phone, ''), username),
@@ -417,17 +417,17 @@ namespace ShabAdmin
                 string query = "";
                 if (documenttype == 2)
                 {
-                    query = @"INSERT INTO usersDelivery (countryId,l_city,username,firstName,referenceMobile,referenceName,isMobile,vehicleModel,userPlatform,l_gender,lastName,email,userPicture,vehicleNo,vehicleVin,passportPicture,licensePicture,carLicensePicture,carPicture,l_vehicleType,l_deliveryStatusId,l_documentType,documentNo,userDate)
+                    query = @"INSERT INTO usersDelivery (countryId,cityId,username,firstName,referenceMobile,referenceName,isMobile,vehicleModel,userPlatform,l_gender,lastName,email,userPicture,vehicleNo,vehicleVin,passportPicture,licensePicture,carLicensePicture,carPicture,l_vehicleType,l_deliveryStatusId,l_documentType,documentNo,userDate)
                               VALUES(@country,@finalresult,@phonen,@firstname,@nerbynumberr,@nerbynamee,@ismobilee,@carmarkaa,@userPlatformm,@genderr,@lastname,@email,@userPicPath,@carNumber,@vinCar,@passportt,@licensePicPath,@carLicensePicPath,@carPicPath,@carkind,@deliveryStatus,@documenttype,@docnumber,getDate())";
                 }
                 else if (documenttype == 3)
                 {
-                    query = @"INSERT INTO usersDelivery (countryId,l_city,username,firstName,referenceMobile,referenceName,isMobile,vehicleModel,userPlatform,l_gender,lastName,email,userPicture,vehicleNo,vehicleVin,residencePicture,licensePicture,carLicensePicture,carPicture,l_vehicleType,l_deliveryStatusId,l_documentType,documentNo,userDate)
+                    query = @"INSERT INTO usersDelivery (countryId,cityId,username,firstName,referenceMobile,referenceName,isMobile,vehicleModel,userPlatform,l_gender,lastName,email,userPicture,vehicleNo,vehicleVin,residencePicture,licensePicture,carLicensePicture,carPicture,l_vehicleType,l_deliveryStatusId,l_documentType,documentNo,userDate)
                               VALUES(@country,@finalresult,@phonen,@firstname,@nerbynumberr,@nerbynamee,@ismobilee,@carmarkaa,@userPlatformm,@genderr,@lastname,@email,@userPicPath,@carNumber,@vinCar,@residentt,@licensePicPath,@carLicensePicPath,@carPicPath,@carkind,@deliveryStatus,@documenttype,@docnumber,getDate())";
                 }
                 else
                 {
-                    query = @"INSERT INTO usersDelivery (countryId,l_city,username,firstName,referenceMobile,referenceName,isMobile,vehicleModel,userPlatform,l_gender,lastName,email,userPicture,vehicleNo,vehicleVin,idFrontPicture,idBackPicture,licensePicture,carLicensePicture,carPicture,l_vehicleType,l_deliveryStatusId,l_documentType,documentNo,userDate)
+                    query = @"INSERT INTO usersDelivery (countryId,cityId,username,firstName,referenceMobile,referenceName,isMobile,vehicleModel,userPlatform,l_gender,lastName,email,userPicture,vehicleNo,vehicleVin,idFrontPicture,idBackPicture,licensePicture,carLicensePicture,carPicture,l_vehicleType,l_deliveryStatusId,l_documentType,documentNo,userDate)
                               VALUES(@country,@finalresult,@phonen,@firstname,@nerbynumberr,@nerbynamee,@ismobilee,@carmarkaa,@userPlatformm,@genderr,@lastname,@email,@userPicPath,@carNumber,@vinCar,@frontPicPath,@backPicPath,@licensePicPath,@carLicensePicPath,@carPicPath,@carkind,@deliveryStatus,@documenttype,@docnumber,getDate())";
                 }
 

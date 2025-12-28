@@ -234,14 +234,21 @@
                 width: 90px;
                 height: 90px;
             }
-
-            .driver-fullname {
-                font-size: 22px !important;
-                display: block;
-            }
             
             .driver-greeting-text {
-                font-size: 18px;
+                    font-size: 16px !important;
+                    display: flex;
+                    flex-wrap: wrap; 
+                    justify-content: center; 
+                }
+
+            .driver-fullname {
+                    font-size: 18px !important; 
+                    display: inline-block !important; 
+                    white-space: nowrap; 
+                }
+            .names-wrapper {
+                display: inline-flex !important; 
             }
         }
         .main-content{
@@ -251,11 +258,11 @@
             color:red;
         }
         .driver-header-wrapper,
-    .driver-header-wrapper * {
-        font-family: 'Cairo', sans-serif !important;
-        color:white !important;
-        font-size:28px !important;
-    }
+        .driver-header-wrapper * {
+            font-family: 'Cairo', sans-serif !important;
+            color: white !important;
+             font-size: 28px !important; 
+        }
 
     .driver-header-wrapper {
         direction: rtl;

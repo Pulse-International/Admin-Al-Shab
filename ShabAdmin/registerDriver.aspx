@@ -849,6 +849,26 @@
                 padding-left: 10px;
             }
         }
+.names-wrapper {
+    display: inline-flex !important;
+    gap: 8px;
+    align-items: center;
+    white-space: nowrap; 
+    vertical-align: middle;
+}
+
+@media (max-width: 900px) {
+    .driver-greeting-text {
+        font-size: 16px !important;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+    }
+    .driver-fullname {
+        font-size: 18px !important; 
+    }
+}
     </style>
     <script type="text/javascript">
         var currentStep = 1;
@@ -1188,6 +1208,22 @@
                 previewDiv.classList.remove('has-image'); 
             }
         }
+        document.addEventListener("DOMContentLoaded", function () {
+            var container = document.getElementById("namesContainer");
+            if (container) {
+                var fullText = container.innerText || container.textContent;
+
+                var hasArabic = /[\u0600-\u06FF]/.test(fullText);
+
+                if (hasArabic) {
+                    container.style.direction = "rtl";
+                    container.style.textAlign = "right";
+                } else {
+                    container.style.direction = "ltr";
+                    container.style.textAlign = "left";
+                }
+            }
+        });
     </script>
     <main>
         
@@ -1205,8 +1241,11 @@
             
                         <div class="driver-details-section">
                             <div class="driver-greeting-text">
-                                مرحباً، <dx:ASPxLabel CssClass="driver-fullname" runat="server" ID="lastheader"></dx:ASPxLabel>
-                                <dx:ASPxLabel CssClass="driver-fullname" runat="server" ID="nameatheader"></dx:ASPxLabel>
+                                <span>مرحباً،</span>
+                                <span id="namesContainer" class="names-wrapper">
+                                    <dx:ASPxLabel CssClass="driver-fullname" runat="server" ID="nameatheader"></dx:ASPxLabel>
+                                    <dx:ASPxLabel CssClass="driver-fullname" runat="server" ID="lastheader"></dx:ASPxLabel>
+                                </span>
                             </div>
                             <div class="driver-info-field">
                                 <span class="driver-info-icon">✉</span>
@@ -1352,23 +1391,23 @@
                     </div>
                      <div style="margin-bottom: 20px;display:none" id="divJordan">
                         <label>اختر المحافظة التي تريد العمل بها:<span style="color:red">*</span></label><br>
-                        <dx:ASPxComboBox ID="JordanCity" runat="server" Width="100%" Height="45px" ClientInstanceName="JordanCity" DataSourceID="SqlDataSource1" ValueField="id" TextField="description">
+                        <dx:ASPxComboBox ID="JordanCity" runat="server" Width="100%" Height="45px" ClientInstanceName="JordanCity" DataSourceID="SqlDataSource1" ValueField="id" TextField="cityName">
                             <ValidationSettings RequiredField-IsRequired="true" ErrorText="مطلوب" Display="Dynamic" SetFocusOnError="True" >
                             <RequiredField IsRequired="True"></RequiredField>
                             </ValidationSettings>
                         </dx:ASPxComboBox>
-                         <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>" SelectCommand="SELECT [id], [description] FROM [L_City] where countryid = 1"></asp:SqlDataSource>
+                         <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>" SelectCommand="SELECT [id], [cityName] FROM [cities] where countryId = 1"></asp:SqlDataSource>
                     </div>
                     <div style="margin-bottom: 20px; display:none" id="divUAE">
                         <label>اختر المحافظة التي تريد العمل بها:<span style="color:red">*</span></label>
-                        <dx:ASPxComboBox ID="UAE" runat="server" Width="100%" Height="45px" ClientInstanceName="UAE" DataSourceID="SqlDataSource2" ValueField="id" TextField="description">
+                        <dx:ASPxComboBox ID="UAE" runat="server" Width="100%" Height="45px" ClientInstanceName="UAE" DataSourceID="SqlDataSource2" ValueField="id" TextField="cityName">
                             <ValidationSettings RequiredField-IsRequired="true" ErrorText="مطلوب" Display="Dynamic" SetFocusOnError="True" >
                             <RequiredField IsRequired="True"></RequiredField>
                             </ValidationSettings>
                         </dx:ASPxComboBox>
-                        <asp:SqlDataSource ID="SqlDataSource2" runat="server" ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>" SelectCommand="SELECT [id], [description] FROM [L_City] WHERE ([countryid] = @countryid)">
+                        <asp:SqlDataSource ID="SqlDataSource2" runat="server" ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>" SelectCommand="SELECT [id], [cityName] FROM [cities] WHERE ([countryId] = @countryid)">
                             <SelectParameters>
-                                <asp:Parameter DefaultValue="5" Name="countryid" Type="Int32" />
+                                <asp:Parameter DefaultValue="5" Name="countryId" Type="Int32" />
                             </SelectParameters>
                         </asp:SqlDataSource>
                     </div>

@@ -156,7 +156,11 @@
   <ItemGroup>
     <Content Include="assets\animations\bike.png" />
     <Content Include="assets\animations\car.png" />
+    <Content Include="assets\animations\redBike.png" />
+    <Content Include="assets\animations\redCar.png" />
     <Content Include="assets\animations\WhiteCar.png" />
+    <Content Include="assets\animations\yellowBike.png" />
+    <Content Include="assets\animations\yellowCar.png" />
     <Content Include="assets\css\m_material-dashboard.css" />
     <Content Include="assets\css\material-dashboard.css" />
     <Content Include="assets\css\material-dashboard.min.css" />

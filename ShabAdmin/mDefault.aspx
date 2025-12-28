@@ -36,7 +36,7 @@
                                 <i class="material-icons opacity-10">attach_money</i>
                             </div>
                             <div class="text-start pt-1">
-                                <p class="text-sm mb-0 text-capitalize">إجمالي المبيعات (اليوم)</p>
+                                <p class="text-sm mb-0 text-capitalize">إجمالي المبيعات حسب التاريخ</p>
                                 <h4 class="mb-0"><%= TodaySalesAmount.ToString("N2") %> <%= SelectedCurrencySymbol %> </h4>
                             </div>
                         </div>
@@ -55,13 +55,13 @@
                                 <i class="material-icons opacity-10">shopping_cart</i>
                             </div>
                             <div class="text-start pt-1">
-                                <p class="text-sm mb-0 text-capitalize">عدد الطلبات (اليوم)</p>
+                                <p class="text-sm mb-0 text-capitalize">عدد الطلبات حسب التاريخ</p>
                                 <h4 class="mb-0"><%= TodayOrders %></h4>
                             </div>
                         </div>
                         <hr class="dark horizontal my-0">
                         <div class="card-footer p-3">
-                            <p class="mb-0 text-center">إجمالي الطلبات المسجلة اليوم</p>
+                            <p class="mb-0 text-center">إجمالي الطلبات المسجلة حسب التاريخ</p>
                         </div>
                     </div>
                 </div>
@@ -75,13 +75,13 @@
                             </div>
 
                             <div class="text-start pt-1">
-                                <p class="text-sm mb-0 text-capitalize">عدد المسجلين (اليوم)</p>
+                                <p class="text-sm mb-0 text-capitalize">عدد المسجلين حسب التاريخ</p>
                                 <h4 class="mb-0"><%= TodayRegisteredUsers %></h4>
                             </div>
                         </div>
                         <hr class="dark horizontal my-0">
                         <div class="card-footer p-3">
-                            <p class="mb-0" style="text-align: center;">عدد المستخدمين الذين سجّلوا اليوم</p>
+                            <p class="mb-0" style="text-align: center;">عدد المستخدمين الذين سجّلوا</p>
                         </div>
                     </div>
                 </div>
@@ -93,7 +93,7 @@
                                 <i class="material-icons opacity-10">local_shipping</i>
                             </div>
                             <div class="text-start pt-1">
-                                <p class="text-sm mb-0 text-capitalize">مجموع التوصيل (اليوم)</p>
+                                <p class="text-sm mb-0 text-capitalize">مجموع التوصيل حسب التاريخ</p>
                                 <h4 class="mb-0"><%= TodayDeliveryAmount.ToString("N2") %> <%= SelectedCurrencySymbol %> </h4>
                             </div>
                         </div>
@@ -124,7 +124,7 @@
                             <hr class="dark horizontal">
                             <div class="d-flex ">
                                 <i class="material-icons text-sm my-auto ms-1">schedule</i>
-                                <p class="mb-0 text-sm">محدث اليوم</p>
+                                <p class="mb-0 text-sm">آخر تحديث</p>
                             </div>
                         </div>
                     </div>
@@ -144,7 +144,7 @@
                             <hr class="dark horizontal">
                             <div class="d-flex ">
                                 <i class="material-icons text-sm my-auto ms-1">schedule</i>
-                                <p class="mb-0 text-sm">محدث اليوم</p>
+                                <p class="mb-0 text-sm">آخر تحديث</p>
                             </div>
                         </div>
                     </div>
@@ -164,7 +164,7 @@
                             <hr class="dark horizontal">
                             <div class="d-flex ">
                                 <i class="material-icons text-sm my-auto me-1">schedule</i>
-                                <p class="mb-0 text-sm">محدث اليوم</p>
+                                <p class="mb-0 text-sm">آخر تحديث</p>
                             </div>
                         </div>
                     </div>

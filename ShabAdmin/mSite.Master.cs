@@ -28,6 +28,7 @@ namespace ShabAdmin
             {
                 cmbCountries.Visible = false;
                 cmbCompanies.Visible = false;
+                dateFilter.Visible = false;
             }
 
             if (Request.Cookies["M_Username"] != null && !string.IsNullOrEmpty(Request.Cookies["M_Username"].Value))
@@ -154,6 +155,16 @@ namespace ShabAdmin
                     };
                     Response.Cookies.Add(cookie);
                 }
+                if (Request.Cookies["dashDate"] != null && !string.IsNullOrEmpty(Request.Cookies["dashDate"].Value))
+                {
+                    DateTime dt;
+                    if (DateTime.TryParse(Request.Cookies["dashDate"].Value, out dt))
+                    {
+                        dateFilter.Date = dt; // 👈 عرض التاريخ في فلتر الواجهة
+                    }
+                }
+                
+
             }
         }
 

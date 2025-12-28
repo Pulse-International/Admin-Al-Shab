@@ -284,6 +284,38 @@
                             <ClientSideEvents SelectedIndexChanged="companySelectedChanged" />
                         </dx:ASPxComboBox>
 
+                        <!-- تاريخ -->
+                        <dx:ASPxDateEdit
+                            ID="dateFilter"
+                            runat="server"
+                            ClientInstanceName="dateFilter"
+                            EditFormat="Date"
+                            UseMaskBehavior="true"
+                            Width="240px"
+                            Font-Size="X-Large"
+                            Font-Names="Cairo"
+                            NullText="اختر التاريخ"
+                            DisplayFormatString="yyyy-MM-dd"
+                            Style="font-family: 'Cairo', sans-serif; font-weight: 600; text-align: center; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+                            <CalendarProperties
+                                ClearButtonText="مسح"
+                                TodayButtonText="اليوم" />
+
+                            <ClientSideEvents DateChanged="function(s,e){
+    if(s.GetDate()){
+        var d = s.GetDate();
+        var year = d.getFullYear();
+        var month = ('0' + (d.getMonth() + 1)).slice(-2);
+        var day = ('0' + d.getDate()).slice(-2);
+        setCookie('dashDate', year + '-' + month + '-' + day, 365);
+    } else {
+        setCookie('dashDate', '', -1);
+    }
+    window.location.href='mDefault';
+}" />
+
+                        </dx:ASPxDateEdit>
+
                     </div>
 
                     <!-- User + Profile + Icons (يمين) -->

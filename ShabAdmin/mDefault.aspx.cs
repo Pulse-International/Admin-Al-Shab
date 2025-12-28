@@ -32,6 +32,19 @@ namespace ShabAdmin
             CurrentData = LoadDashboardDataFromDb(countryId, companyId);
         }
 
+        private DateTime? GetFilterDateFromCookie()
+        {
+            try
+            {
+                var c = Request.Cookies["dashDate"];
+                if (c != null && DateTime.TryParse(c.Value, out DateTime dt))
+                    return dt;
+            }
+            catch { }
+            return null;
+        }
+
+
         private DashboardData LoadDashboardDataFromDb(int countryId, int companyId)
         {
             var data = new DashboardData
@@ -44,8 +57,13 @@ namespace ShabAdmin
                 SelectedCurrencySymbol = GetCurrencySymbolByCountry(countryId)
             };
 
-            var startDay = DateTime.Now.Date.AddDays(-6);
-            var startMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-5);
+            var filterDate = GetFilterDateFromCookie(); // 👈 القراءة من الكوكي
+            var startDay = filterDate.HasValue
+                ? filterDate.Value.Date.AddDays(-6)
+                : DateTime.Now.Date.AddDays(-6);
+            var startMonth = filterDate.HasValue
+                ? new DateTime(filterDate.Value.Year, filterDate.Value.Month, 1).AddMonths(-5)
+                : new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-5);
 
             using (var cn = new SqlConnection(ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
             {
@@ -57,12 +75,16 @@ namespace ShabAdmin
                     cmd.Parameters.AddWithValue("@CountryId", countryId);
                     cmd.Parameters.AddWithValue("@CompanyId", companyId);
 
-                    // Add timeout for long queries
+                    // ⬇️ أهم سطرين
+                    if (filterDate.HasValue)
+                        cmd.Parameters.AddWithValue("@FilterDate", filterDate.Value);
+                    else
+                        cmd.Parameters.AddWithValue("@FilterDate", DBNull.Value);
+
                     cmd.CommandTimeout = 30;
 
                     using (var rdr = cmd.ExecuteReader())
                     {
-                        // Process all result sets...
                         ProcessOrdersPerDay(rdr, data, startDay);
                         ProcessSalesPerDay(rdr, data, startDay);
                         ProcessMonthlySales(rdr, data, startMonth);
@@ -72,7 +94,6 @@ namespace ShabAdmin
                     }
                 }
             }
-
             return data;
         }
 
@@ -281,13 +302,21 @@ namespace ShabAdmin
         protected string GetLast7DayLabelsArabic()
         {
             var labels = new List<string>();
-            for (int i = 6; i >= 0; i--)
+            var filterDate = GetFilterDateFromCookie();
+
+            DateTime startDay = filterDate.HasValue
+                ? filterDate.Value.AddDays(-6)  // من التاريخ المختار
+                : DateTime.Now.AddDays(-6);     // من اليوم مثل السابق
+
+            for (int i = 0; i < 7; i++)
             {
-                var d = DateTime.Now.AddDays(-i).DayOfWeek;
-                labels.Add(GetArabicDayName(d));
+                var d = startDay.AddDays(i);
+                labels.Add(GetArabicDayName(d.DayOfWeek));
             }
+
             return new JavaScriptSerializer().Serialize(labels);
         }
+
 
         protected string GetOrdersLast7Json()
             => new JavaScriptSerializer().Serialize(OrdersLast7);

@@ -51,6 +51,15 @@ namespace ShabAdmin
         protected global::DevExpress.Web.ASPxComboBox cmbCompanies;
 
         /// <summary>
+        /// dateFilter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxDateEdit dateFilter;
+
+        /// <summary>
         /// mainFullName control.
         /// </summary>
         /// <remarks>

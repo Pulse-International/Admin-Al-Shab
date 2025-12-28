@@ -355,9 +355,9 @@
             setTimeout(initLastOrderId, 500);
         </script>
 
-        <audio id="newOrderSound" controls style="display:none">
+        <audio id="newOrderSound" controls style="display: none">
             <source src="https://www.alshaeb.net/assets/sounds/Notify.mp3" preload="auto" type="audio/mpeg">
-        </audio>      
+        </audio>
 
         <dx:ASPxCallback ID="callbackLocation" runat="server" ClientInstanceName="callbackLocation"
             OnCallback="callbackLocation_Callback">
@@ -1092,11 +1092,19 @@
                                         const last = lastPositions1[id];
                                         const rotation = last ? calculateBearing(last, pos) : 0;
 
-                                        const imageUrl = loc.l_vehicleType === "2"
-                                            ? "/assets/animations/bike.png"
-                                            : "/assets/animations/WhiteCar.png";
-
+                                        const hasOrder = loc.withOrder === true || loc.withOrder === "true";
                                         const isBike = loc.l_vehicleType === "2";
+
+                                        let imageUrl = "";
+                                        if (isBike) {
+                                            imageUrl = hasOrder
+                                                ? "/assets/animations/redBike.png"
+                                                : "/assets/animations/yellowBike.png";
+                                        } else {
+                                            imageUrl = hasOrder
+                                                ? "/assets/animations/redCar.png"
+                                                : "/assets/animations/yallowCar.png";
+                                        }
 
                                         if (!driverOverlays[id]) {
                                             const overlay = new RotatingCarOverlay(pos, driversMap, imageUrl, rotation, isBike);
@@ -1107,7 +1115,7 @@
                                                 div.style.width = "60px";
                                                 div.style.height = "60px";
                                                 div.style.transition = "transform 0.3s ease";
-                                                div.title = tooltip; // ✅ Tooltip includes Order ID + Name
+                                                div.title = tooltip;
                                                 div.innerHTML = `<img src="${this.imageUrl}" style="width: 70px; height: 110px;" />`;
                                                 this.div = div;
                                                 this.getPanes().overlayImage.appendChild(div);

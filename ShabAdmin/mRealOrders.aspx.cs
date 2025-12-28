@@ -474,32 +474,44 @@ namespace ShabAdmin
             {
                 conn.Open();
                 SqlCommand cmd = new SqlCommand(@"
-            SELECT 
-                ol.latitude, 
-                ol.longitude, 
-                ol.driverId,
-                u.firstName,
-                u.lastName,
-                u.l_vehicleType
-            FROM driverLocation ol
-            JOIN Orders o ON ol.driverId = o.usersDeliveryId
-            JOIN usersDelivery u ON o.usersDeliveryId = u.id
-            WHERE o.l_orderStatus = 3", conn);
+    SELECT 
+        ol.latitude, 
+        ol.longitude, 
+        ol.driverId,
+        u.firstName,
+        u.lastName,
+        u.l_vehicleType,
+        u.isOnline,
+        u.isActive,
+        (SELECT COUNT(*) FROM Orders oo 
+         WHERE oo.usersDeliveryId = ol.driverId AND oo.l_orderStatus = 3) AS OrderCount
+    FROM driverLocation ol
+    LEFT JOIN usersDelivery u ON ol.driverId = u.id
+    WHERE u.isOnline = 1  -- فقط الأونلاين (حسب رغبتك)
+", conn);
 
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
+                        int orderCount = Convert.ToInt32(reader["OrderCount"]);
+                        bool online = Convert.ToBoolean(reader["isOnline"]);
+                        bool active = Convert.ToBoolean(reader["isActive"]);
+
                         locations.Add(new
                         {
                             latitude = reader["latitude"].ToString(),
                             longitude = reader["longitude"].ToString(),
                             driverId = reader["driverId"].ToString(),
                             firstName = reader["firstName"].ToString(),
+                            lastName = reader["lastName"].ToString(),
                             l_vehicleType = reader["l_vehicleType"].ToString(),
-                            lastName = reader["lastName"].ToString()
+                            withOrder = orderCount > 0,
+                            isOnline = online,
+                            isActive = active
                         });
                     }
+
                 }
             }
 

@@ -1369,10 +1369,10 @@
                                             <CellStyle VerticalAlign="Middle" Font-Size="12px" HorizontalAlign="Center" />
                                         </dx:GridViewDataComboBoxColumn>
                                         
-                                        <dx:GridViewDataComboBoxColumn Caption="المدينة" Width="3%" FieldName="l_city">
+                                        <dx:GridViewDataComboBoxColumn Caption="المدينة" Width="3%" FieldName="cityId">
                                             <PropertiesComboBox ClientInstanceName="cmbCity"
-                                                DataSourceID="db_l_city"
-                                                TextField="description"
+                                                DataSourceID="db_city"
+                                                TextField="cityName"
                                                 ValueField="id"
                                                 ValueType="System.Int32"
                                                 EnableCallbackMode="false">
@@ -1957,7 +1957,7 @@
                                            u.licensePicture, u.password, u.firstName, u.lastName, u.l_vehicleType, u.isActive, 
                                            u.vehicleVin, u.vehicleNo, u.l_DeliveryStatusId, u.incompleteNote, u.rejectNote, 
                                            u.isUpdated, u.isOnline, u.countryId, u.documentNo, u.l_gender, g.description AS gender, 
-                                           u.userplatform,u.vehicleModel,u.rate, u.userDate,u.l_city
+                                           u.userplatform,u.vehicleModel,u.rate, u.userDate,u.cityId
                                     FROM [usersDelivery] u
                                     LEFT JOIN L_Gender g ON u.l_gender = g.id
                                     ORDER BY u.l_deliveryStatusId,u.isOnline,u.userDate"
@@ -1983,10 +1983,10 @@
                                 SelectCommand="SELECT id, description FROM [l_DeliveryStatus]" />
 
                             <asp:SqlDataSource
-                                ID="db_l_city"
+                                ID="db_city"
                                 runat="server"
                                 ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                                SelectCommand="SELECT id, description FROM [L_City]" />
+                                SelectCommand="SELECT id, cityName FROM [cities]" />
 
                             <asp:SqlDataSource
                                 ID="db_L_Gender"

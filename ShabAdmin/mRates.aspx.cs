@@ -56,30 +56,53 @@ SELECT
     pr.userDate,
     pr.rateApproved,
     pr.orderId,
-    (SELECT username FROM orders WHERE id = pr.orderId) AS username,
+    o.username,
+    ua.firstName + ' ' + ua.lastName AS fullName,  
     pr.productId,
     p.countryId,
     p.companyId
 FROM productsRates AS pr
 INNER JOIN products AS p ON pr.productId = p.id
-WHERE p.countryId = @countryId AND p.companyId = @companyId
-ORDER BY pr.id DESC";  
+INNER JOIN orders AS o ON o.id = pr.orderId
+LEFT JOIN usersApp AS ua ON ua.username = o.username  
+WHERE p.countryId = @countryId
+  AND p.companyId = @companyId
+ORDER BY pr.id DESC";
+
                 db_ProductRates.SelectParameters.Add("countryId", countryId.ToString());
                 db_ProductRates.SelectParameters.Add("companyId", companyId.ToString());
 
                 db_OrderRates.SelectCommand = @"
-SELECT id,companyId,countryId,rate,rateDesc,rateDate,rateApproved,totalAmount 
-FROM orders 
-WHERE rate > 0 AND companyId = @companyId
-ORDER BY id DESC";
+SELECT 
+    o.id,
+    o.companyId,
+    o.countryId,
+    o.rate,
+    o.rateDesc,
+    o.rateDate,
+    o.rateApproved,
+    o.totalAmount,
+    o.username,                                    
+    ua.firstName + ' ' + ua.lastName AS fullName     
+FROM orders AS o
+LEFT JOIN usersApp AS ua ON ua.username = o.username
+WHERE o.rate > 0 
+  AND o.companyId = @companyId
+  AND o.countryId = @countryId
+ORDER BY o.id DESC";
+
                 db_OrderRates.SelectParameters.Add("companyId", companyId.ToString());
+                db_OrderRates.SelectParameters.Add("countryId", countryId.ToString());
+
 
                 db_DeliveryRates.SelectCommand = @"
 SELECT 
     r.id, 
     r.userDeliveryId, 
-    (u.firstName + ' ' + u.lastName) AS fullName,
-    u.username,
+    (u.firstName + ' ' + u.lastName) AS deliveryFullName,
+    u.username AS deliveryUsername,
+    ua.username AS appUsername,
+    (ua.firstName + ' ' + ua.lastName) AS appFullName,
     r.rate, 
     r.rateDesc,
     o.countryId,
@@ -90,10 +113,15 @@ SELECT
 FROM usersDeliveryRates AS r
 JOIN orders AS o ON o.id = r.orderId
 INNER JOIN usersDelivery AS u ON r.userDeliveryId = u.id
-WHERE r.rate > 0 AND u.countryId = @countryId AND o.companyId = @companyId
+LEFT JOIN usersApp AS ua ON ua.username = o.username 
+WHERE r.rate > 0 
+  AND u.countryId = @countryId 
+  AND o.companyId = @companyId
 ORDER BY r.id DESC";
+
                 db_DeliveryRates.SelectParameters.Add("countryId", countryId.ToString());
                 db_DeliveryRates.SelectParameters.Add("companyId", companyId.ToString());
+
 
                 db_DeliveryUsers.SelectCommand = @"
 SELECT id, (firstName + ' ' + lastName) AS fullName, countryId, username, rate, rateCount
@@ -134,31 +162,49 @@ SELECT
     pr.userDate,
     pr.rateApproved,
     pr.orderId,
-    (SELECT username FROM orders WHERE id = pr.orderId) AS username,
+    o.username,
+    ua.firstName + ' ' + ua.lastName AS fullName,  
     pr.productId,
     p.countryId,
     p.companyId
 FROM productsRates AS pr
 INNER JOIN products AS p ON pr.productId = p.id
+INNER JOIN orders AS o ON o.id = pr.orderId
+LEFT JOIN usersApp AS ua ON ua.username = o.username  
 WHERE p.countryId = @countryId
 ORDER BY pr.id DESC";
                 db_ProductRates.SelectParameters.Add("countryId", countryId.ToString());
 
                 db_OrderRates.SelectCommand = @"
-SELECT id,companyId,countryId,rate,rateDesc,rateDate,rateApproved,totalAmount 
-FROM orders 
-WHERE rate > 0 AND companyId IN (SELECT id FROM companies WHERE countryId = @countryId)
-ORDER BY id DESC";
+SELECT 
+    o.id,
+    o.companyId,
+    o.countryId,
+    o.rate,
+    o.rateDesc,
+    o.rateDate,
+    o.rateApproved,
+    o.totalAmount,
+    o.username,                                    
+    ua.firstName + ' ' + ua.lastName AS fullName     
+FROM orders AS o
+LEFT JOIN usersApp AS ua ON ua.username = o.username
+WHERE o.rate > 0 
+  AND o.countryId = @countryId
+ORDER BY o.id DESC";
+
                 db_OrderRates.SelectParameters.Add("countryId", countryId.ToString());
 
                 db_DeliveryRates.SelectCommand = @"
 SELECT 
     r.id, 
     r.userDeliveryId, 
-    (u.firstName + ' ' + u.lastName) AS fullName,
-    u.username,
+    (u.firstName + ' ' + u.lastName) AS deliveryFullName,
+    u.username AS deliveryUsername,
+    ua.username AS appUsername,
+    (ua.firstName + ' ' + ua.lastName) AS appFullName,
     r.rate, 
-    r.rateDesc, 
+    r.rateDesc,
     o.countryId,
     o.companyId,
     r.userDate, 
@@ -167,6 +213,7 @@ SELECT
 FROM usersDeliveryRates AS r
 JOIN orders AS o ON o.id = r.orderId
 INNER JOIN usersDelivery AS u ON r.userDeliveryId = u.id
+LEFT JOIN usersApp AS ua ON ua.username = o.username 
 WHERE r.rate > 0 AND o.countryId = @countryId
 ORDER BY r.id DESC";
                 db_DeliveryRates.SelectParameters.Add("countryId", countryId.ToString());
@@ -204,33 +251,53 @@ SELECT
     pr.userDate,
     pr.rateApproved,
     pr.orderId,
-    (SELECT username FROM orders WHERE id = pr.orderId) AS username,
+    o.username ,
+    ua.firstName + ' ' + ua.lastName AS fullName,  
     pr.productId,
     p.countryId,
     p.companyId
 FROM productsRates AS pr
 INNER JOIN products AS p ON pr.productId = p.id
+INNER JOIN orders AS o ON o.id = pr.orderId
+LEFT JOIN usersApp AS ua ON ua.username = o.username  
 ORDER BY pr.id DESC";
 
-                db_OrderRates.SelectCommand =
-                    "SELECT id,rate,companyId,countryId,rateDesc,rateDate,rateApproved,totalAmount FROM orders WHERE rate > 0 ORDER BY id DESC";
+                db_OrderRates.SelectCommand = @"
+SELECT 
+    o.id,
+    o.companyId,
+    o.countryId,
+    o.rate,
+    o.rateDesc,
+    o.rateDate,
+    o.rateApproved,
+    o.totalAmount,
+    o.username,                                    
+    ua.firstName + ' ' + ua.lastName AS fullName     
+FROM orders AS o
+LEFT JOIN usersApp AS ua ON ua.username = o.username
+WHERE o.rate > 0 
+ORDER BY o.id DESC";
 
                 db_DeliveryRates.SelectCommand = @"
 SELECT 
     r.id, 
     r.userDeliveryId, 
-    (u.firstName + ' ' + u.lastName) AS fullName,
-    u.username,
+    (u.firstName + ' ' + u.lastName) AS deliveryFullName,
+    u.username AS deliveryUsername,
+    ua.username AS appUsername,
+    (ua.firstName + ' ' + ua.lastName) AS appFullName,
     r.rate, 
+    r.rateDesc,
     o.countryId,
     o.companyId,
-    r.rateDesc, 
     r.userDate, 
     r.rateApproved,
     r.orderId
 FROM usersDeliveryRates AS r
 JOIN orders AS o ON o.id = r.orderId
 INNER JOIN usersDelivery AS u ON r.userDeliveryId = u.id
+LEFT JOIN usersApp AS ua ON ua.username = o.username 
 WHERE r.rate > 0
 ORDER BY r.id DESC";
 

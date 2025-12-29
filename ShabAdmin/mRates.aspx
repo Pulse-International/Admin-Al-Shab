@@ -190,10 +190,16 @@
                                         </dx:GridViewDataComboBoxColumn>
 
 
-                                        <dx:GridViewDataColumn Caption="رقم المستخدم" FieldName="username">
-                                            <EditFormSettings Visible="False" />
-                                            <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
+                                        <dx:GridViewDataColumn Caption="المستخدم (رقم الهاتف)" FieldName="username">
+                                            <DataItemTemplate>
+                                                <div style="font-family: Cairo; text-align: center;">
+                                                    <div style="color: #888; font-size: 20px;"><%# Eval("username") %></div>
+                                                    <div style="font-weight: bold;"><%# Eval("fullName") %></div>
+                                                </div>
+                                            </DataItemTemplate>
+                                            <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
                                         </dx:GridViewDataColumn>
+
 
                                         <dx:GridViewDataTextColumn FieldName="rateDesc" Caption="وصف التقييم">
                                             <PropertiesTextEdit>
@@ -530,6 +536,16 @@
                                                 </CellStyle>
                                             </dx:GridViewDataComboBoxColumn>
 
+                                            <dx:GridViewDataColumn Caption="المستخدم (رقم الهاتف)" FieldName="username">
+                                                <DataItemTemplate>
+                                                    <div style="font-family: Cairo; text-align: center;">
+                                                        <div style="color: #888; font-size: 20px;"><%# Eval("username") %></div>
+                                                        <div style="font-weight: bold;"><%# Eval("fullName") %></div>
+                                                    </div>
+                                                </DataItemTemplate>
+                                                <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                                            </dx:GridViewDataColumn>
+
                                             <dx:GridViewDataTextColumn FieldName="rateDesc" Caption="وصف التقييم">
                                                 <PropertiesTextEdit EncodeHtml="false">
                                                     <ValidationSettings Display="Dynamic">
@@ -859,14 +875,25 @@
                                             </dx:GridViewDataComboBoxColumn>
 
 
-                                            <dx:GridViewDataComboBoxColumn Caption="رقم السائق" FieldName="username">
-                                                <PropertiesComboBox DataSourceID="db_DeliveryUsers" TextField="username" ValueField="id" ValueType="System.Int32">
-                                                    <ItemStyle Font-Size="1.5em" />
-                                                </PropertiesComboBox>
-                                                <EditFormSettings Visible="False" />
-                                                <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center">
-                                                </CellStyle>
-                                            </dx:GridViewDataComboBoxColumn>
+                                            <dx:GridViewDataColumn Caption="السائق (رقم الهاتف)" FieldName="deliveryUsername">
+                                                <DataItemTemplate>
+                                                    <div style="font-family: Cairo; text-align: center;">
+                                                        <div style="color: #888; font-size: 20px;"><%# Eval("deliveryUsername") %></div>
+                                                        <div style="font-weight: bold;"><%# Eval("deliveryFullName") %></div>
+                                                    </div>
+                                                </DataItemTemplate>
+                                                <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                                            </dx:GridViewDataColumn>
+
+                                            <dx:GridViewDataColumn Caption="المستخدم (رقم الهاتف)" FieldName="appUsername">
+                                                <DataItemTemplate>
+                                                    <div style="font-family: Cairo; text-align: center;">
+                                                        <div style="color: #888; font-size: 20px;"><%# Eval("appUsername") %></div>
+                                                        <div style="font-weight: bold;"><%# Eval("appFullName") %></div>
+                                                    </div>
+                                                </DataItemTemplate>
+                                                <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                                            </dx:GridViewDataColumn>
 
                                             <dx:GridViewDataTextColumn FieldName="rateDesc" Caption="وصف التقييم">
                                                 <PropertiesTextEdit EncodeHtml="false">
@@ -983,7 +1010,7 @@
                                                 <CellStyle VerticalAlign="Middle" Font-Size="Large" HorizontalAlign="Center" />
                                             </dx:GridViewDataColumn>
 
-                                            
+
                                             <dx:GridViewDataColumn Caption="صورة السائق" FieldName="userPicture">
 
                                                 <DataItemTemplate>

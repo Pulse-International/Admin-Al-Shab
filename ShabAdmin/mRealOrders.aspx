@@ -584,6 +584,7 @@
                                                     onclick="callbackAddress1.PerformCallback('<%# Eval("addressId") %>'); popupAddress1.Show();"
                                                     style="text-decoration: underline; color: #007bff; font-family: Cairo;">موقع الزبون
                                                 </a>
+                                                <%# GetPendingOrdersHtml(Eval("username").ToString()) %>
                                             </DataItemTemplate>
                                             <EditFormSettings Visible="False" />
                                             <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />

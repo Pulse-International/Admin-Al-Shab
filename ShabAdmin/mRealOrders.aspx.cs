@@ -1217,5 +1217,44 @@ namespace ShabAdmin
             }
         }
 
+
+
+        public string GetPendingOrdersHtml(string username)
+        {
+            List<string> orderIds = new List<string>();
+
+            using (SqlConnection conn = new SqlConnection(
+                ConfigurationManager.ConnectionStrings["ShabDB_connection"].ConnectionString))
+            {
+                conn.Open();
+                string sql = @"
+            SELECT Id
+            FROM orders
+            WHERE Username = @username
+            AND l_orderStatus IN (1,2,3)
+        ";
+
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@username", username);
+
+                SqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    orderIds.Add(dr["Id"].ToString());
+                }
+            }
+
+            if (orderIds.Count > 1)
+            {
+                return $@"
+            <div style='margin-top:5px; color:black; font-size:13px;'>
+                لديه اكثر من طلب <br/>
+                ({string.Join(", ", orderIds)})
+            </div>";
+            }
+
+            return "";
+        }
+
     }
 }

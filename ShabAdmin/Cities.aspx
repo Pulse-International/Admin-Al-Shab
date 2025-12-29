@@ -98,27 +98,7 @@
                         </CellStyle>
                     </dx:GridViewDataTextColumn>
 
-                    <dx:GridViewDataSpinEditColumn
-                        Caption="مدى السائق"
-                        FieldName="driverDistance"
-                        Width="5%">
-                        <PropertiesSpinEdit
-                            DisplayFormatString="g"
-                            NullDisplayText="0"
-                            MaxLength="10"
-                            MinValue="0"
-                            MaxValue="999999">
-                            <ValidationSettings
-                                Display="Dynamic"
-                                SetFocusOnError="True">
-                                <RequiredField
-                                    IsRequired="True"
-                                    ErrorText="الرجاء إدخال مدى السائق" />
-                            </ValidationSettings>
-                        </PropertiesSpinEdit>
-                        <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
-                    </dx:GridViewDataSpinEditColumn>
-
+                  
                     <dx:GridViewDataTextColumn Caption="" ShowInCustomizationForm="True" Width="100px">
                         <EditFormSettings Visible="False" />
                         <DataItemTemplate>
@@ -164,8 +144,8 @@
                 ID="db_Cities"
                 runat="server"
                 ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                SelectCommand="SELECT [id], [cityName] ,[cityCode] , [countryId], [driverDistance] FROM [cities] where ((countryId=@id) or (@id=0))"
-                InsertCommand="INSERT INTO [cities] ([cityName],[cityCode],[countryId],[driverDistance],[userDate]) VALUES (@cityName,@cityCode,@countryId,@driverDistance,getdate());"
+                SelectCommand="SELECT [id], [cityName] ,[cityCode] , [countryId] FROM [cities] where ((countryId=@id) or (@id=0))"
+                InsertCommand="INSERT INTO [cities] ([cityName],[cityCode],[countryId],[userDate]) VALUES (@cityName,@cityCode,@countryId,getdate());"
                 UpdateCommand="UPDATE [cities]
                     SET [cityName] = @cityName,
                         [countryId] = @countryId,
@@ -180,13 +160,11 @@
                 <InsertParameters>
                     <asp:Parameter Name="cityName" Type="String" />
                     <asp:Parameter Name="cityCode" Type="String" />
-                    <asp:Parameter Name="driverDistance" />
                     <asp:Parameter Name="countryId" Type="String" />
                 </InsertParameters>
                 <UpdateParameters>
                     <asp:Parameter Name="cityName" Type="String" />
                     <asp:Parameter Name="cityCode" Type="String" />
-                    <asp:Parameter Name="driverDistance" />
                     <asp:Parameter Name="countryId" Type="String" />
                 </UpdateParameters>
                 <DeleteParameters>

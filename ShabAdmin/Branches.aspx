@@ -253,6 +253,27 @@
                         <CellStyle VerticalAlign="Middle" HorizontalAlign="Center" />
                     </dx:GridViewDataTextColumn>
 
+                    <dx:GridViewDataSpinEditColumn
+                        Caption="مدى السائق"
+                        FieldName="driverDistance"
+                        Width="5%">
+                        <PropertiesSpinEdit
+                            DisplayFormatString="g"
+                            NullDisplayText="0"
+                            MaxLength="10"
+                            MinValue="0"
+                            MaxValue="999999">
+                            <ValidationSettings
+                                Display="Dynamic"
+                                SetFocusOnError="True">
+                                <RequiredField
+                                    IsRequired="True"
+                                    ErrorText="الرجاء إدخال مدى السائق" />
+                            </ValidationSettings>
+                        </PropertiesSpinEdit>
+                        <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                    </dx:GridViewDataSpinEditColumn>
+
                     <dx:GridViewDataTextColumn Caption="الهاتف" FieldName="phone">
                         <PropertiesTextEdit>
                             <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
@@ -340,11 +361,12 @@
                         b.[zone],
                         b.[phone], 
                         b.[extensionNumber],
+                        b.[driverDistance],
                         b.[isMain]
                     FROM branches b
                     LEFT JOIN companies c ON b.companyId = c.id
 "
-                InsertCommand="INSERT INTO [branches] ([name], [l_branchStatus], [latitude], [longitude], [zone], [phone], [extensionNumber], [isMain], [countryId], [companyId], [cityId],[userDate]) VALUES (@name , @l_branchStatus, @latitude, @longitude, @zone, @phone, @extensionNumber,@isMain ,@countryId,@companyId,@cityId,getdate());"
+                InsertCommand="INSERT INTO [branches] ([name], [l_branchStatus], [latitude], [longitude], [zone], [phone], [extensionNumber], [isMain], [countryId], [companyId], [cityId],[driverDistance],[userDate]) VALUES (@name , @l_branchStatus, @latitude, @longitude, @zone, @phone, @extensionNumber,@isMain ,@countryId,@companyId,@cityId,@driverDistance,getdate());"
                 UpdateCommand="UPDATE [branches]
                     SET [name]        = @name,
                         l_branchStatus = @l_branchStatus,
@@ -356,7 +378,8 @@
                         [isMain] = @isMain,
                         [countryId] = @countryId,
                         [companyId] = @companyId,
-                        [cityId] = @cityId
+                        [cityId] = @cityId,
+                        [driverDistance] = @driverDistance
                     WHERE [id] = @id;"
                 DeleteCommand="DELETE FROM [branches] WHERE [id] = @id;
                     delete from branchproducts where branchId = @id;
@@ -373,6 +396,7 @@
                     <asp:Parameter Name="countryId" Type="String" />
                     <asp:Parameter Name="companyId" Type="String" />
                     <asp:Parameter Name="cityId" Type="String" />
+                    <asp:Parameter Name="driverDistance"  />
                 </InsertParameters>
                 <UpdateParameters>
                     <asp:Parameter Name="name" Type="String" />
@@ -386,6 +410,7 @@
                     <asp:Parameter Name="countryId" Type="String" />
                     <asp:Parameter Name="companyId" Type="String" />
                     <asp:Parameter Name="cityId" Type="String" />
+                    <asp:Parameter Name="driverDistance" />
                     <asp:Parameter Name="id" Type="Int32" />
                 </UpdateParameters>
                 <DeleteParameters>

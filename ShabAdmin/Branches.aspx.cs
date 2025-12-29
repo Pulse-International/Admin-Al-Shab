@@ -56,6 +56,7 @@ namespace ShabAdmin
                             b.[zone],
                             b.[phone], 
                             b.[extensionNumber],
+                            b.[driverDistance],
                             b.[isMain]
                         FROM branches b
                         LEFT JOIN companies c ON b.companyId = c.id
@@ -96,6 +97,7 @@ namespace ShabAdmin
                             b.[zone],
                             b.[phone], 
                             b.[extensionNumber],
+                            b.[driverDistance],
                             b.[isMain]
                         FROM branches b
                         LEFT JOIN companies c ON b.companyId = c.id

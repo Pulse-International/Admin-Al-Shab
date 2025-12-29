@@ -4,183 +4,207 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
-    
-        <main>
-            <script>
-                var MyIndex;
-                var gridNo;
 
-                function OnRowClick(e) {
-                    MyIndex = e.visibleIndex;
-                }
+    <main>
+        <script>
+            var MyIndex;
+            var gridNo;
 
-                function onDeleteClick(visibleIndex, gridNo) {
-                    MyIndex = visibleIndex;
+            function OnRowClick(e) {
+                MyIndex = e.visibleIndex;
+            }
 
-                    Pop_Del_Grids.Show();
-                }
-            </script>
+            function onDeleteClick(visibleIndex, gridNo) {
+                MyIndex = visibleIndex;
 
-            <div class="w-100 text-center my-4">
-                <h2 class="pageTitle d-inline-block" style="font-family: Cairo">الــــدول</h2>
-            </div>
+                Pop_Del_Grids.Show();
+            }
+        </script>
 
-            <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
+        <div class="w-100 text-center my-4">
+            <h2 class="pageTitle d-inline-block" style="font-family: Cairo">الــــدول</h2>
+        </div>
 
-                <dx:ASPxGridView ID="GridCountries" runat="server" DataSourceID="db_Cities" KeyFieldName="id" ClientInstanceName="GridCountries" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="1em" RightToLeft="True">
-                    <Settings ShowFooter="True" ShowFilterRow="True" />
+        <div class="navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl bg-white shadow mt-3 mb-1">
 
-
-                    <ClientSideEvents RowClick="function(s, e) {OnRowClick(e);}" RowDblClick="function(s, e) {setTimeout(function(){GridCountries.StartEditRow(MyIndex);},100);}" />
-                    <SettingsAdaptivity AdaptivityMode="HideDataCells">
-                    </SettingsAdaptivity>
-                    <Settings ShowFilterRow="True" ShowFilterRowMenu="False" ShowHeaderFilterButton="False" AutoFilterCondition="Contains" />
-
-                    <SettingsCommandButton>
-                        <NewButton Text="جديد">
-                        </NewButton>
-                        <UpdateButton Text=" حفظ ">
-                            <Image Url="~/assets/img/save.png" SpriteProperties-Left="50">
-                                <SpriteProperties Left="50px"></SpriteProperties>
-                            </Image>
-                        </UpdateButton>
-                        <CancelButton Text=" الغاء ">
-                            <Image Url="~/assets/img/cancel.png">
-                            </Image>
-                        </CancelButton>
-                    </SettingsCommandButton>
-
-                    <SettingsPopup>
-                        <FilterControl AutoUpdatePosition="False"></FilterControl>
-                    </SettingsPopup>
-
-                    <SettingsSearchPanel CustomEditorID="tbToolbarSearch1" />
-
-                    <SettingsExport EnableClientSideExportAPI="true" ExcelExportMode="WYSIWYG" PaperKind="A4" RightToLeft="True" />
-                    <SettingsLoadingPanel Text="Please Wait &amp;hellip;" Mode="ShowAsPopup" />
-                    <SettingsText SearchPanelEditorNullText="ابحث في الجدول..." EmptyDataRow="لا يوجد" />
-                    <Columns>
-                        <dx:GridViewDataColumn Caption="الرقم" FieldName="id">
-                            <EditFormSettings Visible="False" />
-                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
-                            </CellStyle>
-                        </dx:GridViewDataColumn>
+            <dx:ASPxGridView ID="GridCountries" runat="server" DataSourceID="db_Cities" KeyFieldName="id" ClientInstanceName="GridCountries" Width="100%" AutoGenerateColumns="False" EnablePagingCallbackAnimation="True" Font-Names="cairo" Font-Size="1em" RightToLeft="True">
+                <Settings ShowFooter="True" ShowFilterRow="True" />
 
 
-                        <dx:GridViewDataComboBoxColumn Caption="الدولة" FieldName="countryId">
-                            <PropertiesComboBox DataSourceID="DB_Countries" TextField="countryName" ValueField="id" ValueType="System.Int32">
-                                <ItemStyle Font-Size="1.5em" />
-                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
-                                    <RequiredField IsRequired="True"></RequiredField>
-                                </ValidationSettings>
-                            </PropertiesComboBox>
-                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
-                            </CellStyle>
-                        </dx:GridViewDataComboBoxColumn>
+                <ClientSideEvents RowClick="function(s, e) {OnRowClick(e);}" RowDblClick="function(s, e) {setTimeout(function(){GridCountries.StartEditRow(MyIndex);},100);}" />
+                <SettingsAdaptivity AdaptivityMode="HideDataCells">
+                </SettingsAdaptivity>
+                <Settings ShowFilterRow="True" ShowFilterRowMenu="False" ShowHeaderFilterButton="False" AutoFilterCondition="Contains" />
 
-                        <dx:GridViewDataTextColumn Caption="المدينة" FieldName="cityName">
-                            <PropertiesTextEdit>
-                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
-                                    <RequiredField IsRequired="True"></RequiredField>
-                                </ValidationSettings>
-                            </PropertiesTextEdit>
-                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
-                            </CellStyle>
-                        </dx:GridViewDataTextColumn>
+                <SettingsCommandButton>
+                    <NewButton Text="جديد">
+                    </NewButton>
+                    <UpdateButton Text=" حفظ ">
+                        <Image Url="~/assets/img/save.png" SpriteProperties-Left="50">
+                            <SpriteProperties Left="50px"></SpriteProperties>
+                        </Image>
+                    </UpdateButton>
+                    <CancelButton Text=" الغاء ">
+                        <Image Url="~/assets/img/cancel.png">
+                        </Image>
+                    </CancelButton>
+                </SettingsCommandButton>
 
-                        <dx:GridViewDataTextColumn Caption="رمز المدينة" FieldName="cityCode">
-                            <PropertiesTextEdit>
-                                <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="City Code is required." Display="Dynamic">
-                                    <RequiredField IsRequired="True"></RequiredField>
-                                </ValidationSettings>
-                            </PropertiesTextEdit>
-                            <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
-                            </CellStyle>
-                        </dx:GridViewDataTextColumn>
+                <SettingsPopup>
+                    <FilterControl AutoUpdatePosition="False"></FilterControl>
+                </SettingsPopup>
 
-                        <dx:GridViewDataTextColumn Caption="" ShowInCustomizationForm="True" Width="100px">
-                            <EditFormSettings Visible="False" />
-                            <DataItemTemplate>
-                                <div style="width: 100%; float: left; text-align: center">
-                                    <img src="/assets/img/update.png" width="32" height="32" title="تعديل" style="cursor: pointer" onclick="setTimeout(function(){GridCountries.StartEditRow(MyIndex);},100);" />
-                                </div>
-                            </DataItemTemplate>
-                        </dx:GridViewDataTextColumn>
+                <SettingsSearchPanel CustomEditorID="tbToolbarSearch1" />
 
-                    </Columns>
-                    <Toolbars>
-                        <dx:GridViewToolbar ItemAlign="left">
-                            <SettingsAdaptivity Enabled="true" EnableCollapseRootItemsToIcons="true" />
-                            <Items>
-                                <dx:GridViewToolbarItem Command="New" Text="جديد" />
-                                <dx:GridViewToolbarItem Command="Refresh" BeginGroup="true" AdaptivePriority="1" Text="تحديث الجدول" />
-                                <dx:GridViewToolbarItem Command="ExportToXlsx" BeginGroup="true" />
-                                <dx:GridViewToolbarItem Command="ExportToPdf" />
+                <SettingsExport EnableClientSideExportAPI="true" ExcelExportMode="WYSIWYG" PaperKind="A4" RightToLeft="True" />
+                <SettingsLoadingPanel Text="Please Wait &amp;hellip;" Mode="ShowAsPopup" />
+                <SettingsText SearchPanelEditorNullText="ابحث في الجدول..." EmptyDataRow="لا يوجد" />
+                <Columns>
+                    <dx:GridViewDataColumn Caption="الرقم" FieldName="id">
+                        <EditFormSettings Visible="False" />
+                        <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
+                        </CellStyle>
+                    </dx:GridViewDataColumn>
 
-                                <dx:GridViewToolbarItem Alignment="Right" Name="toolbarItemSearch" BeginGroup="true" AdaptivePriority="2">
-                                    <Template>
-                                        <dx:ASPxButtonEdit ID="tbToolbarSearch1" runat="server" NullText="البحث..." Width="140" Font-Names="cairo" />
-                                    </Template>
-                                </dx:GridViewToolbarItem>
 
-                            </Items>
-                        </dx:GridViewToolbar>
-                    </Toolbars>
-                    <TotalSummary>
-                        <dx:ASPxSummaryItem FieldName="id" SummaryType="Count" DisplayFormat="العدد = {0}" />
-                    </TotalSummary>
-                    <Styles>
-                        <AlternatingRow BackColor="#F0F0F0">
-                        </AlternatingRow>
-                        <Footer Font-Names="cairo">
-                        </Footer>
-                    </Styles>
-                    <Paddings Padding="2em" />
+                    <dx:GridViewDataComboBoxColumn Caption="الدولة" FieldName="countryId">
+                        <PropertiesComboBox DataSourceID="DB_Countries" TextField="countryName" ValueField="id" ValueType="System.Int32">
+                            <ItemStyle Font-Size="1.5em" />
+                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
+                                <RequiredField IsRequired="True"></RequiredField>
+                            </ValidationSettings>
+                        </PropertiesComboBox>
+                        <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
+                        </CellStyle>
+                    </dx:GridViewDataComboBoxColumn>
 
-                </dx:ASPxGridView>
+                    <dx:GridViewDataTextColumn Caption="المدينة" FieldName="cityName">
+                        <PropertiesTextEdit>
+                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="حقل مطلوب" Display="Dynamic">
+                                <RequiredField IsRequired="True"></RequiredField>
+                            </ValidationSettings>
+                        </PropertiesTextEdit>
+                        <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
+                        </CellStyle>
+                    </dx:GridViewDataTextColumn>
 
-                <asp:SqlDataSource
-                    ID="db_Cities"
-                    runat="server"
-                    ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                    SelectCommand="SELECT [id], [cityName] ,[cityCode] , [countryId] FROM [cities] where ((countryId=@id) or (@id=0))"
-                    InsertCommand="INSERT INTO [cities] ([cityName],[cityCode],[countryId],[userDate]) VALUES (@cityName,@cityCode,@countryId,getdate());"
-                    UpdateCommand="UPDATE [cities]
+                    <dx:GridViewDataTextColumn Caption="رمز المدينة" FieldName="cityCode">
+                        <PropertiesTextEdit>
+                            <ValidationSettings RequiredField-IsRequired="true" SetFocusOnError="True" ErrorText="City Code is required." Display="Dynamic">
+                                <RequiredField IsRequired="True"></RequiredField>
+                            </ValidationSettings>
+                        </PropertiesTextEdit>
+                        <CellStyle VerticalAlign="Middle" HorizontalAlign="Center">
+                        </CellStyle>
+                    </dx:GridViewDataTextColumn>
+
+                    <dx:GridViewDataSpinEditColumn
+                        Caption="مدى السائق"
+                        FieldName="driverDistance"
+                        Width="5%">
+                        <PropertiesSpinEdit
+                            DisplayFormatString="g"
+                            NullDisplayText="0"
+                            MaxLength="10"
+                            MinValue="0"
+                            MaxValue="999999">
+                            <ValidationSettings
+                                Display="Dynamic"
+                                SetFocusOnError="True">
+                                <RequiredField
+                                    IsRequired="True"
+                                    ErrorText="الرجاء إدخال مدى السائق" />
+                            </ValidationSettings>
+                        </PropertiesSpinEdit>
+                        <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                    </dx:GridViewDataSpinEditColumn>
+
+                    <dx:GridViewDataTextColumn Caption="" ShowInCustomizationForm="True" Width="100px">
+                        <EditFormSettings Visible="False" />
+                        <DataItemTemplate>
+                            <div style="width: 100%; float: left; text-align: center">
+                                <img src="/assets/img/update.png" width="32" height="32" title="تعديل" style="cursor: pointer" onclick="setTimeout(function(){GridCountries.StartEditRow(MyIndex);},100);" />
+                            </div>
+                        </DataItemTemplate>
+                    </dx:GridViewDataTextColumn>
+
+                </Columns>
+                <Toolbars>
+                    <dx:GridViewToolbar ItemAlign="left">
+                        <SettingsAdaptivity Enabled="true" EnableCollapseRootItemsToIcons="true" />
+                        <Items>
+                            <dx:GridViewToolbarItem Command="New" Text="جديد" />
+                            <dx:GridViewToolbarItem Command="Refresh" BeginGroup="true" AdaptivePriority="1" Text="تحديث الجدول" />
+                            <dx:GridViewToolbarItem Command="ExportToXlsx" BeginGroup="true" />
+                            <dx:GridViewToolbarItem Command="ExportToPdf" />
+
+                            <dx:GridViewToolbarItem Alignment="Right" Name="toolbarItemSearch" BeginGroup="true" AdaptivePriority="2">
+                                <Template>
+                                    <dx:ASPxButtonEdit ID="tbToolbarSearch1" runat="server" NullText="البحث..." Width="140" Font-Names="cairo" />
+                                </Template>
+                            </dx:GridViewToolbarItem>
+
+                        </Items>
+                    </dx:GridViewToolbar>
+                </Toolbars>
+                <TotalSummary>
+                    <dx:ASPxSummaryItem FieldName="id" SummaryType="Count" DisplayFormat="العدد = {0}" />
+                </TotalSummary>
+                <Styles>
+                    <AlternatingRow BackColor="#F0F0F0">
+                    </AlternatingRow>
+                    <Footer Font-Names="cairo">
+                    </Footer>
+                </Styles>
+                <Paddings Padding="2em" />
+
+            </dx:ASPxGridView>
+
+            <asp:SqlDataSource
+                ID="db_Cities"
+                runat="server"
+                ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
+                SelectCommand="SELECT [id], [cityName] ,[cityCode] , [countryId], [driverDistance] FROM [cities] where ((countryId=@id) or (@id=0))"
+                InsertCommand="INSERT INTO [cities] ([cityName],[cityCode],[countryId],[driverDistance],[userDate]) VALUES (@cityName,@cityCode,@countryId,@driverDistance,getdate());"
+                UpdateCommand="UPDATE [cities]
                     SET [cityName] = @cityName,
                         [countryId] = @countryId,
-                        [cityCode] = @cityCode
+                        [cityCode] = @cityCode,
+                        [driverDistance] = @driverDistance
                     WHERE [id] = @id;
                     "
-                    DeleteCommand="DELETE FROM [branches] WHERE [id] = @id;">
-                    <SelectParameters>
-                        <asp:Parameter Name="id" Type="String" DefaultValue="0" />
-                    </SelectParameters>
-                    <InsertParameters>
-                        <asp:Parameter Name="cityName" Type="String" />
-                        <asp:Parameter Name="cityCode" Type="String" />
-                        <asp:Parameter Name="countryId" Type="String" />
-                    </InsertParameters>
-                    <UpdateParameters>
-                        <asp:Parameter Name="cityName" Type="String" />
-                        <asp:Parameter Name="cityCode" Type="String" />
-                        <asp:Parameter Name="countryId" Type="String" />
-                    </UpdateParameters>
-                    <DeleteParameters>
-                        <asp:Parameter Name="id" Type="Int32" />
-                    </DeleteParameters>
-                </asp:SqlDataSource>
+                DeleteCommand="DELETE FROM [branches] WHERE [id] = @id;">
+                <SelectParameters>
+                    <asp:Parameter Name="id" Type="String" DefaultValue="0" />
+                </SelectParameters>
+                <InsertParameters>
+                    <asp:Parameter Name="cityName" Type="String" />
+                    <asp:Parameter Name="cityCode" Type="String" />
+                    <asp:Parameter Name="driverDistance" />
+                    <asp:Parameter Name="countryId" Type="String" />
+                </InsertParameters>
+                <UpdateParameters>
+                    <asp:Parameter Name="cityName" Type="String" />
+                    <asp:Parameter Name="cityCode" Type="String" />
+                    <asp:Parameter Name="driverDistance" />
+                    <asp:Parameter Name="countryId" Type="String" />
+                </UpdateParameters>
+                <DeleteParameters>
+                    <asp:Parameter Name="id" Type="Int32" />
+                </DeleteParameters>
+            </asp:SqlDataSource>
 
-                <asp:SqlDataSource ID="DB_Countries" runat="server" ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                    SelectCommand="SELECT * FROM countries where ((id=@id) or (@id=0)) AND id <> 1000">
-                    <SelectParameters>
-                        <asp:Parameter Name="id" Type="String" DefaultValue="0" />
-                    </SelectParameters>
+            <asp:SqlDataSource ID="DB_Countries" runat="server" ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
+                SelectCommand="SELECT * FROM countries where ((id=@id) or (@id=0)) AND id <> 1000">
+                <SelectParameters>
+                    <asp:Parameter Name="id" Type="String" DefaultValue="0" />
+                </SelectParameters>
 
-                </asp:SqlDataSource>
+            </asp:SqlDataSource>
 
-            </div>
+        </div>
 
-        </main>
-    
+    </main>
+
 
 </asp:Content>

@@ -1616,7 +1616,7 @@
                                                     </dx:GridViewDataColumn>
 
                                                     <dx:GridViewDataColumn Caption="الصورة" FieldName="imagePath" EditFormSettings-VisibleIndex="1" EditFormSettings-Caption=" " Width="3%">
-                                                        <EditFormSettings RowSpan="3" VisibleIndex="1" Caption=" "></EditFormSettings>
+                                                        <EditFormSettings RowSpan="5" VisibleIndex="1" Caption=" "></EditFormSettings>
                                                         <DataItemTemplate>
                                                             <div style="text-align: center; width: 100%">
                                                                 <img id="<%# "DocsFile-" + Eval("id") %>" src="<%# (!string.IsNullOrEmpty(Eval("imagePath").ToString()) ? Eval("imagePath") : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>" style="width: 5em; border: 1px solid #c8c8c8; border-radius: 5px;" />
@@ -1674,6 +1674,19 @@
                                                         <CellStyle HorizontalAlign="Center" VerticalAlign="Middle">
                                                         </CellStyle>
                                                     </dx:GridViewDataSpinEditColumn>
+
+                                                    <dx:GridViewDataComboBoxColumn
+                                                        Caption="متوفر"
+                                                        FieldName="isAvailable"
+                                                        Width="5%">
+                                                        <PropertiesComboBox ValueType="System.Int32">
+                                                            <Items>
+                                                                <dx:ListEditItem Text="نعم" Value="1" />
+                                                                <dx:ListEditItem Text="لا" Value="0" />
+                                                            </Items>
+                                                        </PropertiesComboBox>
+                                                    </dx:GridViewDataComboBoxColumn>
+
 
 
                                                     <dx:GridViewDataTextColumn Caption="" ShowInCustomizationForm="True" Width="100px">
@@ -1750,9 +1763,9 @@
                                                 ID="db_ProductsOptions"
                                                 runat="server"
                                                 ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                                                SelectCommand="SELECT [id], [productOption],[imagePath], [productOptionPrice],[offerPrice] ,[productId], [barcode] FROM [productsOptions] Where productId = @productId"
-                                                InsertCommand="INSERT INTO [productsOptions] ([productOption],[imagePath] ,[productOptionPrice], [productId], [barcode], [userDate]) VALUES (@productOption,@imagePath, @productOptionPrice, @productId, @barcode, getdate());"
-                                                UpdateCommand="UPDATE [productsOptions] SET [productOption] = @productOption, [productOptionPrice] = @productOptionPrice ,[imagePath] =@imagePath, [barcode]=@barcode WHERE [id] = @id;"
+                                                SelectCommand="SELECT [id], [productOption],[imagePath], [productOptionPrice],[offerPrice] ,[productId], [barcode],[isAvailable] FROM [productsOptions] Where productId = @productId"
+                                                InsertCommand="INSERT INTO [productsOptions] ([productOption],[imagePath] ,[productOptionPrice], [productId], [barcode],[isAvailable], [userDate]) VALUES (@productOption,@imagePath, @productOptionPrice, @productId, @barcode,@isAvailable, getdate());"
+                                                UpdateCommand="UPDATE [productsOptions] SET [productOption] = @productOption, [productOptionPrice] = @productOptionPrice ,[imagePath] =@imagePath, [barcode]=@barcode, [isAvailable]=@isAvailable WHERE [id] = @id;"
                                                 DeleteCommand="DELETE FROM [productsOptions] WHERE [id] = @id;">
                                                 <SelectParameters>
                                                     <asp:ControlParameter ControlID="l_Product_Id" Name="productId" PropertyName="Text" />
@@ -1761,6 +1774,7 @@
                                                     <asp:Parameter Name="productOption" Type="String" />
                                                     <asp:Parameter Name="productOptionPrice" Type="String" />
                                                     <asp:Parameter Name="barcode" Type="String" />
+                                                    <asp:Parameter Name="isAvailable" />
                                                     <asp:ControlParameter ControlID="l_Product_Id" Name="productId" PropertyName="Text" />
                                                     <asp:ControlParameter ControlID="l_item_file1" Name="imagePath" PropertyName="Text" />
                                                 </InsertParameters>
@@ -1768,6 +1782,7 @@
                                                     <asp:Parameter Name="productOption" Type="String" />
                                                     <asp:Parameter Name="productOptionPrice" Type="String" />
                                                     <asp:Parameter Name="barcode" Type="String" />
+                                                    <asp:Parameter Name="isAvailable" />
                                                     <asp:Parameter Name="id" Type="Int32" />
                                                     <asp:ControlParameter ControlID="l_item_file1" Name="imagePath" PropertyName="Text" />
                                                 </UpdateParameters>
@@ -1908,7 +1923,7 @@
                                                     </dx:GridViewDataColumn>
 
                                                     <dx:GridViewDataColumn Caption="الصورة" FieldName="imagePath" EditFormSettings-VisibleIndex="1" EditFormSettings-Caption=" " Width="3%">
-                                                        <EditFormSettings RowSpan="3" VisibleIndex="1" Caption=" "></EditFormSettings>
+                                                        <EditFormSettings RowSpan="5" VisibleIndex="1" Caption=" "></EditFormSettings>
                                                         <DataItemTemplate>
                                                             <div style="text-align: center; width: 100%">
                                                                 <img id="<%# "DocsFile-" + Eval("id") %>" src="<%# (!string.IsNullOrEmpty(Eval("imagePath").ToString()) ? Eval("imagePath") : "/assets/uploads/noFile.png") + "?v=" + DateTime.Now.Ticks %>" style="width: 5em; border: 1px solid #c8c8c8; border-radius: 5px;" />
@@ -1967,6 +1982,17 @@
                                                         </CellStyle>
                                                     </dx:GridViewDataSpinEditColumn>
 
+                                                    <dx:GridViewDataComboBoxColumn
+                                                        Caption="متوفر"
+                                                        FieldName="isAvailable"
+                                                        Width="5%">
+                                                        <PropertiesComboBox ValueType="System.Int32">
+                                                            <Items>
+                                                                <dx:ListEditItem Text="نعم" Value="1" />
+                                                                <dx:ListEditItem Text="لا" Value="0" />
+                                                            </Items>
+                                                        </PropertiesComboBox>
+                                                    </dx:GridViewDataComboBoxColumn>
 
                                                     <dx:GridViewDataTextColumn Caption="" ShowInCustomizationForm="True" Width="100px">
                                                         <EditFormSettings Visible="False" />
@@ -2015,9 +2041,9 @@
                                                 ID="db_ProductsExtras"
                                                 runat="server"
                                                 ConnectionString="<%$ ConnectionStrings:ShabDB_connection %>"
-                                                SelectCommand="SELECT [id], [productExtra],[imagePath], [productExtraPrice], [productId], [barcode] FROM [productsExtra] Where productId = @productId"
-                                                InsertCommand="INSERT INTO [productsExtra] ([productExtra],[imagePath], [productExtraPrice], [productId], [barcode], [userDate]) VALUES (@productExtra,@imagePath, @productExtraPrice, @productId, @barcode, getdate());"
-                                                UpdateCommand="UPDATE [productsExtra] SET [productExtra] = @productExtra, [productExtraPrice] = @productExtraPrice, [imagePath] = @imagePath, [barcode]=@barcode WHERE [id] = @id;"
+                                                SelectCommand="SELECT [id], [productExtra],[imagePath], [productExtraPrice], [productId], [barcode], [isAvailable] FROM [productsExtra] Where productId = @productId"
+                                                InsertCommand="INSERT INTO [productsExtra] ([productExtra],[imagePath], [productExtraPrice], [productId], [barcode],[isAvailable], [userDate]) VALUES (@productExtra,@imagePath, @productExtraPrice, @productId, @barcode,@isAvailable, getdate());"
+                                                UpdateCommand="UPDATE [productsExtra] SET [productExtra] = @productExtra, [productExtraPrice] = @productExtraPrice, [imagePath] = @imagePath, [barcode]=@barcode, [isAvailable]=@isAvailable WHERE [id] = @id;"
                                                 DeleteCommand="DELETE FROM [productsExtra] WHERE [id] = @id;">
                                                 <SelectParameters>
                                                     <asp:ControlParameter ControlID="l_Product_Id" Name="productId" PropertyName="Text" />
@@ -2026,6 +2052,7 @@
                                                     <asp:Parameter Name="productExtra" Type="String" />
                                                     <asp:Parameter Name="productExtraPrice" Type="String" />
                                                     <asp:Parameter Name="barcode" Type="String" />
+                                                    <asp:Parameter Name="isAvailable" />
                                                     <asp:ControlParameter ControlID="l_Product_Id" Name="productId" PropertyName="Text" />
                                                     <asp:ControlParameter ControlID="l_item_file2" Name="imagePath" PropertyName="Text" />
                                                 </InsertParameters>
@@ -2033,6 +2060,7 @@
                                                     <asp:Parameter Name="productExtra" Type="String" />
                                                     <asp:Parameter Name="productExtraPrice" Type="String" />
                                                     <asp:Parameter Name="barcode" Type="String" />
+                                                    <asp:Parameter Name="isAvailable" />
                                                     <asp:Parameter Name="id" Type="Int32" />
                                                     <asp:ControlParameter ControlID="l_item_file2" Name="imagePath" PropertyName="Text" />
                                                 </UpdateParameters>

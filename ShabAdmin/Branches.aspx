@@ -258,7 +258,7 @@
                         FieldName="driverDistance"
                         Width="5%">
                         <PropertiesSpinEdit
-                            DisplayFormatString="g"
+                            DisplayFormatString="{0} كيلو"
                             NullDisplayText="0"
                             MaxLength="10"
                             MinValue="0"
@@ -396,7 +396,7 @@
                     <asp:Parameter Name="countryId" Type="String" />
                     <asp:Parameter Name="companyId" Type="String" />
                     <asp:Parameter Name="cityId" Type="String" />
-                    <asp:Parameter Name="driverDistance"  />
+                    <asp:Parameter Name="driverDistance" />
                 </InsertParameters>
                 <UpdateParameters>
                     <asp:Parameter Name="name" Type="String" />

@@ -539,7 +539,7 @@
                         </CellStyle>
                     </dx:GridViewDataColumn>
 
-                    <dx:GridViewDataColumn Caption="الصور" VisibleIndex="1" FieldName="Images">
+                    <dx:GridViewDataColumn Caption="الصور" VisibleIndex="1" >
                         <EditFormSettings RowSpan="16" VisibleIndex="1" Caption=" "></EditFormSettings>
 
                         <DataItemTemplate>

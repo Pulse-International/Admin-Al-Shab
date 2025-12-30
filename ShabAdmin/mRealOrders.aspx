@@ -1238,7 +1238,7 @@
                             <dx:GridViewDataColumn FieldName="id" Caption="الرقم">
                                 <CellStyle HorizontalAlign="Center" VerticalAlign="Middle" />
                             </dx:GridViewDataColumn>
-                            <dx:GridViewDataColumn Caption="الصور" VisibleIndex="1" FieldName="Images">
+                            <dx:GridViewDataColumn Caption="الصور" VisibleIndex="1">
 
                                 <DataItemTemplate>
                                     <div class="preview-container" style="text-align: center; display: flex; justify-content: center;">
@@ -1277,7 +1277,7 @@
                                 </CellStyle>
                             </dx:GridViewDataTextColumn>
 
-                            <dx:GridViewDataTextColumn Caption="الكمية / الوزن" Width="15%">
+                            <dx:GridViewDataTextColumn Caption="الكمية / الوزن" Width="15%" FieldName="CalculatedQtyOrWeight">
                                 <DataItemTemplate>
                                     <%# 
     (Convert.ToDecimal(Eval("quantity")) > 0) ? 
@@ -1289,7 +1289,7 @@
                             </dx:GridViewDataTextColumn>
 
 
-                            <dx:GridViewDataTextColumn Caption="السعر" Width="15%">
+                            <dx:GridViewDataTextColumn Caption="السعر" Width="15%" FieldName="CalculatedTotalPrice">
                                 <DataItemTemplate>
                                     <%# GetTotalPaidAmount(
     Eval("price"), 
@@ -1340,21 +1340,34 @@ SELECT
     c.weight, 
     ISNULL(po.productOption, N'لا يوجد') AS optionName,
     ISNULL(
-        (SELECT STRING_AGG(pe.productExtra, N' &lt;br&gt; ') 
-         FROM productsExtra pe 
-         WHERE pe.id IN (SELECT TRY_CAST([value] AS INT) 
-                         FROM STRING_SPLIT(c.extras, ',')))
-    , N'لا يوجد') AS extras,
-    c.note 
+        (
+            SELECT STRING_AGG(pe.productExtra, N'&lt;br&gt;')
+            FROM productsExtra pe
+            WHERE pe.id IN (
+                SELECT TRY_CAST([value] AS INT)
+                FROM STRING_SPLIT(c.extras, ',')
+            )
+        ), 
+        N'لا يوجد'
+    ) AS extras,
+    c.note,
+    CASE 
+        WHEN c.quantity &gt; 0 THEN CAST(c.quantity AS nvarchar(50))
+        ELSE CAST(c.weight AS nvarchar(50)) + N' كغ'
+    END AS CalculatedQtyOrWeight,
+    CAST(
+        c.price * 
+        (CASE WHEN c.quantity &gt; 0 THEN c.quantity ELSE c.weight END)
+        AS decimal(18,3)
+    ) AS CalculatedTotalPrice
 FROM carts c 
 LEFT JOIN products p ON c.productId = p.id 
 LEFT JOIN productsOptions po ON c.options = po.id 
-WHERE c.orderId = @orderId">
+WHERE c.orderId = @orderId;">
             <SelectParameters>
                 <asp:ControlParameter ControlID="l_Order_Id" Name="orderId" PropertyName="Text" />
             </SelectParameters>
         </asp:SqlDataSource>
-
 
 
     </main>
